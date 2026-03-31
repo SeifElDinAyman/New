@@ -22,7 +22,6 @@ body {
     overflow: hidden;
 }
 
-/* cinematic overlay without changing branding too much */
 body::before {
     content: "";
     position: fixed;
@@ -87,6 +86,7 @@ body::before {
     opacity: 0;
     transition: opacity 0.8s ease 0.45s;
     padding: 24px;
+    text-align: center;
 }
 
 .card.flipped .back {
@@ -169,6 +169,11 @@ button:hover {
     filter: brightness(1.05);
 }
 
+button:disabled {
+    opacity: 0.7;
+    cursor: default;
+}
+
 #terminal {
     margin-top: 15px;
     text-align: left;
@@ -178,6 +183,7 @@ button:hover {
     overflow: hidden;
     line-height: 1.4;
     transition: text-shadow 0.2s;
+    white-space: pre-wrap;
 }
 
 .progress {
@@ -307,6 +313,7 @@ const bar = document.getElementById("bar");
 const card = document.getElementById("card");
 
 let isRunning = false;
+let newTab = null;
 
 function typeLine(text, callback) {
     let i = 0;
@@ -328,6 +335,7 @@ function typeLine(text, callback) {
 
 function streamLogs(i = 0) {
     terminal.classList.add("flicker");
+
     if (i < logs.length) {
         typeLine(logs[i], () => streamLogs(i + 1));
     } else {
@@ -360,7 +368,11 @@ function showAccessGranted() {
         card.classList.add("flipped");
 
         setTimeout(() => {
-            window.open(redirectUrl, "_blank");
+            if (newTab && !newTab.closed) {
+                newTab.location.href = redirectUrl;
+            } else {
+                error.textContent = "Popup was blocked. Please allow popups and try again.";
+            }
         }, 2200);
     }, 1400);
 }
@@ -390,6 +402,13 @@ function checkPassword() {
     }
 
     if (input === correctDate) {
+        newTab = window.open("about:blank", "_blank");
+
+        if (!newTab) {
+            error.textContent = "Please allow popups for this site.";
+            return;
+        }
+
         isRunning = true;
         lockInputs();
         streamLogs();
