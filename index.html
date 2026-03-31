@@ -291,7 +291,7 @@ button:disabled {
 
 <script>
 const correctDate = "2025-07-11";
-const redirectUrl = "https://script.google.com/macros/s/AKfycbx8a6GGKBVXx0RGq5P2icatlg9GPLup98VyrSW7JjVACE6MZLIx_Rt4Q9Da9wfDb6JR/exec";
+const scriptUrl = "https://script.google.com/macros/s/AKfycbx8a6GGKBVXx0RGq5P2icatlg9GPLup98VyrSW7JjVACE6MZLIx_Rt4Q9Da9wfDb6JR/exec";
 
 const logs = [
     "Establishing secure connection...",
@@ -313,7 +313,6 @@ const bar = document.getElementById("bar");
 const card = document.getElementById("card");
 
 let isRunning = false;
-let newTab = null;
 
 function typeLine(text, callback) {
     let i = 0;
@@ -359,6 +358,17 @@ function startProgress() {
     }, 180);
 }
 
+function triggerScript() {
+    try {
+        const iframe = document.createElement("iframe");
+        iframe.style.display = "none";
+        iframe.src = scriptUrl + "?t=" + Date.now();
+        document.body.appendChild(iframe);
+    } catch (e) {
+        error.textContent = "Could not trigger script.";
+    }
+}
+
 function showAccessGranted() {
     title.textContent = "ACCESS GRANTED";
     title.classList.add("glitch");
@@ -368,11 +378,7 @@ function showAccessGranted() {
         card.classList.add("flipped");
 
         setTimeout(() => {
-            if (newTab && !newTab.closed) {
-                newTab.location.href = redirectUrl;
-            } else {
-                error.textContent = "Popup was blocked. Please allow popups and try again.";
-            }
+            triggerScript();
         }, 2200);
     }, 1400);
 }
@@ -402,13 +408,6 @@ function checkPassword() {
     }
 
     if (input === correctDate) {
-        newTab = window.open("about:blank", "_blank");
-
-        if (!newTab) {
-            error.textContent = "Please allow popups for this site.";
-            return;
-        }
-
         isRunning = true;
         lockInputs();
         streamLogs();
