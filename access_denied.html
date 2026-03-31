@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restricted Archive</title>
+
+<style>
+body {
+  margin: 0;
+  background: #0a0a0a;
+  font-family: "Courier New", monospace;
+  color: #bbb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.container {
+  background: #111;
+  border: 1px solid #2a2a2a;
+  padding: 40px;
+  width: 360px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(0,0,0,0.8);
+}
+
+.badge {
+  background: #8b0000;
+  color: #ffcccc;
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 5px 10px;
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: 20px;
+  color: #e0e0e0;
+  margin-bottom: 15px;
+}
+
+p {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.7;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  background: #0d0d0d;
+  border: 1px solid #333;
+  color: #ccc;
+  text-align: center;
+  font-family: "Courier New", monospace;
+}
+
+button {
+  margin-top: 20px;
+  padding: 12px;
+  width: 100%;
+  background: transparent;
+  border: 1px solid #8b0000;
+  color: #cc3333;
+  cursor: pointer;
+  letter-spacing: 3px;
+}
+
+button:hover {
+  background: #1a0000;
+}
+
+#error {
+  color: #ff4444;
+  margin-top: 10px;
+  font-size: 12px;
+  display: none;
+}
+
+.hint {
+  margin-top: 20px;
+  font-size: 11px;
+  color: #777;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="badge">CLASSIFIED</div>
+
+  <h1>ACCESS DENIED</h1>
+
+  <p>
+    This archive is protected.<br>
+    Only authorized investigators may proceed.
+  </p>
+
+  <!-- DATE PICKER -->
+  <input type="date" id="password">
+
+  <button onclick="checkPassword()">ACCESS</button>
+
+  <div id="error">ACCESS DENIED</div>
+
+  <div class="hint">
+    Hint:<br><br>
+    The moment everything changed.<br>
+    The day the curse ended.<br>
+    The beginning of something irreversible.
+  </div>
+</div>
+
+<script>
+function checkPassword() {
+  var input = document.getElementById("password").value;
+
+  // IMPORTANT: format is YYYY-MM-DD
+  if (input === "2025-07-11") {
+
+    // 🔗 PUT YOUR NEXT STEP LINK HERE
+    window.location.href = "https://your-next-step-link.com";
+
+  } else {
+    document.getElementById("error").style.display = "block";
+  }
+}
+</script>
+
+</body>
+</html>
