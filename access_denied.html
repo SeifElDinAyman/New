@@ -22,7 +22,7 @@ body {
     overflow: hidden;
 }
 
-/* light cinematic overlays without changing branding too much */
+/* cinematic overlay without changing branding too much */
 body::before {
     content: "";
     position: fixed;
@@ -227,6 +227,7 @@ button:hover {
     0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: 0 0 2px #00ff9c; }
     20%, 22%, 24%, 55% { text-shadow: 0 0 12px #00ff9c; }
 }
+
 .flicker { animation: flicker 0.15s infinite; }
 
 .shake {
@@ -284,7 +285,7 @@ button:hover {
 
 <script>
 const correctDate = "2025-07-11";
-const redirectUrl = "google.com"; // <- replace with your real link
+const redirectUrl = "https://www.google.com";
 
 const logs = [
     "Establishing secure connection...",
@@ -306,16 +307,6 @@ const bar = document.getElementById("bar");
 const card = document.getElementById("card");
 
 let isRunning = false;
-
-function resetUI() {
-    error.textContent = "";
-    terminal.innerHTML = "";
-    progress.style.display = "none";
-    bar.style.width = "0%";
-    title.textContent = "ENTER ACCESS DATE";
-    title.classList.remove("glitch");
-    card.classList.remove("glow", "flipped", "shake");
-}
 
 function typeLine(text, callback) {
     let i = 0;
