@@ -8,7 +8,7 @@
 <style>
 body {
     margin: 0;
-    background: #0a0a0a;
+    background: #050505;
     font-family: "Courier New", monospace;
     color: #bbb;
     display: flex;
@@ -19,13 +19,13 @@ body {
 }
 
 .container {
-    background: #111;
-    border: 1px solid #2a2a2a;
-    padding: 30px;
+    background: #0d0d0d;
+    border: 1px solid #222;
+    padding: 25px;
     width: 90%;
     max-width: 360px;
     text-align: center;
-    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    box-shadow: 0 0 40px rgba(0,0,0,0.9);
     border-radius: 10px;
 }
 
@@ -35,31 +35,23 @@ body {
     font-size: 10px;
     letter-spacing: 2px;
     padding: 6px 10px;
-    display: inline-block;
     margin-bottom: 20px;
+    display: inline-block;
 }
 
 h1 {
     font-size: 18px;
     color: #e0e0e0;
-    margin-bottom: 10px;
-}
-
-p {
-    font-size: 12px;
-    color: #666;
-    line-height: 1.6;
 }
 
 input {
     width: 100%;
     padding: 12px;
     margin-top: 20px;
-    background: #0d0d0d;
+    background: #000;
     border: 1px solid #333;
     color: #ccc;
     text-align: center;
-    font-family: "Courier New", monospace;
 }
 
 button {
@@ -72,37 +64,49 @@ button {
     cursor: pointer;
 }
 
-button:hover {
-    background: #a00000;
+#terminal {
+    margin-top: 15px;
+    text-align: left;
+    font-size: 11px;
+    color: #00ff9c;
+    height: 100px;
+    overflow: hidden;
 }
 
-#typing {
-    color: #00ff9c;
-    font-size: 12px;
-    height: 20px;
-    margin-top: 15px;
+.progress {
+    width: 100%;
+    height: 6px;
+    background: #111;
+    margin-top: 10px;
+    display: none;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: #00ff9c;
+    transition: width 0.2s;
 }
 
 .system {
-    margin-top: 15px;
-    font-size: 11px;
+    margin-top: 10px;
+    font-size: 10px;
     color: #444;
 }
 
 .error {
     color: red;
     margin-top: 10px;
-    font-size: 12px;
 }
 
-/* subtle flicker */
-@keyframes flicker {
-    0% {opacity: 0.95;}
-    50% {opacity: 1;}
-    100% {opacity: 0.95;}
+.glitch {
+    animation: glitch 0.2s infinite;
 }
-body {
-    animation: flicker 2s infinite;
+
+@keyframes glitch {
+    0% {transform: translate(1px, -1px);}
+    50% {transform: translate(-1px, 1px);}
+    100% {transform: translate(1px, 1px);}
 }
 </style>
 </head>
@@ -111,19 +115,16 @@ body {
 
 <div class="container">
     <div class="badge">RESTRICTED ARCHIVE</div>
-
-    <h1>ACCESS DENIED</h1>
-
-    <p>
-        This archive is protected.<br>
-        Only authorized investigators may proceed.
-    </p>
+    <h1 id="title">ACCESS DENIED</h1>
 
     <input type="date" id="password">
-
     <button onclick="checkPassword()">ENTER</button>
 
-    <div id="typing"></div>
+    <div id="terminal"></div>
+
+    <div class="progress" id="progress">
+        <div class="progress-bar" id="bar"></div>
+    </div>
 
     <div class="system">
         IP Logged: Cairo, Egypt<br>
@@ -136,35 +137,73 @@ body {
 <script>
 const correctDate = "2025-07-11";
 
-function typeEffect(text, element, speed = 40) {
-    element.innerHTML = "";
+const logs = [
+    "Establishing secure connection...",
+    "Bypassing firewall...",
+    "Injecting credentials...",
+    "Decrypting archive...",
+    "Extracting hidden files...",
+    "Verifying access level...",
+    "Access granted..."
+];
+
+function streamLogs() {
+    const terminal = document.getElementById("terminal");
     let i = 0;
-    function typing() {
-        if (i < text.length) {
-            element.innerHTML += text.charAt(i);
+
+    function addLine() {
+        if (i < logs.length) {
+            terminal.innerHTML += logs[i] + "<br>";
+            terminal.scrollTop = terminal.scrollHeight;
             i++;
-            setTimeout(typing, speed);
+            setTimeout(addLine, 400);
         }
     }
-    typing();
+    addLine();
+}
+
+function startProgress() {
+    const bar = document.getElementById("bar");
+    const progress = document.getElementById("progress");
+    progress.style.display = "block";
+
+    let width = 0;
+    let interval = setInterval(() => {
+        width += Math.random() * 15;
+        bar.style.width = width + "%";
+
+        if (width >= 100) {
+            clearInterval(interval);
+            success();
+        }
+    }, 200);
+}
+
+function success() {
+    const title = document.getElementById("title");
+    title.innerText = "ACCESS GRANTED";
+    title.classList.add("glitch");
+
+    setTimeout(() => {
+        window.location.href = "PUT_YOUR_NEXT_LINK_HERE";
+    }, 2000);
 }
 
 function checkPassword() {
     const input = document.getElementById("password").value;
-    const typingDiv = document.getElementById("typing");
-    const errorDiv = document.getElementById("error");
+    const error = document.getElementById("error");
 
-    errorDiv.innerHTML = "";
+    error.innerHTML = "";
 
     if (input === correctDate) {
-        typeEffect("Decrypting archive...", typingDiv);
+        document.querySelector("button").style.display = "none";
+        document.getElementById("password").style.display = "none";
 
-        setTimeout(() => {
-            window.location.href = "PUT_YOUR_NEXT_LINK_HERE";
-        }, 2500);
+        streamLogs();
+        setTimeout(startProgress, 1500);
 
     } else {
-        errorDiv.innerHTML = "ACCESS DENIED";
+        error.innerHTML = "ACCESS DENIED";
     }
 }
 </script>
