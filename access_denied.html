@@ -1,178 +1,345 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Restricted Archive</title>
 
 <style>
 * { box-sizing: border-box; }
 
-body {
+html, body {
     margin: 0;
-    background: #050505;
+    min-height: 100%;
+}
+
+body {
+    background:
+        radial-gradient(circle at top, rgba(120, 0, 0, 0.15), transparent 35%),
+        radial-gradient(circle at bottom, rgba(0, 255, 156, 0.08), transparent 25%),
+        linear-gradient(180deg, #030303 0%, #070707 45%, #000000 100%);
     font-family: "Courier New", monospace;
     color: #bbb;
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    padding: 15px;
-    perspective: 1200px;
+    padding: 18px;
+    perspective: 1400px;
+    overflow: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.02) 0px,
+            rgba(255,255,255,0.02) 1px,
+            transparent 2px,
+            transparent 4px
+        );
+    opacity: 0.16;
+    pointer-events: none;
+    animation: scanMove 8s linear infinite;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle, rgba(255,255,255,0.035) 0.6px, transparent 0.8px);
+    background-size: 4px 4px;
+    opacity: 0.08;
+    pointer-events: none;
+}
+
+@keyframes scanMove {
+    from { transform: translateY(-12px); }
+    to { transform: translateY(12px); }
 }
 
 .card {
     width: 100%;
-    max-width: 360px;
-    height: 420px;
+    max-width: 390px;
+    height: 510px;
     position: relative;
     transform-style: preserve-3d;
-    transition: transform 1s cubic-bezier(0.68, -0.55, 0.265, 1.55), box-shadow 0.4s;
+    transition:
+        transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+        box-shadow 0.5s ease,
+        filter 0.5s ease;
+    filter: drop-shadow(0 0 12px rgba(0,0,0,0.9));
 }
 
 .card.glow {
-    box-shadow: 0 0 20px #00ff9c, 0 0 60px #00ff9c, 0 0 100px #00ff9c;
+    box-shadow:
+        0 0 20px rgba(0,255,156,0.35),
+        0 0 60px rgba(0,255,156,0.25),
+        0 0 120px rgba(0,255,156,0.12);
 }
 
 .card.flipped {
-    transform: rotateY(180deg) rotateZ(1deg);
+    transform: rotateY(180deg) rotateZ(1deg) scale(1.01);
 }
 
 .container {
-    background: #0d0d0d;
-    border: 1px solid #222;
-    padding: 20px;
+    background:
+        linear-gradient(180deg, rgba(18,18,18,0.96), rgba(8,8,8,0.98));
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 22px;
     text-align: center;
-    box-shadow: 0 0 40px rgba(0,0,0,0.9);
-    border-radius: 12px;
+    border-radius: 16px;
     width: 100%;
     height: 100%;
     position: absolute;
     inset: 0;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+    overflow: hidden;
+    box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,0.03),
+        0 0 50px rgba(0,0,0,0.95);
 }
 
-.front {
-    z-index: 2;
+.container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.05) 48%, transparent 52%);
+    opacity: 0.08;
+    pointer-events: none;
 }
+
+.front { z-index: 2; }
 
 .back {
     transform: rotateY(180deg);
-    color: #c9a84c;
+    color: #d7bf74;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    flex-direction: column;
     opacity: 0;
-    transition: opacity 1s ease 0.8s;
-    padding: 24px;
+    transition: opacity 1.1s ease 0.6s;
+    padding: 30px;
+    letter-spacing: 1px;
 }
 
 .card.flipped .back {
     opacity: 1;
 }
 
+.back-title {
+    font-size: 16px;
+    color: #f0d88c;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+.back-sub {
+    font-size: 12px;
+    color: #bfa85d;
+    line-height: 1.7;
+    max-width: 260px;
+}
+
 .badge {
-    background: #8b0000;
+    background: linear-gradient(180deg, #8b0000, #560000);
     color: #ffcccc;
     font-size: 10px;
-    letter-spacing: 2px;
-    padding: 6px 10px;
-    margin-bottom: 15px;
+    letter-spacing: 2.5px;
+    padding: 7px 12px;
+    margin-bottom: 16px;
     display: inline-block;
-    border-radius: 4px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 0 18px rgba(139,0,0,0.35);
 }
 
 h1 {
-    font-size: 18px;
-    color: #e0e0e0;
-    margin: 10px 0;
+    font-size: 22px;
+    color: #efefef;
+    margin: 8px 0 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.subtitle {
+    color: #c9a84c;
+    margin: 0 0 14px;
+    font-size: 12px;
+    line-height: 1.5;
+    letter-spacing: 0.8px;
+}
+
+.hint-box {
+    margin: 0 0 16px;
+    padding: 12px 14px;
+    border: 1px solid rgba(201,168,76,0.22);
+    background: rgba(201,168,76,0.04);
+    border-radius: 10px;
+    text-align: left;
+    box-shadow: inset 0 0 25px rgba(201,168,76,0.03);
+}
+
+.hint-title {
+    color: #e6cb80;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.hint-box div {
+    color: #bda76a;
+    font-size: 11px;
+    line-height: 1.7;
 }
 
 input {
     width: 100%;
-    padding: 12px;
-    margin-top: 15px;
-    background: #000;
-    border: 1px solid #333;
-    color: #ccc;
+    padding: 13px;
+    margin-top: 8px;
+    background: rgba(0,0,0,0.78);
+    border: 1px solid #313131;
+    color: #d9d9d9;
     text-align: center;
-    border-radius: 6px;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
+}
+
+input:focus {
+    border-color: #7f6840;
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.08);
+    transform: translateY(-1px);
 }
 
 button {
     margin-top: 12px;
     width: 100%;
-    padding: 10px;
-    background: #8b0000;
-    border: none;
+    padding: 11px;
+    background: linear-gradient(180deg, #8b0000, #5f0000);
+    border: 1px solid rgba(255,255,255,0.06);
     color: white;
     cursor: pointer;
-    border-radius: 6px;
+    border-radius: 8px;
+    letter-spacing: 2px;
+    font-weight: bold;
+    transition: transform 0.2s, box-shadow 0.25s, opacity 0.2s;
 }
 
 button:hover {
-    opacity: 0.95;
+    transform: translateY(-1px);
+    box-shadow: 0 0 18px rgba(139,0,0,0.28);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: default;
+    transform: none;
 }
 
 #terminal {
-    margin-top: 15px;
+    margin-top: 16px;
     text-align: left;
     font-size: 11px;
     color: #00ff9c;
-    height: 90px;
+    height: 104px;
     overflow: hidden;
-    line-height: 1.4;
+    line-height: 1.5;
     transition: text-shadow 0.2s;
     white-space: pre-wrap;
+    padding: 10px;
+    border: 1px solid rgba(0,255,156,0.08);
+    background: rgba(0,0,0,0.42);
+    border-radius: 8px;
+    box-shadow: inset 0 0 22px rgba(0,255,156,0.03);
 }
 
 .progress {
     width: 100%;
-    height: 6px;
+    height: 7px;
     background: #111;
-    margin-top: 10px;
+    margin-top: 12px;
     display: none;
-    border-radius: 10px;
+    border-radius: 999px;
     overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.04);
 }
 
 .progress-bar {
     height: 100%;
     width: 0%;
-    background: #00ff9c;
-    transition: width 0.2s;
-    border-radius: 10px;
+    background:
+        linear-gradient(90deg, #009c62 0%, #00ff9c 60%, #b0ffd8 100%);
+    transition: width 0.18s;
+    border-radius: 999px;
+    box-shadow: 0 0 16px rgba(0,255,156,0.45);
 }
 
 .system {
-    margin-top: 12px;
+    margin-top: 14px;
     font-size: 10px;
-    color: #555;
-    line-height: 1.4;
+    color: #5d5d5d;
+    line-height: 1.5;
+    letter-spacing: 0.8px;
 }
 
 .error {
-    color: red;
-    margin-top: 10px;
+    color: #ff4c4c;
+    margin-top: 12px;
     font-size: 12px;
-    min-height: 16px;
+    min-height: 18px;
+    letter-spacing: 1px;
 }
 
 .glitch {
-    animation: glitch 0.2s infinite;
+    animation: glitch 0.18s infinite;
+    text-shadow:
+        1px 0 rgba(255,0,0,0.5),
+        -1px 0 rgba(0,255,255,0.3);
+}
+
+.shake {
+    animation: shake 0.26s linear 1;
+}
+
+.flash {
+    animation: flash 0.8s ease;
 }
 
 @keyframes glitch {
     0% { transform: translate(1px, -1px); }
-    50% { transform: translate(-1px, 1px); }
-    100% { transform: translate(1px, 1px); }
+    25% { transform: translate(-1px, 1px); }
+    50% { transform: translate(1px, 1px); }
+    75% { transform: translate(-1px, -1px); }
+    100% { transform: translate(1px, -1px); }
 }
 
 @keyframes flicker {
-    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: 0 0 2px #00ff9c; }
-    20%, 22%, 24%, 55% { text-shadow: 0 0 12px #00ff9c; }
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: 0 0 2px #00ff9c; opacity: 1; }
+    20%, 22%, 24%, 55% { text-shadow: 0 0 12px #00ff9c; opacity: 0.92; }
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    50% { transform: translateX(3px); }
+    75% { transform: translateX(-2px); }
+    100% { transform: translateX(0); }
+}
+
+@keyframes flash {
+    0% { box-shadow: 0 0 0 rgba(0,255,156,0); }
+    40% { box-shadow: 0 0 40px rgba(0,255,156,0.25); }
+    100% { box-shadow: 0 0 0 rgba(0,255,156,0); }
 }
 
 .flicker {
@@ -185,13 +352,20 @@ button:hover {
 <div class="card" id="card">
     <div class="container front">
         <div class="badge">RESTRICTED ARCHIVE</div>
-        <h1 id="title">ENTER ACCESS DATE</h1>
+        <h1 id="title">Enter Access Date</h1>
 
-        <p style="color:#c9a84c; margin:0 0 6px; font-size:12px; line-height:1.3;">
+        <p class="subtitle">
             &ldquo;The date all curses ended.&rdquo;
         </p>
 
-        <input type="date" id="password" />
+        <div class="hint-box">
+            <div class="hint-title">Hint:</div>
+            <div>The moment everything changed.</div>
+            <div>The day the curse ended.</div>
+            <div>The beginning of something irreversible.</div>
+        </div>
+
+        <input type="date" id="password">
         <button id="enterBtn" type="button">ENTER</button>
 
         <div id="terminal"></div>
@@ -201,7 +375,7 @@ button:hover {
         </div>
 
         <div class="system">
-            IP Logged: Cairo, Egypt<br />
+            IP Logged: Cairo, Egypt<br>
             Device: Mobile Access Detected
         </div>
 
@@ -209,21 +383,26 @@ button:hover {
     </div>
 
     <div class="container back" id="backMessage">
-        Interrogation Video will be shown now...
+        <div class="back-title">Archive Unsealed</div>
+        <div class="back-sub">
+            Interrogation video unlocked.<br>
+            Redirecting through external channel...
+        </div>
     </div>
 </div>
 
 <script>
 const correctDate = "2025-07-11";
+const redirectUrl = "google.com";
 
 const logs = [
-    "Establishing secure connection...",
-    "Bypassing firewall...",
-    "Injecting credentials...",
-    "Decrypting archive...",
-    "Extracting hidden files...",
-    "Verifying access level...",
-    "Access granted..."
+    "[SYS] Establishing secure connection...",
+    "[SYS] Authenticating temporal marker...",
+    "[SYS] Reconstructing sealed archive...",
+    "[SYS] Cross-checking curse termination date...",
+    "[SYS] Decrypting interrogation index...",
+    "[SYS] External channel approved...",
+    "[SYS] Access granted..."
 ];
 
 const title = document.getElementById("title");
@@ -235,11 +414,15 @@ const progress = document.getElementById("progress");
 const bar = document.getElementById("bar");
 const card = document.getElementById("card");
 
+let pendingWindow = null;
+let isRunning = false;
+
 function resetUI() {
     error.textContent = "";
     terminal.innerHTML = "";
     progress.style.display = "none";
     bar.style.width = "0%";
+    card.classList.remove("flash");
 }
 
 function typeLine(text, callback) {
@@ -249,11 +432,11 @@ function typeLine(text, callback) {
         if (i < text.length) {
             terminal.innerHTML += text.charAt(i);
             i++;
-            setTimeout(type, 20);
+            setTimeout(type, 18);
         } else {
             terminal.innerHTML += "<br>";
             terminal.scrollTop = terminal.scrollHeight;
-            if (callback) setTimeout(callback, 100);
+            if (callback) setTimeout(callback, 120);
         }
     }
 
@@ -272,10 +455,11 @@ function streamLogs(i = 0) {
 
 function startProgress() {
     progress.style.display = "block";
+    card.classList.add("flash");
 
     let width = 0;
     const interval = setInterval(() => {
-        width += Math.random() * 12;
+        width += Math.random() * 10 + 4;
         width = Math.min(width, 100);
         bar.style.width = width + "%";
 
@@ -283,11 +467,27 @@ function startProgress() {
             clearInterval(interval);
             showAccessGranted();
         }
-    }, 180);
+    }, 190);
+}
+
+function openPendingWindow() {
+    pendingWindow = window.open("", "_blank", "noopener,noreferrer");
+    return pendingWindow;
+}
+
+function finishRedirect() {
+    if (pendingWindow && !pendingWindow.closed) {
+        pendingWindow.location.href = redirectUrl;
+    } else {
+        const fallbackWindow = window.open(redirectUrl, "_blank", "noopener,noreferrer");
+        if (!fallbackWindow) {
+            error.textContent = "Popup blocked. Please allow popups for this page.";
+        }
+    }
 }
 
 function showAccessGranted() {
-    title.textContent = "ACCESS GRANTED";
+    title.textContent = "Access Granted";
     title.classList.add("glitch");
     card.classList.add("glow");
 
@@ -295,10 +495,9 @@ function showAccessGranted() {
         card.classList.add("flipped");
 
         setTimeout(() => {
-            // Example:
-             window.location.href = "google.com";
-        }, 2500);
-    }, 1500);
+            finishRedirect();
+        }, 2400);
+    }, 1400);
 }
 
 function lockInputs() {
@@ -308,7 +507,15 @@ function lockInputs() {
     enterBtn.style.display = "none";
 }
 
+function denyAccess() {
+    error.textContent = "ACCESS DENIED";
+    card.classList.add("shake");
+    setTimeout(() => card.classList.remove("shake"), 300);
+}
+
 function checkPassword() {
+    if (isRunning) return;
+
     const input = passwordInput.value;
     resetUI();
 
@@ -318,11 +525,20 @@ function checkPassword() {
     }
 
     if (input === correctDate) {
+        isRunning = true;
+
+        const popup = openPendingWindow();
+        if (!popup) {
+            error.textContent = "Popup blocked. Please allow popups, then try again.";
+            isRunning = false;
+            return;
+        }
+
         lockInputs();
         streamLogs();
-        setTimeout(startProgress, 1800);
+        setTimeout(startProgress, 1500);
     } else {
-        error.textContent = "ACCESS DENIED";
+        denyAccess();
     }
 }
 
