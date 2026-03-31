@@ -22,11 +22,16 @@ body {
 }
 
 .card {
-    position: relative;
     width: 100%;
     max-width: 360px;
     transform-style: preserve-3d;
     transition: transform 1s cubic-bezier(0.68, -0.55, 0.265, 1.55), box-shadow 0.4s;
+
+    /* flex centering for inner containers */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative; /* keep for flipping */
 }
 
 .container {
@@ -38,23 +43,15 @@ body {
     border-radius: 12px;
     backface-visibility: hidden;
     
-    /* Fix centering */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); /* <-- perfectly center each side */
     width: 100%;
+    /* remove absolute positioning */
+    position: relative;
 }
-.front { z-index: 2; }
 .back {
     transform: rotateY(180deg);
-    color: #c9a84c;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    opacity: 0;
-    transition: opacity 1s ease 0.8s;
+}
+}
+.front { z-index: 2; }
 }
 .card.flipped .back {
     opacity: 1;
