@@ -8,32 +8,27 @@
 <style>
 * { box-sizing: border-box; }
 
-html, body {
-    margin: 0;
-    min-height: 100%;
-}
-
 body {
-    background:
-        radial-gradient(circle at top, rgba(120, 0, 0, 0.15), transparent 35%),
-        radial-gradient(circle at bottom, rgba(0, 255, 156, 0.08), transparent 25%),
-        linear-gradient(180deg, #030303 0%, #070707 45%, #000000 100%);
+    margin: 0;
+    background: #050505;
     font-family: "Courier New", monospace;
     color: #bbb;
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    padding: 18px;
-    perspective: 1400px;
+    padding: 15px;
+    perspective: 1200px;
     overflow: hidden;
 }
 
+/* light cinematic overlays without changing branding too much */
 body::before {
     content: "";
     position: fixed;
     inset: 0;
     background:
+        radial-gradient(circle at top, rgba(139,0,0,0.12), transparent 35%),
         repeating-linear-gradient(
             to bottom,
             rgba(255,255,255,0.02) 0px,
@@ -41,291 +36,201 @@ body::before {
             transparent 2px,
             transparent 4px
         );
-    opacity: 0.16;
+    opacity: 0.5;
     pointer-events: none;
-    animation: scanMove 8s linear infinite;
-}
-
-body::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background:
-        radial-gradient(circle, rgba(255,255,255,0.035) 0.6px, transparent 0.8px);
-    background-size: 4px 4px;
-    opacity: 0.08;
-    pointer-events: none;
-}
-
-@keyframes scanMove {
-    from { transform: translateY(-12px); }
-    to { transform: translateY(12px); }
 }
 
 .card {
     width: 100%;
-    max-width: 390px;
-    height: 510px;
+    max-width: 360px;
+    height: 405px;
     position: relative;
     transform-style: preserve-3d;
-    transition:
-        transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55),
-        box-shadow 0.5s ease,
-        filter 0.5s ease;
-    filter: drop-shadow(0 0 12px rgba(0,0,0,0.9));
+    transition: transform 1s cubic-bezier(0.68, -0.55, 0.265, 1.55), box-shadow 0.4s;
+    display: block;
 }
 
 .card.glow {
-    box-shadow:
-        0 0 20px rgba(0,255,156,0.35),
-        0 0 60px rgba(0,255,156,0.25),
-        0 0 120px rgba(0,255,156,0.12);
+    box-shadow: 0 0 20px #00ff9c, 0 0 60px rgba(0,255,156,0.75), 0 0 100px rgba(0,255,156,0.45);
 }
 
 .card.flipped {
-    transform: rotateY(180deg) rotateZ(1deg) scale(1.01);
+    transform: rotateY(180deg) rotateZ(1deg);
 }
 
 .container {
-    background:
-        linear-gradient(180deg, rgba(18,18,18,0.96), rgba(8,8,8,0.98));
-    border: 1px solid rgba(255,255,255,0.08);
-    padding: 22px;
+    background: #0d0d0d;
+    border: 1px solid #222;
+    padding: 20px;
     text-align: center;
-    border-radius: 16px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.9);
+    border-radius: 12px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
     width: 100%;
     height: 100%;
     position: absolute;
     inset: 0;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
     overflow: hidden;
-    box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,0.03),
-        0 0 50px rgba(0,0,0,0.95);
-}
-
-.container::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.05) 48%, transparent 52%);
-    opacity: 0.08;
-    pointer-events: none;
 }
 
 .front { z-index: 2; }
 
 .back {
     transform: rotateY(180deg);
-    color: #d7bf74;
+    color: #c9a84c;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
+    font-size: 14px;
+    line-height: 1.6;
     opacity: 0;
-    transition: opacity 1.1s ease 0.6s;
-    padding: 30px;
-    letter-spacing: 1px;
+    transition: opacity 0.8s ease 0.45s;
+    padding: 24px;
 }
 
 .card.flipped .back {
     opacity: 1;
 }
 
-.back-title {
-    font-size: 16px;
-    color: #f0d88c;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-}
-
-.back-sub {
-    font-size: 12px;
-    color: #bfa85d;
-    line-height: 1.7;
-    max-width: 260px;
-}
-
 .badge {
-    background: linear-gradient(180deg, #8b0000, #560000);
+    background: #8b0000;
     color: #ffcccc;
     font-size: 10px;
-    letter-spacing: 2.5px;
-    padding: 7px 12px;
-    margin-bottom: 16px;
+    letter-spacing: 2px;
+    padding: 6px 10px;
+    margin-bottom: 15px;
     display: inline-block;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 0 18px rgba(139,0,0,0.35);
+    border-radius: 4px;
+    box-shadow: 0 0 12px rgba(139,0,0,0.25);
 }
 
 h1 {
-    font-size: 22px;
-    color: #efefef;
-    margin: 8px 0 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
+    font-size: 18px;
+    color: #e0e0e0;
+    margin: 10px 0;
+    letter-spacing: 1px;
 }
 
 .subtitle {
     color: #c9a84c;
-    margin: 0 0 14px;
+    margin: 0 0 10px;
     font-size: 12px;
+    line-height: 1.3;
+}
+
+.hint {
+    margin: 0 0 12px;
+    font-size: 11px;
+    color: #8f8f8f;
     line-height: 1.5;
-    letter-spacing: 0.8px;
+    border-top: 1px solid #1a1a1a;
+    border-bottom: 1px solid #1a1a1a;
+    padding: 10px 0;
 }
 
-.hint-box {
-    margin: 0 0 16px;
-    padding: 12px 14px;
-    border: 1px solid rgba(201,168,76,0.22);
-    background: rgba(201,168,76,0.04);
-    border-radius: 10px;
-    text-align: left;
-    box-shadow: inset 0 0 25px rgba(201,168,76,0.03);
-}
-
-.hint-title {
-    color: #e6cb80;
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-}
-
-.hint-box div {
-    color: #bda76a;
-    font-size: 11px;
-    line-height: 1.7;
+.hint .label {
+    color: #c9a84c;
+    display: block;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
 }
 
 input {
     width: 100%;
-    padding: 13px;
-    margin-top: 8px;
-    background: rgba(0,0,0,0.78);
-    border: 1px solid #313131;
-    color: #d9d9d9;
+    padding: 12px;
+    margin-top: 10px;
+    background: #000;
+    border: 1px solid #333;
+    color: #ccc;
     text-align: center;
-    border-radius: 8px;
+    border-radius: 6px;
     outline: none;
-    transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
 }
 
 input:focus {
-    border-color: #7f6840;
-    box-shadow: 0 0 0 3px rgba(201,168,76,0.08);
-    transform: translateY(-1px);
+    border-color: #555;
+    box-shadow: 0 0 10px rgba(201,168,76,0.12);
 }
 
 button {
     margin-top: 12px;
     width: 100%;
-    padding: 11px;
-    background: linear-gradient(180deg, #8b0000, #5f0000);
-    border: 1px solid rgba(255,255,255,0.06);
+    padding: 10px;
+    background: #8b0000;
+    border: none;
     color: white;
     cursor: pointer;
-    border-radius: 8px;
-    letter-spacing: 2px;
-    font-weight: bold;
-    transition: transform 0.2s, box-shadow 0.25s, opacity 0.2s;
+    border-radius: 6px;
+    letter-spacing: 1px;
 }
 
 button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 0 18px rgba(139,0,0,0.28);
-}
-
-button:disabled {
-    opacity: 0.6;
-    cursor: default;
-    transform: none;
+    filter: brightness(1.05);
 }
 
 #terminal {
-    margin-top: 16px;
+    margin-top: 15px;
     text-align: left;
     font-size: 11px;
     color: #00ff9c;
-    height: 104px;
+    height: 78px;
     overflow: hidden;
-    line-height: 1.5;
+    line-height: 1.4;
     transition: text-shadow 0.2s;
-    white-space: pre-wrap;
-    padding: 10px;
-    border: 1px solid rgba(0,255,156,0.08);
-    background: rgba(0,0,0,0.42);
-    border-radius: 8px;
-    box-shadow: inset 0 0 22px rgba(0,255,156,0.03);
 }
 
 .progress {
     width: 100%;
-    height: 7px;
+    height: 6px;
     background: #111;
-    margin-top: 12px;
+    margin-top: 10px;
     display: none;
-    border-radius: 999px;
+    border-radius: 10px;
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.04);
 }
 
 .progress-bar {
     height: 100%;
     width: 0%;
-    background:
-        linear-gradient(90deg, #009c62 0%, #00ff9c 60%, #b0ffd8 100%);
-    transition: width 0.18s;
-    border-radius: 999px;
-    box-shadow: 0 0 16px rgba(0,255,156,0.45);
+    background: #00ff9c;
+    transition: width 0.2s;
+    border-radius: 10px;
+    box-shadow: 0 0 12px rgba(0,255,156,0.45);
 }
 
 .system {
-    margin-top: 14px;
+    margin-top: 12px;
     font-size: 10px;
-    color: #5d5d5d;
-    line-height: 1.5;
-    letter-spacing: 0.8px;
+    color: #555;
+    line-height: 1.4;
 }
 
 .error {
-    color: #ff4c4c;
-    margin-top: 12px;
+    color: red;
+    margin-top: 10px;
     font-size: 12px;
-    min-height: 18px;
-    letter-spacing: 1px;
+    min-height: 16px;
 }
 
 .glitch {
-    animation: glitch 0.18s infinite;
-    text-shadow:
-        1px 0 rgba(255,0,0,0.5),
-        -1px 0 rgba(0,255,255,0.3);
-}
-
-.shake {
-    animation: shake 0.26s linear 1;
-}
-
-.flash {
-    animation: flash 0.8s ease;
+    animation: glitch 0.2s infinite;
 }
 
 @keyframes glitch {
     0% { transform: translate(1px, -1px); }
-    25% { transform: translate(-1px, 1px); }
-    50% { transform: translate(1px, 1px); }
-    75% { transform: translate(-1px, -1px); }
-    100% { transform: translate(1px, -1px); }
+    50% { transform: translate(-1px, 1px); }
+    100% { transform: translate(1px, 1px); }
 }
 
 @keyframes flicker {
-    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: 0 0 2px #00ff9c; opacity: 1; }
-    20%, 22%, 24%, 55% { text-shadow: 0 0 12px #00ff9c; opacity: 0.92; }
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: 0 0 2px #00ff9c; }
+    20%, 22%, 24%, 55% { text-shadow: 0 0 12px #00ff9c; }
+}
+.flicker { animation: flicker 0.15s infinite; }
+
+.shake {
+    animation: shake 0.22s linear 1;
 }
 
 @keyframes shake {
@@ -335,16 +240,6 @@ button:disabled {
     75% { transform: translateX(-2px); }
     100% { transform: translateX(0); }
 }
-
-@keyframes flash {
-    0% { box-shadow: 0 0 0 rgba(0,255,156,0); }
-    40% { box-shadow: 0 0 40px rgba(0,255,156,0.25); }
-    100% { box-shadow: 0 0 0 rgba(0,255,156,0); }
-}
-
-.flicker {
-    animation: flicker 0.15s infinite;
-}
 </style>
 </head>
 <body>
@@ -352,17 +247,17 @@ button:disabled {
 <div class="card" id="card">
     <div class="container front">
         <div class="badge">RESTRICTED ARCHIVE</div>
-        <h1 id="title">Enter Access Date</h1>
+        <h1 id="title">ENTER ACCESS DATE</h1>
 
         <p class="subtitle">
             &ldquo;The date all curses ended.&rdquo;
         </p>
 
-        <div class="hint-box">
-            <div class="hint-title">Hint:</div>
-            <div>The moment everything changed.</div>
-            <div>The day the curse ended.</div>
-            <div>The beginning of something irreversible.</div>
+        <div class="hint">
+            <span class="label">Hint:</span>
+            The moment everything changed.<br>
+            The day the curse ended.<br>
+            The beginning of something irreversible.
         </div>
 
         <input type="date" id="password">
@@ -383,26 +278,22 @@ button:disabled {
     </div>
 
     <div class="container back" id="backMessage">
-        <div class="back-title">Archive Unsealed</div>
-        <div class="back-sub">
-            Interrogation video unlocked.<br>
-            Redirecting through external channel...
-        </div>
+        Interrogation Video will be shown now...
     </div>
 </div>
 
 <script>
 const correctDate = "2025-07-11";
-const redirectUrl = "google.com";
+const redirectUrl = "google.com"; // <- replace with your real link
 
 const logs = [
-    "[SYS] Establishing secure connection...",
-    "[SYS] Authenticating temporal marker...",
-    "[SYS] Reconstructing sealed archive...",
-    "[SYS] Cross-checking curse termination date...",
-    "[SYS] Decrypting interrogation index...",
-    "[SYS] External channel approved...",
-    "[SYS] Access granted..."
+    "Establishing secure connection...",
+    "Bypassing firewall...",
+    "Injecting credentials...",
+    "Decrypting archive...",
+    "Extracting hidden files...",
+    "Verifying access level...",
+    "Access granted..."
 ];
 
 const title = document.getElementById("title");
@@ -414,7 +305,6 @@ const progress = document.getElementById("progress");
 const bar = document.getElementById("bar");
 const card = document.getElementById("card");
 
-let pendingWindow = null;
 let isRunning = false;
 
 function resetUI() {
@@ -422,7 +312,9 @@ function resetUI() {
     terminal.innerHTML = "";
     progress.style.display = "none";
     bar.style.width = "0%";
-    card.classList.remove("flash");
+    title.textContent = "ENTER ACCESS DATE";
+    title.classList.remove("glitch");
+    card.classList.remove("glow", "flipped", "shake");
 }
 
 function typeLine(text, callback) {
@@ -432,11 +324,11 @@ function typeLine(text, callback) {
         if (i < text.length) {
             terminal.innerHTML += text.charAt(i);
             i++;
-            setTimeout(type, 18);
+            setTimeout(type, 20);
         } else {
             terminal.innerHTML += "<br>";
             terminal.scrollTop = terminal.scrollHeight;
-            if (callback) setTimeout(callback, 120);
+            if (callback) setTimeout(callback, 100);
         }
     }
 
@@ -445,7 +337,6 @@ function typeLine(text, callback) {
 
 function streamLogs(i = 0) {
     terminal.classList.add("flicker");
-
     if (i < logs.length) {
         typeLine(logs[i], () => streamLogs(i + 1));
     } else {
@@ -455,11 +346,10 @@ function streamLogs(i = 0) {
 
 function startProgress() {
     progress.style.display = "block";
-    card.classList.add("flash");
-
     let width = 0;
+
     const interval = setInterval(() => {
-        width += Math.random() * 10 + 4;
+        width += Math.random() * 12;
         width = Math.min(width, 100);
         bar.style.width = width + "%";
 
@@ -467,27 +357,11 @@ function startProgress() {
             clearInterval(interval);
             showAccessGranted();
         }
-    }, 190);
-}
-
-function openPendingWindow() {
-    pendingWindow = window.open("", "_blank", "noopener,noreferrer");
-    return pendingWindow;
-}
-
-function finishRedirect() {
-    if (pendingWindow && !pendingWindow.closed) {
-        pendingWindow.location.href = redirectUrl;
-    } else {
-        const fallbackWindow = window.open(redirectUrl, "_blank", "noopener,noreferrer");
-        if (!fallbackWindow) {
-            error.textContent = "Popup blocked. Please allow popups for this page.";
-        }
-    }
+    }, 180);
 }
 
 function showAccessGranted() {
-    title.textContent = "Access Granted";
+    title.textContent = "ACCESS GRANTED";
     title.classList.add("glitch");
     card.classList.add("glow");
 
@@ -495,8 +369,8 @@ function showAccessGranted() {
         card.classList.add("flipped");
 
         setTimeout(() => {
-            finishRedirect();
-        }, 2400);
+            window.open(redirectUrl, "_blank");
+        }, 2200);
     }, 1400);
 }
 
@@ -510,14 +384,14 @@ function lockInputs() {
 function denyAccess() {
     error.textContent = "ACCESS DENIED";
     card.classList.add("shake");
-    setTimeout(() => card.classList.remove("shake"), 300);
+    setTimeout(() => card.classList.remove("shake"), 240);
 }
 
 function checkPassword() {
     if (isRunning) return;
 
     const input = passwordInput.value;
-    resetUI();
+    error.textContent = "";
 
     if (!input) {
         error.textContent = "PLEASE SELECT A DATE";
@@ -526,17 +400,9 @@ function checkPassword() {
 
     if (input === correctDate) {
         isRunning = true;
-
-        const popup = openPendingWindow();
-        if (!popup) {
-            error.textContent = "Popup blocked. Please allow popups, then try again.";
-            isRunning = false;
-            return;
-        }
-
         lockInputs();
         streamLogs();
-        setTimeout(startProgress, 1500);
+        setTimeout(startProgress, 1800);
     } else {
         denyAccess();
     }
