@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Restricted Archive</title>
 
 <style>
@@ -24,14 +24,18 @@ body {
 .card {
     width: 100%;
     max-width: 360px;
+    height: 420px;
+    position: relative;
     transform-style: preserve-3d;
     transition: transform 1s cubic-bezier(0.68, -0.55, 0.265, 1.55), box-shadow 0.4s;
+}
 
-    /* flex centering for inner containers */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative; /* keep for flipping */
+.card.glow {
+    box-shadow: 0 0 20px #00ff9c, 0 0 60px #00ff9c, 0 0 100px #00ff9c;
+}
+
+.card.flipped {
+    transform: rotateY(180deg) rotateZ(1deg);
 }
 
 .container {
@@ -41,18 +45,30 @@ body {
     text-align: center;
     box-shadow: 0 0 40px rgba(0,0,0,0.9);
     border-radius: 12px;
-    backface-visibility: hidden;
-    
     width: 100%;
-    /* remove absolute positioning */
-    position: relative;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
+
+.front {
+    z-index: 2;
+}
+
 .back {
     transform: rotateY(180deg);
+    color: #c9a84c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 1s ease 0.8s;
+    padding: 24px;
 }
-}
-.front { z-index: 2; }
-}
+
 .card.flipped .back {
     opacity: 1;
 }
@@ -96,6 +112,10 @@ button {
     border-radius: 6px;
 }
 
+button:hover {
+    opacity: 0.95;
+}
+
 #terminal {
     margin-top: 15px;
     text-align: left;
@@ -105,6 +125,7 @@ button {
     overflow: hidden;
     line-height: 1.4;
     transition: text-shadow 0.2s;
+    white-space: pre-wrap;
 }
 
 .progress {
@@ -114,6 +135,7 @@ button {
     margin-top: 10px;
     display: none;
     border-radius: 10px;
+    overflow: hidden;
 }
 
 .progress-bar {
@@ -135,6 +157,7 @@ button {
     color: red;
     margin-top: 10px;
     font-size: 12px;
+    min-height: 16px;
 }
 
 .glitch {
@@ -142,16 +165,19 @@ button {
 }
 
 @keyframes glitch {
-    0% {transform: translate(1px, -1px);}
-    50% {transform: translate(-1px, 1px);}
-    100% {transform: translate(1px, 1px);}
+    0% { transform: translate(1px, -1px); }
+    50% { transform: translate(-1px, 1px); }
+    100% { transform: translate(1px, 1px); }
 }
 
 @keyframes flicker {
-    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {text-shadow: 0 0 2px #00ff9c;}
-    20%, 22%, 24%, 55% {text-shadow: 0 0 12px #00ff9c;}
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: 0 0 2px #00ff9c; }
+    20%, 22%, 24%, 55% { text-shadow: 0 0 12px #00ff9c; }
 }
-.flicker { animation: flicker 0.15s infinite; }
+
+.flicker {
+    animation: flicker 0.15s infinite;
+}
 </style>
 </head>
 <body>
@@ -159,20 +185,26 @@ button {
 <div class="card" id="card">
     <div class="container front">
         <div class="badge">RESTRICTED ARCHIVE</div>
-        <h1 id="title"></h1>
+        <h1 id="title">ENTER ACCESS DATE</h1>
+
         <p style="color:#c9a84c; margin:0 0 6px; font-size:12px; line-height:1.3;">
             &ldquo;The date all curses ended.&rdquo;
         </p>
-        <input type="date" id="password">
-        <button onclick="checkPassword()">ENTER</button>
+
+        <input type="date" id="password" />
+        <button id="enterBtn" type="button">ENTER</button>
+
         <div id="terminal"></div>
+
         <div class="progress" id="progress">
             <div class="progress-bar" id="bar"></div>
         </div>
+
         <div class="system">
-            IP Logged: Cairo, Egypt<br>
+            IP Logged: Cairo, Egypt<br />
             Device: Mobile Access Detected
         </div>
+
         <div id="error" class="error"></div>
     </div>
 
@@ -183,6 +215,7 @@ button {
 
 <script>
 const correctDate = "2025-07-11";
+
 const logs = [
     "Establishing secure connection...",
     "Bypassing firewall...",
@@ -193,9 +226,25 @@ const logs = [
     "Access granted..."
 ];
 
+const title = document.getElementById("title");
+const passwordInput = document.getElementById("password");
+const enterBtn = document.getElementById("enterBtn");
+const error = document.getElementById("error");
+const terminal = document.getElementById("terminal");
+const progress = document.getElementById("progress");
+const bar = document.getElementById("bar");
+const card = document.getElementById("card");
+
+function resetUI() {
+    error.textContent = "";
+    terminal.innerHTML = "";
+    progress.style.display = "none";
+    bar.style.width = "0%";
+}
+
 function typeLine(text, callback) {
-    const terminal = document.getElementById("terminal");
     let i = 0;
+
     function type() {
         if (i < text.length) {
             terminal.innerHTML += text.charAt(i);
@@ -207,12 +256,13 @@ function typeLine(text, callback) {
             if (callback) setTimeout(callback, 100);
         }
     }
+
     type();
 }
 
 function streamLogs(i = 0) {
-    const terminal = document.getElementById("terminal");
-    terminal.classList.add("flicker"); // terminal flicker
+    terminal.classList.add("flicker");
+
     if (i < logs.length) {
         typeLine(logs[i], () => streamLogs(i + 1));
     } else {
@@ -221,13 +271,14 @@ function streamLogs(i = 0) {
 }
 
 function startProgress() {
-    const bar = document.getElementById("bar");
-    const progress = document.getElementById("progress");
     progress.style.display = "block";
+
     let width = 0;
-    let interval = setInterval(() => {
+    const interval = setInterval(() => {
         width += Math.random() * 12;
+        width = Math.min(width, 100);
         bar.style.width = width + "%";
+
         if (width >= 100) {
             clearInterval(interval);
             showAccessGranted();
@@ -236,33 +287,52 @@ function startProgress() {
 }
 
 function showAccessGranted() {
-    const title = document.getElementById("title");
-    const card = document.getElementById("card");
-    title.innerText = "ACCESS GRANTED";
+    title.textContent = "ACCESS GRANTED";
     title.classList.add("glitch");
-    card.classList.add("glow"); // cinematic glow
+    card.classList.add("glow");
 
     setTimeout(() => {
         card.classList.add("flipped");
+
         setTimeout(() => {
-            window.location.href = "PUT_YOUR_NEXT_LINK_HERE";
+            // Example:
+             window.location.href = "google.com";
         }, 2500);
     }, 1500);
 }
 
+function lockInputs() {
+    passwordInput.disabled = true;
+    enterBtn.disabled = true;
+    passwordInput.style.display = "none";
+    enterBtn.style.display = "none";
+}
+
 function checkPassword() {
-    const input = document.getElementById("password").value;
-    const error = document.getElementById("error");
-    error.innerHTML = "";
+    const input = passwordInput.value;
+    resetUI();
+
+    if (!input) {
+        error.textContent = "PLEASE SELECT A DATE";
+        return;
+    }
+
     if (input === correctDate) {
-        document.querySelector("button").style.display = "none";
-        document.getElementById("password").style.display = "none";
+        lockInputs();
         streamLogs();
         setTimeout(startProgress, 1800);
     } else {
-        error.innerHTML = "ACCESS DENIED";
+        error.textContent = "ACCESS DENIED";
     }
 }
+
+enterBtn.addEventListener("click", checkPassword);
+
+passwordInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        checkPassword();
+    }
+});
 </script>
 
 </body>
