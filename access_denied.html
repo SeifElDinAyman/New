@@ -18,7 +18,7 @@ body {
     justify-content: center;
     min-height: 100vh;
     padding: 15px;
-    perspective: 1200px; /* for 3D flip */
+    perspective: 1200px;
 }
 
 .card {
@@ -29,14 +29,6 @@ body {
     transition: transform 1s cubic-bezier(0.68, -0.55, 0.265, 1.55), box-shadow 0.4s;
 }
 
-.card.glow {
-    box-shadow: 0 0 20px #00ff9c, 0 0 60px #00ff9c, 0 0 100px #00ff9c;
-}
-
-.card.flipped {
-    transform: rotateY(180deg) rotateZ(1deg);
-}
-
 .container {
     background: #0d0d0d;
     border: 1px solid #222;
@@ -45,10 +37,14 @@ body {
     box-shadow: 0 0 40px rgba(0,0,0,0.9);
     border-radius: 12px;
     backface-visibility: hidden;
+    
+    /* Fix centering */
     position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* <-- perfectly center each side */
     width: 100%;
 }
-
 .front { z-index: 2; }
 .back {
     transform: rotateY(180deg);
