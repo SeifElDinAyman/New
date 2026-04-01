@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>You Have Been Summoned</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=IM+Fell+English:ital@0;1&display=swap');
+
+  :root {
+    --bg: #0a0806;
+    --paper: #111008;
+    --red: #8b0000;
+    --red-soft: #ffcccc;
+    --gold: #c9a84c;
+    --gold-dim: rgba(201,168,76,0.3);
+    --text: #c8c0a8;
+    --text-dim: #6a6050;
+    --white: #f0ead8;
+    --line: #2a2416;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'IM Fell English', Georgia, serif;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at top, rgba(139,0,0,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at bottom, rgba(201,168,76,0.04) 0%, transparent 50%),
+      repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.012) 0px,
+        rgba(255,255,255,0.012) 1px,
+        transparent 2px,
+        transparent 5px
+      );
+    pointer-events: none;
+  }
+
+  .envelope-wrap {
+    width: 100%;
+    max-width: 580px;
+    animation: fadeIn 1.8s ease both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .stamp-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    padding: 0 4px;
+    animation: fadeIn 2s ease 0.3s both;
+  }
+
+  .stamp {
+    border: 1px solid var(--gold-dim);
+    color: rgba(201,168,76,0.6);
+    font-family: 'Special Elite', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    padding: 5px 10px;
+    text-transform: uppercase;
+    transform: rotate(-2deg);
+  }
+
+  .stamp.right {
+    transform: rotate(2deg);
+    border-color: rgba(139,0,0,0.3);
+    color: rgba(255,140,140,0.4);
+  }
+
+  .letter {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.015) inset,
+      0 20px 60px rgba(0,0,0,0.7),
+      0 0 120px rgba(139,0,0,0.06);
+    padding: 40px 36px 44px;
+    position: relative;
+    animation: fadeIn 2s ease 0.6s both;
+  }
+
+  .letter::before {
+    content: 'CONFIDENTIAL';
+    position: absolute;
+    top: 22px;
+    right: -36px;
+    transform: rotate(28deg);
+    border: 1px solid rgba(139,0,0,0.2);
+    color: rgba(139,0,0,0.15);
+    font-family: 'Special Elite', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    padding: 5px 18px;
+    pointer-events: none;
+  }
+
+  .seal {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 1.5px solid var(--gold-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 28px;
+    position: relative;
+  }
+
+  .seal::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.15);
+  }
+
+  .seal-inner {
+    font-family: 'Special Elite', monospace;
+    font-size: 18px;
+    color: var(--gold);
+    opacity: 0.7;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 22px 0;
+  }
+
+  .division-tag {
+    text-align: center;
+    font-family: 'Special Elite', monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .heading {
+    font-family: 'Special Elite', monospace;
+    font-size: 22px;
+    color: var(--white);
+    letter-spacing: 2px;
+    text-align: center;
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+
+  .sub {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    font-family: 'Special Elite', monospace;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .body-text {
+    font-size: 15px;
+    line-height: 2;
+    color: #b0a890;
+    margin-bottom: 16px;
+  }
+
+  .body-text strong {
+    color: var(--white);
+    font-weight: normal;
+  }
+
+  .body-text em {
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  .quote-block {
+    margin: 24px 0;
+    padding: 16px 18px;
+    border-left: 2px solid var(--red);
+    background: rgba(139,0,0,0.04);
+    font-style: italic;
+    font-size: 15px;
+    color: #c0b898;
+    line-height: 1.9;
+  }
+
+  .meta-line {
+    font-family: 'Special Elite', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .warning-box {
+    border: 1px solid rgba(139,0,0,0.25);
+    background: rgba(139,0,0,0.04);
+    padding: 14px 16px;
+    margin: 24px 0;
+    font-family: 'Special Elite', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: rgba(255,180,180,0.6);
+    text-transform: uppercase;
+    line-height: 1.8;
+  }
+
+  .signature {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+
+  .sig-label {
+    font-family: 'Special Elite', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .sig-name {
+    font-size: 20px;
+    color: var(--gold);
+    font-style: italic;
+    letter-spacing: 1px;
+  }
+
+  .sig-title {
+    font-family: 'Special Elite', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .cta-wrap {
+    margin-top: 36px;
+    text-align: center;
+    animation: fadeIn 2s ease 1.4s both;
+  }
+
+  .cta {
+    display: inline-block;
+    background: var(--red);
+    color: #fff;
+    font-family: 'Special Elite', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 14px 32px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    transition: filter 0.2s, box-shadow 0.2s;
+  }
+
+  .cta:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 0 20px rgba(139,0,0,0.4);
+  }
+
+  .cta-note {
+    margin-top: 12px;
+    font-family: 'Special Elite', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  .footer-tag {
+    margin-top: 32px;
+    text-align: center;
+    font-family: 'Special Elite', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #2a2a2a;
+    text-transform: uppercase;
+    animation: fadeIn 2s ease 1.8s both;
+  }
+
+  @media (max-width: 480px) {
+    .letter { padding: 28px 20px 32px; }
+    .heading { font-size: 18px; }
+    .body-text { font-size: 14px; }
+    .letter::before { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="envelope-wrap">
+
+  <div class="stamp-row">
+    <div class="stamp">Internal Affairs</div>
+    <div class="stamp right">Urgent — Do Not Ignore</div>
+  </div>
+
+  <div class="letter">
+
+    <div class="seal">
+      <div class="seal-inner">⚖</div>
+    </div>
+
+    <div class="division-tag">Internal Affairs Division — Restricted Correspondence</div>
+
+    <h1 class="heading">YOU HAVE BEEN<br>SUMMONED</h1>
+    <div class="sub">Case No. 0114-S &nbsp;|&nbsp; Active Investigation</div>
+
+    <hr class="divider">
+
+    <p class="meta-line">To: S.S. — Primary Witness &amp; Named Suspect</p>
+
+    <p class="body-text">
+      This is not a coincidence.<br>
+      This is not a mistake.<br>
+      You were found.
+    </p>
+
+    <p class="body-text">
+      A case has been reopened — one that was dismissed too early,
+      closed without a verdict, and buried without a confession.
+    </p>
+
+    <p class="body-text">
+      The victim, known only as <strong>S.E.D</strong>, has formally requested
+      that the investigation resume. He believes the evidence was always there.
+      He believes the criminal left traces everywhere.
+    </p>
+
+    <p class="body-text">
+      He believes <em>you</em> are the one who did it.
+    </p>
+
+    <div class="quote-block">
+      "She came in quietly.<br>
+      No warning. No announcement.<br>
+      She simply arrived — and everything changed.<br><br>
+      I didn't notice what she took until it was already gone."
+    </div>
+
+    <p class="body-text">
+      You are hereby summoned to review the full case file,
+      examine the evidence, and determine — for yourself —
+      whether what was taken was stolen…
+    </p>
+
+    <p class="body-text">
+      …or willingly surrendered.
+    </p>
+
+    <div class="warning-box">
+      ⚠ Warning: This investigation is personal.<br>
+      Proceed only if you are prepared for the truth.<br>
+      Once you accept, there is no turning back.
+    </div>
+
+    <div class="signature">
+      <div class="sig-label">Filed by</div>
+      <div class="sig-name">S.E.D — The Victim</div>
+      <div class="sig-title">Maadi Division &nbsp;|&nbsp; Case No. 0114-S</div>
+    </div>
+
+  </div>
+
+  <div class="cta-wrap">
+    <a class="cta" href="YOUR_CASE_FILE_LINK_HERE">Accept the Case</a>
+    <div class="cta-note">By proceeding, you confirm your identity as the suspect</div>
+  </div>
+
+  <div class="footer-tag">
+    Internal Affairs Division &nbsp;|&nbsp; Restricted &nbsp;|&nbsp; Case #114
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evidence #5 — The Crossword</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=IM+Fell+English:ital@0;1&display=swap');
+
+  :root {
+    --bg: #080706;
+    --red: #8b0000;
+    --gold: #c9a84c;
+    --green: #7CFC98;
+    --text: #c8c0a8;
+    --white: #f0ead8;
+    --line: #2a2416;
+    --cell-bg: #0f0d0a;
+    --cell-border: #2a2416;
+    --cell-active: rgba(201,168,76,0.12);
+    --cell-correct: rgba(124,252,152,0.1);
+    --dim: #444;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'IM Fell English', Georgia, serif;
+    color: var(--text);
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at top, rgba(139,0,0,0.08) 0%, transparent 40%),
+      repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 1px,
+        transparent 2px, transparent 5px
+      );
+    pointer-events: none;
+  }
+
+  .wrap {
+    max-width: 700px;
+    margin: 0 auto;
+    animation: fadeUp 1.2s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .badge {
+    background: var(--red);
+    color: #ffcccc;
+    font-family: 'Special Elite', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    padding: 5px 10px;
+    text-transform: uppercase;
+  }
+
+  .case-no {
+    font-family: 'Special Elite', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  .panel {
+    background: #0e0c09;
+    border: 1px solid var(--line);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+    padding: 28px 24px 32px;
+    margin-bottom: 20px;
+  }
+
+  .section-tag {
+    font-family: 'Special Elite', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-family: 'Special Elite', monospace;
+    font-size: 20px;
+    color: var(--white);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+
+  .sub {
+    font-family: 'Special Elite', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  hr { border: none; border-top: 1px solid var(--line); margin: 18px 0; }
+
+  p { font-size: 14px; line-height: 1.9; color: #a09880; margin-bottom: 12px; }
+  p em { color: var(--gold); font-style: italic; }
+  p strong { color: var(--white); font-weight: normal; }
+
+  /* GRID */
+  .grid-wrap {
+    overflow-x: auto;
+    margin: 20px 0;
+  }
+
+  .grid {
+    display: inline-grid;
+    grid-template-columns: repeat(11, 36px);
+    grid-template-rows: repeat(10, 36px);
+    gap: 2px;
+    background: #050403;
+    padding: 2px;
+    border: 1px solid var(--line);
+  }
+
+  .cell {
+    width: 36px;
+    height: 36px;
+    background: #050403;
+    border: none;
+  }
+
+  .cell.active {
+    background: var(--cell-bg);
+    border: 1px solid var(--cell-border);
+    position: relative;
+  }
+
+  .cell.active input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--white);
+    font-family: 'Special Elite', monospace;
+    font-size: 16px;
+    text-align: center;
+    text-transform: uppercase;
+    caret-color: var(--gold);
+    padding: 0;
+  }
+
+  .cell.active:focus-within {
+    background: var(--cell-active);
+    border-color: var(--gold);
+  }
+
+  .cell.correct { background: var(--cell-correct) !important; border-color: rgba(124,252,152,0.3) !important; }
+  .cell.wrong { background: rgba(139,0,0,0.15) !important; border-color: rgba(139,0,0,0.4) !important; }
+
+  .cell.active .num {
+    position: absolute;
+    top: 2px; left: 3px;
+    font-family: 'Special Elite', monospace;
+    font-size: 8px;
+    color: var(--gold);
+    opacity: 0.7;
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  /* HIGHLIGHTED column for hidden word */
+  .cell.highlight-col { background: rgba(107,63,160,0.08); border-color: rgba(107,63,160,0.25); }
+  .cell.highlight-col:focus-within { background: rgba(107,63,160,0.18); border-color: rgba(107,63,160,0.5); }
+
+  /* CLUES */
+  .clues {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 16px;
+  }
+
+  .clue-group { }
+  .clue-title {
+    font-family: 'Special Elite', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .clue {
+    font-size: 12px;
+    color: #888;
+    line-height: 1.7;
+    margin-bottom: 8px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .clue-num {
+    color: var(--gold);
+    font-family: 'Special Elite', monospace;
+    font-size: 11px;
+    flex-shrink: 0;
+    min-width: 20px;
+  }
+
+  .clue-text { color: #807060; }
+
+  /* HIDDEN WORD REVEAL */
+  .hidden-word {
+    margin-top: 20px;
+    padding: 16px 18px;
+    background: rgba(107,63,160,0.05);
+    border: 1px solid rgba(107,63,160,0.2);
+    border-left: 2px solid rgba(107,63,160,0.5);
+  }
+
+  .hw-label {
+    font-family: 'Special Elite', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(107,63,160,0.6);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .hw-text {
+    font-size: 13px;
+    color: #807080;
+    line-height: 1.8;
+    font-style: italic;
+  }
+
+  .check-btn {
+    margin-top: 20px;
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: #111;
+    border: 1px solid var(--line);
+    color: var(--gold);
+    font-family: 'Special Elite', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .check-btn:hover { background: #181410; border-color: var(--gold); }
+
+  .result {
+    margin-top: 14px;
+    font-family: 'Special Elite', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-height: 16px;
+    color: var(--green);
+  }
+
+  .next-btn {
+    display: none;
+    margin-top: 18px;
+    width: 100%;
+    padding: 13px;
+    background: var(--red);
+    border: none;
+    color: #fff;
+    font-family: 'Special Elite', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: filter 0.2s;
+  }
+
+  .next-btn:hover { filter: brightness(1.1); }
+
+  .footer {
+    margin-top: 16px;
+    text-align: center;
+    font-family: 'Special Elite', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #1e1c14;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 480px) {
+    .panel { padding: 20px 14px 24px; }
+    .grid { grid-template-columns: repeat(11, 30px); grid-template-rows: repeat(10, 30px); }
+    .cell { width: 30px; height: 30px; }
+    .cell.active input { font-size: 14px; }
+    .clues { grid-template-columns: 1fr; }
+    h1 { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <span class="badge">Evidence Archive</span>
+    <span class="case-no">Case #114 — Stage 06</span>
+  </div>
+
+  <div class="panel">
+    <div class="section-tag">Evidence #5 — Encoded Memory</div>
+    <h1>THE CROSSWORD</h1>
+    <div class="sub">Decode the evidence — find the hidden word</div>
+    <hr>
+    <p>
+      Every crime leaves traces. These are yours.
+      Fragments of memory, scattered in the file.
+      Arrange them correctly —
+      and the <em>column in purple</em> will reveal what leads you next.
+    </p>
+
+    <div class="grid-wrap">
+      <div class="grid" id="grid"></div>
+    </div>
+
+    <div class="hidden-word">
+      <div class="hw-label">Hidden Word — Column 6</div>
+      <p class="hw-text">
+        Read the shaded column from top to bottom.<br>
+        That word is your next destination.
+      </p>
+    </div>
+
+    <button class="check-btn" id="checkBtn">Check Answers</button>
+    <div class="result" id="result"></div>
+    <a class="next-btn" id="nextBtn" href="YOUR_STAGE_7_URL">Proceed to Stage 07 →</a>
+
+    <hr>
+
+    <div class="clues">
+      <div class="clue-group">
+        <div class="clue-title">Across</div>
+        <div class="clue"><span class="clue-num">1A</span><span class="clue-text">The fruit that started it all. First gift. First visit.</span></div>
+        <div class="clue"><span class="clue-num">3A</span><span class="clue-text">The neighborhood. Primary incident zone.</span></div>
+        <div class="clue"><span class="clue-num">5A</span><span class="clue-text">The book. The title. The curse.</span></div>
+        <div class="clue"><span class="clue-num">7A</span><span class="clue-text">The victim. Four letters. Starts with S.</span></div>
+        <div class="clue"><span class="clue-num">9A</span><span class="clue-text">What was stolen. The missing organ.</span></div>
+      </div>
+      <div class="clue-group">
+        <div class="clue-title">Down</div>
+        <div class="clue"><span class="clue-num">2D</span><span class="clue-text">The suspect. Five letters. Starts with S.</span></div>
+        <div class="clue"><span class="clue-num">4D</span><span class="clue-text">Her favorite color. Also the color of the prize.</span></div>
+        <div class="clue"><span class="clue-num">6D</span><span class="clue-text">The month the curse ended. (Hidden column)</span></div>
+        <div class="clue"><span class="clue-num">8D</span><span class="clue-text">The Albuquerque chicken man. His restaurant.</span></div>
+        <div class="clue"><span class="clue-num">10D</span><span class="clue-text">The engagement day. Spelled out.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Case #114 &nbsp;|&nbsp; Internal Affairs &nbsp;|&nbsp; Stage 06 of 10</div>
+</div>
+
+<script>
+/*
+  CROSSWORD LAYOUT
+  Grid: 10 rows × 11 columns
+  Words:
+    1A MANGO      row0, col0-4
+    3A MAADI      row2, col1-5
+    5A EDEN       row4, col3-6
+    7A SEIF       row6, col0-3
+    9A HEART      row8, col2-6
+
+    2D SALMA      row0-4, col6
+    4D PURPLE     row1-6, col9
+    6D JULY       row0-3, col5  ← HIDDEN COLUMN (col5 = index 5, 0-based)
+    8D HERMANOS   row2-9, col8
+    10D ELEVEN    row4-9, col2
+
+  Hidden column = col 5 (0-indexed), reading rows 0-3 = J U L Y
+*/
+
+const ROWS = 10, COLS = 11;
+const HIDDEN_COL = 5; // purple highlight column
+
+// [row, col] -> expected letter
+const cells = {};
+
+function place(word, row, col, dir) {
+  for (let i = 0; i < word.length; i++) {
+    const r = dir === 'across' ? row : row + i;
+    const c = dir === 'across' ? col + i : col;
+    cells[`${r},${c}`] = word[i];
+  }
+}
+
+place('MANGO',    0, 0, 'across');
+place('MAADI',    2, 1, 'across');
+place('EDEN',     4, 3, 'across');
+place('SEIF',     6, 0, 'across');
+place('HEART',    8, 2, 'across');
+place('SALMA',    0, 6, 'down');
+place('PURPLE',   1, 9, 'down');
+place('JULY',     0, 5, 'down');
+place('HERMANOS', 2, 8, 'down');
+place('ELEVEN',   4, 2, 'down');
+
+// Cell numbers (clue starters)
+const numberedCells = {
+  '0,0': '1', '0,6': '2', '2,1': '3', '1,9': '4',
+  '4,3': '5', '0,5': '6', '6,0': '7', '2,8': '8',
+  '8,2': '9', '4,2': '10'
+};
+
+const grid = document.getElementById('grid');
+
+for (let r = 0; r < ROWS; r++) {
+  for (let c = 0; c < COLS; c++) {
+    const key = `${r},${c}`;
+    const div = document.createElement('div');
+    div.className = 'cell';
+    div.dataset.r = r;
+    div.dataset.c = c;
+
+    if (cells[key]) {
+      div.classList.add('active');
+      if (c === HIDDEN_COL) div.classList.add('highlight-col');
+
+      if (numberedCells[key]) {
+        const num = document.createElement('span');
+        num.className = 'num';
+        num.textContent = numberedCells[key];
+        div.appendChild(num);
+      }
+
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.maxLength = 1;
+      inp.dataset.key = key;
+      inp.setAttribute('autocomplete', 'off');
+      inp.setAttribute('autocorrect', 'off');
+      inp.setAttribute('spellcheck', 'false');
+
+      inp.addEventListener('input', e => {
+        inp.value = inp.value.toUpperCase().slice(-1);
+        moveFocus(r, c);
+      });
+
+      inp.addEventListener('keydown', e => {
+        if (e.key === 'Backspace' && !inp.value) moveFocusBack(r, c);
+        if (e.key === 'ArrowRight') moveTo(r, c + 1);
+        if (e.key === 'ArrowLeft')  moveTo(r, c - 1);
+        if (e.key === 'ArrowDown')  moveTo(r + 1, c);
+        if (e.key === 'ArrowUp')    moveTo(r - 1, c);
+      });
+
+      div.appendChild(inp);
+    }
+
+    grid.appendChild(div);
+  }
+}
+
+function getInput(r, c) {
+  return grid.querySelector(`input[data-key="${r},${c}"]`);
+}
+
+function moveFocus(r, c) {
+  // try right first, then down
+  const right = getInput(r, c + 1);
+  const down  = getInput(r + 1, c);
+  if (right) right.focus();
+  else if (down) down.focus();
+}
+
+function moveFocusBack(r, c) {
+  const left = getInput(r, c - 1);
+  const up   = getInput(r - 1, c);
+  if (left) left.focus();
+  else if (up) up.focus();
+}
+
+function moveTo(r, c) {
+  const inp = getInput(r, c);
+  if (inp) inp.focus();
+}
+
+document.getElementById('checkBtn').addEventListener('click', () => {
+  let allCorrect = true;
+  let allFilled = true;
+
+  for (const [key, letter] of Object.entries(cells)) {
+    const inp = grid.querySelector(`input[data-key="${key}"]`);
+    const cell = inp ? inp.parentElement : null;
+    if (!inp) continue;
+
+    const val = inp.value.toUpperCase();
+    if (!val) { allFilled = false; allCorrect = false; }
+
+    if (val === letter) {
+      cell.classList.remove('wrong');
+      cell.classList.add('correct');
+    } else {
+      cell.classList.remove('correct');
+      if (val) cell.classList.add('wrong');
+      if (val !== letter) allCorrect = false;
+    }
+  }
+
+  const result = document.getElementById('result');
+  const nextBtn = document.getElementById('nextBtn');
+
+  if (!allFilled) {
+    result.style.color = '#888';
+    result.textContent = 'Some cells are still empty, Detective.';
+    nextBtn.style.display = 'none';
+  } else if (allCorrect) {
+    result.style.color = '#7CFC98';
+    result.textContent = '✓ All correct — read the purple column.';
+    nextBtn.style.display = 'block';
+  } else {
+    result.style.color = 'rgba(255,100,100,0.7)';
+    result.textContent = 'Some answers are wrong — the evidence does not lie.';
+    nextBtn.style.display = 'none';
+  }
+});
+</script>
+
+</body>
+</html>

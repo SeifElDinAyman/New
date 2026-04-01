@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evidence #8 — Encrypted Message</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=IM+Fell+English:ital@0;1&display=swap');
+
+  :root {
+    --bg: #060707;
+    --red: #8b0000;
+    --gold: #c9a84c;
+    --green: #7CFC98;
+    --text: #c8c0a8;
+    --white: #f0ead8;
+    --line: #1e2020;
+    --dim: #444;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'IM Fell English', Georgia, serif;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at top, rgba(0,100,80,0.06) 0%, transparent 40%),
+      repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 1px,
+        transparent 2px, transparent 5px
+      );
+    pointer-events: none;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 560px;
+    animation: fadeUp 1.2s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .badge {
+    background: var(--red);
+    color: #ffcccc;
+    font-family: 'Special Elite', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    padding: 5px 10px;
+    text-transform: uppercase;
+  }
+
+  .case-no {
+    font-family: 'Special Elite', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  .panel {
+    background: #0c0e0e;
+    border: 1px solid var(--line);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+    padding: 30px 26px 34px;
+  }
+
+  .section-tag {
+    font-family: 'Special Elite', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-family: 'Special Elite', monospace;
+    font-size: 20px;
+    color: var(--white);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+
+  .sub {
+    font-family: 'Special Elite', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  hr { border: none; border-top: 1px solid var(--line); margin: 18px 0; }
+
+  p { font-size: 14px; line-height: 1.9; color: #a09880; margin-bottom: 12px; }
+  p em { color: var(--gold); font-style: italic; }
+  p strong { color: var(--white); font-weight: normal; }
+
+  .cipher-box {
+    background: #000;
+    border: 1px solid #0e1010;
+    border-left: 2px solid rgba(124,252,152,0.3);
+    padding: 20px;
+    margin: 20px 0;
+    font-family: 'Special Elite', monospace;
+    font-size: 13px;
+    color: rgba(124,252,152,0.7);
+    line-height: 2;
+    letter-spacing: 1px;
+    word-break: break-all;
+    position: relative;
+  }
+
+  .cipher-box::before {
+    content: 'ENCRYPTED';
+    position: absolute;
+    top: 8px; right: 10px;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: rgba(124,252,152,0.2);
+  }
+
+  .copy-btn {
+    margin-top: 10px;
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background: #0e1010;
+    border: 1px solid #1e2020;
+    color: rgba(124,252,152,0.6);
+    font-family: 'Special Elite', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .copy-btn:hover { background: #141818; }
+
+  .copy-note {
+    margin-top: 6px;
+    font-family: 'Special Elite', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: rgba(124,252,152,0.3);
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .instruction-box {
+    background: #080a0a;
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--gold);
+    padding: 16px 18px;
+    margin: 20px 0;
+  }
+
+  .inst-label {
+    font-family: 'Special Elite', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(201,168,76,0.6);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .inst-steps {
+    list-style: none;
+    counter-reset: steps;
+  }
+
+  .inst-steps li {
+    counter-increment: steps;
+    font-size: 13px;
+    color: #888;
+    line-height: 1.8;
+    margin-bottom: 8px;
+    padding-left: 24px;
+    position: relative;
+  }
+
+  .inst-steps li::before {
+    content: counter(steps) '.';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-family: 'Special Elite', monospace;
+    font-size: 12px;
+  }
+
+  .inst-steps li strong { color: var(--white); font-weight: normal; }
+  .inst-steps li em { color: var(--gold); font-style: italic; }
+
+  /* ANSWER GATE */
+  .gate {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+  }
+
+  .gate-label {
+    font-family: 'Special Elite', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .gate-hint {
+    font-size: 13px;
+    color: #555;
+    font-style: italic;
+    margin-bottom: 16px;
+    line-height: 1.7;
+  }
+
+  .gate-input {
+    width: 100%;
+    background: #060808;
+    border: 1px solid var(--line);
+    color: var(--white);
+    font-family: 'Special Elite', monospace;
+    font-size: 15px;
+    letter-spacing: 4px;
+    text-align: center;
+    padding: 13px;
+    outline: none;
+    text-transform: uppercase;
+    transition: border-color 0.2s;
+  }
+
+  .gate-input:focus { border-color: var(--green); box-shadow: 0 0 12px rgba(124,252,152,0.08); }
+
+  .gate-btn {
+    margin-top: 10px;
+    width: 100%;
+    padding: 12px;
+    background: #0e1010;
+    border: 1px solid var(--line);
+    color: var(--green);
+    font-family: 'Special Elite', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s, border-color 0.2s;
+  }
+
+  .gate-btn:hover { opacity: 1; border-color: var(--green); }
+
+  .gate-error {
+    margin-top: 10px;
+    font-family: 'Special Elite', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(255,100,100,0.6);
+    text-transform: uppercase;
+    min-height: 14px;
+    text-align: center;
+  }
+
+  .shake { animation: shake 0.25s linear; }
+  @keyframes shake {
+    0%   { transform: translateX(0); }
+    25%  { transform: translateX(-5px); }
+    50%  { transform: translateX(5px); }
+    75%  { transform: translateX(-3px); }
+    100% { transform: translateX(0); }
+  }
+
+  .footer {
+    margin-top: 16px;
+    text-align: center;
+    font-family: 'Special Elite', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #1a1c1c;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 480px) {
+    .panel { padding: 22px 16px 26px; }
+    h1 { font-size: 17px; }
+    .cipher-box { font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <span class="badge">Encrypted Evidence</span>
+    <span class="case-no">Case #114 — Stage 08</span>
+  </div>
+
+  <div class="panel">
+
+    <div class="section-tag">Evidence #8 — Intercepted Transmission</div>
+    <h1>THE CIPHER</h1>
+    <div class="sub">Encrypted message — AI decryption required</div>
+
+    <hr>
+
+    <p>
+      The criminal left one final message before disappearing.
+      It was intercepted — but <em>encrypted.</em>
+    </p>
+
+    <p>
+      Our systems cannot decode it.
+      But you know someone who can.
+      <strong>Ask the AI. It will tell you everything.</strong>
+    </p>
+
+    <div class="cipher-box" id="cipherText">Gur ynfg cvrpr bs rivqrapr vf ba Fnynu Fnyrz. Gur ahzore lbh arrq vf uvqqra va gur fgerrg vgfrys. Pbhag gur yrggref va gur anzr bs gur fgerrg. Gung vf lbhe pbqr. Naq jura lbh svaq vg — xabj guvf: Ur arire jnagrq vg onpx. Ur bayl jnagrq lbh.</div>
+
+    <button class="copy-btn" id="copyBtn">Copy Cipher Text</button>
+    <div class="copy-note" id="copyNote">Paste this into Claude or ChatGPT</div>
+
+    <div class="instruction-box">
+      <div class="inst-label">Detective Instruction</div>
+      <ol class="inst-steps">
+        <li>Copy the encrypted text above</li>
+        <li>Open <strong>Claude or ChatGPT</strong></li>
+        <li>Paste it and ask: <em>"Decode this ROT13 cipher"</em></li>
+        <li>Read the decoded message carefully</li>
+        <li>Follow the instruction inside it — it will give you a number</li>
+        <li>Enter that number below</li>
+      </ol>
+    </div>
+
+    <div class="gate" id="gate">
+      <div class="gate-label">Enter the Number From the Decoded Message</div>
+      <p class="gate-hint">
+        The message tells you exactly what to count.<br>
+        Count carefully. Numbers don't lie.
+      </p>
+      <input class="gate-input" id="gateInput" type="text" placeholder="_ _" maxlength="10" autocomplete="off" />
+      <button class="gate-btn" id="gateBtn">Confirm Code</button>
+      <div class="gate-error" id="gateError"></div>
+    </div>
+
+  </div>
+
+  <div class="footer">Case #114 &nbsp;|&nbsp; Internal Affairs &nbsp;|&nbsp; Stage 08 of 10</div>
+</div>
+
+<script>
+  // SALAH SALEM = 10 letters (counting only letters, no space)
+  const correctCode = "10";
+  const nextUrl = "YOUR_STAGE_9_URL";
+
+  document.getElementById('copyBtn').addEventListener('click', () => {
+    const text = document.getElementById('cipherText').textContent.trim();
+    navigator.clipboard.writeText(text).then(() => {
+      const note = document.getElementById('copyNote');
+      note.textContent = '✓ Copied — now paste into your AI';
+      note.style.color = 'rgba(124,252,152,0.6)';
+    });
+  });
+
+  document.getElementById('gateBtn').addEventListener('click', check);
+  document.getElementById('gateInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') check();
+  });
+
+  function check() {
+    const val = document.getElementById('gateInput').value.trim();
+    const err = document.getElementById('gateError');
+
+    if (val === correctCode) {
+      document.getElementById('gate').innerHTML = `
+        <div style="color:#7CFC98;font-family:'Special Elite',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">✓ Code Confirmed</div>
+        <p style="color:#a09880;font-size:14px;line-height:1.9;font-style:italic;margin-bottom:18px;">
+          The message has been received.<br>
+          One final stage remains, Detective.
+        </p>
+        <a href="${nextUrl}" style="display:block;text-align:center;background:#8b0000;color:#fff;font-family:'Special Elite',monospace;font-size:10px;letter-spacing:3px;padding:13px;text-decoration:none;text-transform:uppercase;">
+          Proceed to Stage 09 →
+        </a>
+      `;
+    } else {
+      err.textContent = 'Incorrect — count again, Detective.';
+      document.getElementById('gate').classList.add('shake');
+      setTimeout(() => document.getElementById('gate').classList.remove('shake'), 260);
+    }
+  }
+</script>
+
+</body>
+</html>
