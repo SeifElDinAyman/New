@@ -15,14 +15,15 @@
 }
 
 body {
-  background: var(--bg);
-  color: var(--text);
+  margin:0; 
+  background: var(--bg); 
   font-family: 'IM Fell English', Georgia, serif;
-  margin:0;
-  min-height:100vh;
+  color: var(--text);
+  min-height: 100vh;
   overflow-y: auto;
 }
 
+/* Overlay for starting the case */
 #start-overlay {
   position: fixed; inset:0; background: rgba(10,8,6,0.95);
   display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -34,41 +35,37 @@ body {
 #start-button { padding:14px 32px; font-family:'Special Elite'; font-size:14px; letter-spacing:2px; background: var(--red); color:#fff; border:none; cursor:pointer; }
 #start-button:hover { filter: brightness(1.1); }
 
-.envelope-wrap {
-  max-width: 700px;
-  margin: 20px auto;
-  padding: 40px 20px;
+/* Fingerprint prompt overlay */
+#fingerprint-overlay {
+  position: fixed; inset:0; background: rgba(10,8,6,0.95);
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  z-index: 9998; text-align:center;
+  display:none;
 }
 
-.heading {
-  text-align:center;
-  font-family:'Special Elite';
-  font-size:22px;
-  color: var(--white);
-  margin-bottom: 20px;
-}
+#fingerprint-overlay img { width: 120px; height: 120px; margin-bottom: 20px; cursor:pointer; }
+#fingerprint-overlay p { font-family:'Special Elite'; font-size:14px; color:var(--text); }
 
-#subtitle-container {
-  margin-top:20px;
-}
-
-.subtitle-line {
-  opacity:0;
-  font-size:16px;
-  line-height:1.8;
-  margin: 12px 0;
-  transition: opacity 1s ease;
-  color: var(--text);
-}
+/* Main content */
+.envelope-wrap { max-width: 700px; margin: 20px auto; padding: 40px 20px; display:none; }
+.heading { text-align:center; font-family:'Special Elite'; font-size:22px; color: var(--white); margin-bottom: 20px; }
+#subtitle-container { margin-top:20px; }
+.subtitle-line { opacity:0; font-size:16px; line-height:1.8; margin: 12px 0; transition: opacity 1s ease; color: var(--text); }
 </style>
 </head>
 <body>
 
-<!-- Overlay -->
+<!-- Initial Start Overlay -->
 <div id="start-overlay">
   <h1>Internal Affairs — Case 0114-S</h1>
   <p>⚠ Recommended: Increase your volume before proceeding</p>
   <button id="start-button">Start Investigation</button>
+</div>
+
+<!-- Fingerprint Prompt -->
+<div id="fingerprint-overlay">
+  <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" id="fingerprint-icon" alt="Fingerprint scan"/>
+  <p>Scan your fingerprint to access the case file</p>
 </div>
 
 <!-- Audio -->
@@ -77,7 +74,7 @@ body {
 </audio>
 
 <!-- Main Content -->
-<div id="main-content" class="envelope-wrap" style="display:none;">
+<div id="main-content" class="envelope-wrap">
   <h1 class="heading">YOU HAVE BEEN SUMMONED</h1>
   <div id="subtitle-container"></div>
 </div>
@@ -117,6 +114,8 @@ const srtLines = [
 
 const button = document.getElementById('start-button');
 const overlay = document.getElementById('start-overlay');
+const fingerprintOverlay = document.getElementById('fingerprint-overlay');
+const fingerprintIcon = document.getElementById('fingerprint-icon');
 const mainContent = document.getElementById('main-content');
 const subtitleContainer = document.getElementById('subtitle-container');
 const audio = document.getElementById('voiceover');
@@ -130,18 +129,19 @@ srtLines.forEach(line=>{
   line.element = p;
 });
 
+// Step 1: click start button
 button.addEventListener('click', ()=>{
   overlay.style.display = 'none';
+  fingerprintOverlay.style.display = 'flex';
+});
+
+// Step 2: click fingerprint icon
+fingerprintIcon.addEventListener('click', ()=>{
+  fingerprintOverlay.style.display = 'none';
   mainContent.style.display = 'block';
+  audio.play().catch(()=>{alert("Click anywhere to start audio");});
 
-  const playPromise = audio.play();
-  if(playPromise!==undefined){
-    playPromise.catch(error=>{
-      alert("Click anywhere to start audio");
-      document.body.addEventListener('click', ()=>audio.play(), {once:true});
-    });
-  }
-
+  // subtitle display
   audio.addEventListener('timeupdate', ()=>{
     const t = audio.currentTime;
     srtLines.forEach(line=>{
@@ -154,6 +154,5 @@ button.addEventListener('click', ()=>{
   });
 });
 </script>
-
 </body>
 </html>
