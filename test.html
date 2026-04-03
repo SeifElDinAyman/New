@@ -42,12 +42,26 @@ body {
   z-index: 9998; text-align:center;
   display:none;
 }
-#fingerprint-overlay img {
-  width: 120px; height: 120px; margin-bottom: 20px;
-  cursor: pointer;
+.fingerprint-container {
+  position: relative;
+  width: 140px; height: 140px;
+}
+#fingerprint-icon {
+  width: 120px; height: 120px; cursor:pointer;
+  display:block; margin:auto;
+  border-radius:50%;
+  background: url('https://cdn-icons-png.flaticon.com/512/25/25231.png') no-repeat center/contain;
   animation: pulse 1.5s infinite;
 }
-#fingerprint-overlay p { font-family:'Special Elite'; font-size:14px; color:var(--text); }
+.scan-ring {
+  position:absolute; top:0; left:0; width:140px; height:140px;
+  border-radius:50%; border:3px solid rgba(0,255,0,0.5);
+  box-sizing:border-box;
+  transform: rotate(-90deg);
+  stroke-dasharray: 440;
+  stroke-dashoffset: 440;
+}
+#fingerprint-overlay p { font-family:'Special Elite'; font-size:14px; color:var(--text); margin-top:20px; }
 
 /* Pulse animation for fingerprint */
 @keyframes pulse {
@@ -60,7 +74,7 @@ body {
 .envelope-wrap { max-width: 700px; margin: 20px auto; padding: 40px 20px; display:none; }
 .heading { text-align:center; font-family:'Special Elite'; font-size:22px; color: var(--white); margin-bottom: 20px; }
 #subtitle-container { margin-top:20px; }
-.subtitle-line { opacity:0; font-size:16px; line-height:1.8; margin: 12px 0; transition: opacity 1s ease; color: var(--text); }
+.subtitle-line { opacity:0; font-size:16px; line-height:1.8; margin: 12px 0; transition: opacity 0.5s ease; color: var(--text); }
 
 </style>
 </head>
@@ -75,8 +89,13 @@ body {
 
 <!-- Fingerprint Overlay -->
 <div id="fingerprint-overlay">
-  <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" id="fingerprint-icon" alt="Fingerprint scan"/>
-  <p>Scan your fingerprint to access the case file</p>
+  <div class="fingerprint-container">
+    <div id="fingerprint-icon"></div>
+    <svg class="scan-ring" viewBox="0 0 140 140">
+      <circle cx="70" cy="70" r="70" fill="none" stroke="limegreen" stroke-width="3" stroke-dasharray="440" stroke-dashoffset="440"/>
+    </svg>
+  </div>
+  <p>Press and hold your finger to scan</p>
 </div>
 
 <!-- Audio -->
@@ -91,7 +110,7 @@ body {
 </div>
 
 <script>
-// SRT lines (example from your file)
+// SRT lines
 const srtLines = [
   { start:3.9, end:5.666, text:"Internal Affairs Division" },
   { start:6.2, end:8.266, text:"restricted correspondence" },
@@ -123,15 +142,8 @@ const srtLines = [
   { start:108.066, end:109.933, text:"will you accept this mission" }
 ];
 
-const startBtn = document.getElementById('start-button');
-const startOverlay = document.getElementById('start-overlay');
-const fingerprintOverlay = document.getElementById('fingerprint-overlay');
-const fingerprintIcon = document.getElementById('fingerprint-icon');
-const mainContent = document.getElementById('main-content');
+// Setup subtitles
 const subtitleContainer = document.getElementById('subtitle-container');
-const audio = document.getElementById('voiceover');
-
-// create <p> elements
 srtLines.forEach(line=>{
   const p = document.createElement('p');
   p.className = 'subtitle-line';
@@ -140,26 +152,53 @@ srtLines.forEach(line=>{
   line.element = p;
 });
 
+const startBtn = document.getElementById('start-button');
+const startOverlay = document.getElementById('start-overlay');
+const fingerprintOverlay = document.getElementById('fingerprint-overlay');
+const fingerprintIcon = document.getElementById('fingerprint-icon');
+const scanRing = document.querySelector('.scan-ring circle');
+const mainContent = document.getElementById('main-content');
+const audio = document.getElementById('voiceover');
+
+let holdTimer = null;
+
 // Step 1: Start button
 startBtn.addEventListener('click', ()=>{
   startOverlay.style.display = 'none';
   fingerprintOverlay.style.display = 'flex';
 });
 
-// Step 2: Fingerprint scan
-fingerprintIcon.addEventListener('click', ()=>{
-  fingerprintOverlay.style.display = 'none';
-  mainContent.style.display = 'block';
-  audio.play().catch(()=>{alert("Click anywhere to start audio");});
+// Step 2: Press and hold fingerprint
+fingerprintIcon.addEventListener('mousedown', startHold);
+fingerprintIcon.addEventListener('touchstart', startHold);
 
-  audio.addEventListener('timeupdate', ()=>{
-    const t = audio.currentTime;
-    srtLines.forEach(line=>{
-      if(t>=line.start && t<=line.end){ line.element.style.opacity = 1; }
-      else { line.element.style.opacity = 0; }
+fingerprintIcon.addEventListener('mouseup', cancelHold);
+fingerprintIcon.addEventListener('mouseleave', cancelHold);
+fingerprintIcon.addEventListener('touchend', cancelHold);
+fingerprintIcon.addEventListener('touchcancel', cancelHold);
+
+function startHold(e){
+  e.preventDefault();
+  scanRing.style.transition = 'stroke-dashoffset 3s linear';
+  scanRing.style.strokeDashoffset = 0; // fill circle over 3s
+  holdTimer = setTimeout(()=>{
+    fingerprintOverlay.style.display = 'none';
+    mainContent.style.display = 'block';
+    audio.play().catch(()=>{alert("Click anywhere to start audio");});
+    audio.addEventListener('timeupdate', ()=>{
+      const t = audio.currentTime;
+      srtLines.forEach(line=>{
+        line.element.style.opacity = (t>=line.start && t<=line.end)?1:0;
+      });
     });
-  });
-});
+  }, 3000); // 3 seconds hold
+}
+
+function cancelHold(){
+  clearTimeout(holdTimer);
+  scanRing.style.transition = 'stroke-dashoffset 0s';
+  scanRing.style.strokeDashoffset = 440; // reset circle
+}
 </script>
 </body>
 </html>
