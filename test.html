@@ -5,72 +5,48 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>You Have Been Summoned</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=IM+Fell+English:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=IM+Fell+English:ital@0;1&display=swap');
 
-  :root {
-    --bg: #0a0806;
-    --paper: #111008;
-    --red: #8b0000;
-    --gold: #c9a84c;
-    --text: #c8c0a8;
-    --text-dim: #6a6050;
-    --line: #2a2416;
-    --white: #f0ead8;
-  }
+:root {
+  --bg: #0a0806;
+  --paper: #111008;
+  --red: #8b0000;
+  --gold: #c9a84c;
+  --text: #c8c0a8;
+  --text-dim: #6a6050;
+  --line: #2a2416;
+  --white: #f0ead8;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'IM Fell English', Georgia, serif;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--bg);
-    overflow-x: hidden;
-    color: var(--text);
-  }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'IM Fell English', Georgia, serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  overflow-x: hidden;
+  color: var(--text);
+}
 
-  .envelope-wrap {
-    width: 100%;
-    max-width: 580px;
-    opacity: 0;
-    transition: opacity 1s ease;
-  }
+#start-overlay {
+  position: fixed; inset:0; background: rgba(10,8,6,0.95);
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  z-index: 9999; text-align:center;
+}
 
-  .stamp-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 28px;
-  }
+#start-overlay h1 { color: var(--text); font-family:'Special Elite'; font-size:28px; margin-bottom:20px; }
+#start-overlay p { color: rgba(255,180,180,0.6); font-family:'Special Elite'; font-size:12px; margin-bottom:30px; letter-spacing:1px; }
+#start-button { padding:14px 32px; font-family:'Special Elite'; font-size:14px; letter-spacing:2px; background: var(--red); color:#fff; border:none; cursor:pointer; }
+#start-button:hover { filter: brightness(1.1); }
 
-  .stamp { border: 1px solid rgba(201,168,76,0.3); font-size: 9px; padding: 5px 10px; font-family: 'Special Elite'; }
+.envelope-wrap { width: 100%; max-width: 580px; opacity: 0; transition: opacity 1s ease; }
+.letter { background: var(--paper); border: 1px solid var(--line); padding: 40px; }
+.heading { text-align: center; margin-bottom: 20px; font-family: 'Special Elite'; font-size: 22px; color: var(--white); letter-spacing: 2px; }
+#subtitle { margin-top: 20px; font-family:'Special Elite'; font-size:16px; line-height:1.8; min-height:2em; }
 
-  .letter { background: var(--paper); border: 1px solid var(--line); padding: 40px; }
-
-  .heading { text-align: center; margin-bottom: 20px; font-family: 'Special Elite'; font-size: 22px; color: var(--white); letter-spacing: 2px; }
-
-  .body-text { margin-bottom: 16px; line-height: 1.8; display:none; }
-  .body-text strong { color: var(--white); font-weight: normal; }
-  .body-text em { color: var(--gold); font-style: italic; }
-
-  .quote-block { margin: 20px 0; padding-left: 10px; border-left: 2px solid var(--red); font-style: italic; font-size: 15px; color: #c0b898; display:none; }
-
-  .cta-wrap { margin-top: 20px; text-align: center; display:none; }
-
-  .cta { background: var(--red); color: white; padding: 10px 20px; text-decoration: none; font-family: 'Special Elite'; font-size: 11px; letter-spacing: 3px; }
-
-  #start-overlay {
-    position: fixed; inset:0; background: rgba(10,8,6,0.95);
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    z-index: 9999; text-align:center;
-  }
-
-  #start-overlay h1 { color: var(--text); font-family:'Special Elite'; font-size:28px; margin-bottom:20px; }
-  #start-overlay p { color: rgba(255,180,180,0.6); font-family:'Special Elite'; font-size:12px; margin-bottom:30px; letter-spacing:1px; }
-  #start-button { padding:14px 32px; font-family:'Special Elite'; font-size:14px; letter-spacing:2px; background: var(--red); color:#fff; border:none; cursor:pointer; }
-  #start-button:hover { filter: brightness(1.1); }
-
-  @media (max-width: 480px) { .letter{ padding:28px 20px 32px; } .heading{ font-size:18px; } .body-text{ font-size:14px; } }
+@media (max-width:480px){ .letter{padding:28px 20px 32px;} .heading{ font-size:18px;} #subtitle{font-size:14px;} }
 </style>
 </head>
 <body>
@@ -89,77 +65,71 @@
 
 <!-- Main Content -->
 <div id="main-content" class="envelope-wrap">
-  <div class="stamp-row">
-    <div class="stamp">Internal Affairs</div>
-    <div class="stamp">Urgent</div>
-  </div>
-
   <div class="letter">
     <h1 class="heading">YOU HAVE BEEN SUMMONED</h1>
-
-    <p class="body-text">The victim has been found.</p>
-    <p class="body-text">Unconscious. Memory unstable. Signs of induced anesthesia.</p>
-    <p class="body-text">He does not remember the abduction. He only remembers fragments… after.</p>
-    <div class="quote-block">"I never saw her clearly… but she was always there."</div>
-    <p class="body-text">The following recollections were recovered:</p>
-    <p class="body-text">— A locked door. Password protected. <strong>“Curse Ending Date.”</strong></p>
-    <p class="body-text">— The suspect was referred to by a <em>code name</em>.</p>
-    <p class="body-text">— A tropical scent filled the air.</p>
-    <p class="body-text">— A television was running. Something familiar was playing.</p>
-    <p class="body-text">— The suspect had a defining facial feature.</p>
-    <p class="body-text">— An audiobook was playing continuously.</p>
-    <p class="body-text">— The environment resembled an office.</p>
-    <p class="body-text">— Food was ordered during the incident.</p>
-    <p class="body-text">— The victim was interrogated.</p>
-    <div class="quote-block">"She took something from me… I just don’t know what."</div>
-    <p class="body-text">The victim insists it was not material.</p>
-    <p class="body-text">He insists it was essential.</p>
-    <p class="body-text">He insists… it was his.</p>
-
-    <div class="cta-wrap">
-      <a class="cta" href="#">Accept the Case</a>
-    </div>
+    <div id="subtitle"></div>
   </div>
 </div>
 
 <script>
+// SRT lines from your file
+const srtLines = [
+  { start:3.9, end:5.666, text:"Internal Affairs Division" },
+  { start:6.2, end:8.266, text:"restricted correspondence" },
+  { start:9.5, end:13.1, text:"you have been summoned case No. 0" },
+  { start:13.1, end:20.1, text:"1 1 4 dash s active investigation to s s" },
+  { start:20.4, end:23.166, text:"primary witness and name suspect" },
+  { start:24.0, end:25.833, text:"this is not a coincidence" },
+  { start:26.166, end:30.8, text:"this is not a mistake you were found" },
+  { start:31.3, end:36.0, text:"a case has been reopened one that was dismissed too early" },
+  { start:36.1, end:40.5, text:"closed without a verdict and buried without a confession" },
+  { start:41.2, end:43.966, text:"the victim known only as SED" },
+  { start:44.466, end:48.166, text:"has formally requested that the investigation resume" },
+  { start:48.766, end:51.633, text:"he believes the evidence was always there" },
+  { start:51.966, end:55.666, text:"he believes the criminal left traces everywhere" },
+  { start:56.266, end:59.833, text:"he believes you are the one who did it" },
+  { start:60.933, end:63.766, text:"she came in quietly no warning" },
+  { start:63.766, end:68.633, text:"no announcement she simply arrived and everything changed" },
+  { start:69.133, end:73.166, text:"I didn't notice what she took until it was already gone" },
+  { start:74.1, end:77.433, text:"you are hereby summoned to review the full case file" },
+  { start:77.533, end:79.033, text:"examine the evidence" },
+  { start:79.066, end:84.0, text:"and determine for yourself whether what was taken was stolen" },
+  { start:84.366, end:86.366, text:"or willingly surrendered" },
+  { start:87.6, end:90.866, text:"warning this investigation is personal" },
+  { start:91.133, end:94.433, text:"proceed only if you are prepared for the truth" },
+  { start:94.766, end:98.2, text:"once you accept there is no turning back" },
+  { start:99.066, end:101.566, text:"file by SED the Victim" },
+  { start:101.566, end:104.6, text:"Maadi Division case No. 0" },
+  { start:104.6, end:107.233, text:"1 1 4 dash s" },
+  { start:108.066, end:109.933, text:"will you accept this mission" }
+];
+
 const button = document.getElementById('start-button');
 const overlay = document.getElementById('start-overlay');
 const mainContent = document.getElementById('main-content');
+const subtitle = document.getElementById('subtitle');
 const audio = document.getElementById('voiceover');
-
-// Text animation: show paragraphs sequentially
-const paragraphs = Array.from(mainContent.querySelectorAll('.body-text, .quote-block'));
-let currentIndex = 0;
 
 button.addEventListener('click', () => {
   overlay.style.display = 'none';
-  mainContent.style.display = 'block';
   mainContent.style.opacity = 1;
 
-  // Play audio directly (browser requires user interaction)
+  // Play audio
   const playPromise = audio.play();
   if (playPromise !== undefined) {
     playPromise.catch(error => {
-      alert("Click anywhere on the screen to enable the voiceover.");
-      document.body.addEventListener('click', () => audio.play(), { once: true });
+      alert("Click anywhere on screen to start the voiceover.");
+      document.body.addEventListener('click', () => audio.play(), {once:true});
     });
   }
 
-  // Reveal paragraphs one by one synced with audio (rough timing)
-  const revealNext = () => {
-    if (currentIndex < paragraphs.length) {
-      paragraphs[currentIndex].style.display = 'block';
-      currentIndex++;
-      setTimeout(revealNext, 2500); // Adjust timing as needed for audio sync
-    } else {
-      // show CTA after all paragraphs
-      mainContent.querySelector('.cta-wrap').style.display = 'block';
-    }
-  }
-  revealNext();
+  // Sync subtitles
+  audio.addEventListener('timeupdate', () => {
+    const t = audio.currentTime;
+    const currentLine = srtLines.find(l => t >= l.start && t <= l.end);
+    subtitle.textContent = currentLine ? currentLine.text : "";
+  });
 });
 </script>
-
 </body>
 </html>
