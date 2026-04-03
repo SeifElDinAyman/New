@@ -20,7 +20,7 @@ body {
   font-family: 'IM Fell English', Georgia, serif;
   margin:0;
   min-height:100vh;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 #start-overlay {
@@ -36,10 +36,8 @@ body {
 
 .envelope-wrap {
   max-width: 700px;
-  margin: 0 auto;
+  margin: 20px auto;
   padding: 40px 20px;
-  opacity:0;
-  transition: opacity 1s ease;
 }
 
 .heading {
@@ -48,6 +46,10 @@ body {
   font-size:22px;
   color: var(--white);
   margin-bottom: 20px;
+}
+
+#subtitle-container {
+  margin-top:20px;
 }
 
 .subtitle-line {
@@ -62,23 +64,26 @@ body {
 </head>
 <body>
 
+<!-- Overlay -->
 <div id="start-overlay">
   <h1>Internal Affairs — Case 0114-S</h1>
   <p>⚠ Recommended: Increase your volume before proceeding</p>
   <button id="start-button">Start Investigation</button>
 </div>
 
+<!-- Audio -->
 <audio id="voiceover" preload="auto">
   <source src="https://seifeldinayman.github.io/New/0403.MP3" type="audio/mpeg">
 </audio>
 
-<div id="main-content" class="envelope-wrap">
+<!-- Main Content -->
+<div id="main-content" class="envelope-wrap" style="display:none;">
   <h1 class="heading">YOU HAVE BEEN SUMMONED</h1>
   <div id="subtitle-container"></div>
 </div>
 
 <script>
-// SRT data
+// SRT lines
 const srtLines = [
   { start:3.9, end:5.666, text:"Internal Affairs Division" },
   { start:6.2, end:8.266, text:"restricted correspondence" },
@@ -116,29 +121,28 @@ const mainContent = document.getElementById('main-content');
 const subtitleContainer = document.getElementById('subtitle-container');
 const audio = document.getElementById('voiceover');
 
-// create <p> elements for all lines
+// create <p> elements
 srtLines.forEach(line=>{
   const p = document.createElement('p');
   p.className = 'subtitle-line';
   p.textContent = line.text;
   subtitleContainer.appendChild(p);
-  line.element = p; // store reference
+  line.element = p;
 });
 
-button.addEventListener('click', () => {
+button.addEventListener('click', ()=>{
   overlay.style.display = 'none';
-  mainContent.style.opacity = 1;
+  mainContent.style.display = 'block';
 
   const playPromise = audio.play();
-  if (playPromise !== undefined) {
-    playPromise.catch(error => {
-      alert("Click anywhere to enable audio.");
+  if(playPromise!==undefined){
+    playPromise.catch(error=>{
+      alert("Click anywhere to start audio");
       document.body.addEventListener('click', ()=>audio.play(), {once:true});
     });
   }
 
-  // animate lines based on audio time
-  audio.addEventListener('timeupdate', () => {
+  audio.addEventListener('timeupdate', ()=>{
     const t = audio.currentTime;
     srtLines.forEach(line=>{
       if(t>=line.start && t<=line.end){
@@ -150,5 +154,6 @@ button.addEventListener('click', () => {
   });
 });
 </script>
+
 </body>
 </html>
