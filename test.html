@@ -11,38 +11,28 @@
     --bg: #0a0806;
     --paper: #111008;
     --red: #8b0000;
-    --red-soft: #ffcccc;
     --gold: #c9a84c;
-    --gold-dim: rgba(201,168,76,0.3);
     --text: #c8c0a8;
     --text-dim: #6a6050;
-    --white: #f0ead8;
     --line: #2a2416;
+    --white: #f0ead8;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background: var(--bg);
     font-family: 'IM Fell English', Georgia, serif;
-    color: var(--text);
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    background: var(--bg);
     overflow-x: hidden;
   }
 
   .envelope-wrap {
     width: 100%;
     max-width: 580px;
-    animation: fadeIn 1.8s ease both;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
   }
 
   .stamp-row {
@@ -110,7 +100,7 @@
   #start-overlay {
     position: fixed;
     inset: 0;
-    background: var(--bg);
+    background: rgba(10,8,6,0.95);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -150,6 +140,13 @@
     filter: brightness(1.1);
   }
 
+  /* Main content fade-in */
+  #main-content {
+    display: none;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+  }
+
   @media (max-width: 480px) {
     .letter { padding: 28px 20px 32px; }
     .heading { font-size: 18px; }
@@ -158,6 +155,9 @@
 </style>
 </head>
 <body>
+
+<!-- Background already visible -->
+<div id="background" style="position:fixed; inset:0; background:#0a0806; z-index:0;"></div>
 
 <!-- Start Overlay -->
 <div id="start-overlay">
@@ -172,7 +172,7 @@
 </audio>
 
 <!-- Main Content -->
-<div id="main-content" style="display:none;">
+<div id="main-content">
   <div class="envelope-wrap">
 
     <div class="stamp-row">
@@ -275,16 +275,13 @@ const mainContent = document.getElementById('main-content');
 const audio = document.getElementById('voiceover');
 
 button.addEventListener('click', () => {
-  overlay.style.display = 'none';      // Hide overlay
-  mainContent.style.display = 'block'; // Show main content
+  overlay.style.display = 'none';           // Hide overlay
+  mainContent.style.display = 'block';      // Show main content
+  setTimeout(() => { mainContent.style.opacity = 1; }, 50); // Smooth fade-in
 
-  // Play audio and catch potential errors
+  // Play audio reliably
   audio.play().catch(error => {
-    console.log("Playback blocked:", error);
-    alert("Please click anywhere to start the voiceover.");
-    document.body.addEventListener('click', () => {
-      audio.play();
-    }, { once: true });
+    document.body.addEventListener('click', () => { audio.play(); }, { once: true });
   });
 });
 </script>
