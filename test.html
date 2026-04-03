@@ -9,25 +9,18 @@
 
 :root {
   --bg: #0a0806;
-  --paper: #111008;
-  --red: #8b0000;
-  --gold: #c9a84c;
   --text: #c8c0a8;
-  --text-dim: #6a6050;
-  --line: #2a2416;
   --white: #f0ead8;
+  --red: #8b0000;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  font-family: 'IM Fell English', Georgia, serif;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background: var(--bg);
-  overflow-x: hidden;
   color: var(--text);
+  font-family: 'IM Fell English', Georgia, serif;
+  margin:0;
+  min-height:100vh;
+  overflow-y: scroll;
 }
 
 #start-overlay {
@@ -41,38 +34,51 @@ body {
 #start-button { padding:14px 32px; font-family:'Special Elite'; font-size:14px; letter-spacing:2px; background: var(--red); color:#fff; border:none; cursor:pointer; }
 #start-button:hover { filter: brightness(1.1); }
 
-.envelope-wrap { width: 100%; max-width: 580px; opacity: 0; transition: opacity 1s ease; }
-.letter { background: var(--paper); border: 1px solid var(--line); padding: 40px; }
-.heading { text-align: center; margin-bottom: 20px; font-family: 'Special Elite'; font-size: 22px; color: var(--white); letter-spacing: 2px; }
-#subtitle { margin-top: 20px; font-family:'Special Elite'; font-size:16px; line-height:1.8; min-height:2em; }
+.envelope-wrap {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  opacity:0;
+  transition: opacity 1s ease;
+}
 
-@media (max-width:480px){ .letter{padding:28px 20px 32px;} .heading{ font-size:18px;} #subtitle{font-size:14px;} }
+.heading {
+  text-align:center;
+  font-family:'Special Elite';
+  font-size:22px;
+  color: var(--white);
+  margin-bottom: 20px;
+}
+
+.subtitle-line {
+  opacity:0;
+  font-size:16px;
+  line-height:1.8;
+  margin: 12px 0;
+  transition: opacity 1s ease;
+  color: var(--text);
+}
 </style>
 </head>
 <body>
 
-<!-- Start Overlay -->
 <div id="start-overlay">
   <h1>Internal Affairs — Case 0114-S</h1>
   <p>⚠ Recommended: Increase your volume before proceeding</p>
   <button id="start-button">Start Investigation</button>
 </div>
 
-<!-- Audio -->
 <audio id="voiceover" preload="auto">
   <source src="https://seifeldinayman.github.io/New/0403.MP3" type="audio/mpeg">
 </audio>
 
-<!-- Main Content -->
 <div id="main-content" class="envelope-wrap">
-  <div class="letter">
-    <h1 class="heading">YOU HAVE BEEN SUMMONED</h1>
-    <div id="subtitle"></div>
-  </div>
+  <h1 class="heading">YOU HAVE BEEN SUMMONED</h1>
+  <div id="subtitle-container"></div>
 </div>
 
 <script>
-// SRT lines from your file
+// SRT data
 const srtLines = [
   { start:3.9, end:5.666, text:"Internal Affairs Division" },
   { start:6.2, end:8.266, text:"restricted correspondence" },
@@ -107,27 +113,40 @@ const srtLines = [
 const button = document.getElementById('start-button');
 const overlay = document.getElementById('start-overlay');
 const mainContent = document.getElementById('main-content');
-const subtitle = document.getElementById('subtitle');
+const subtitleContainer = document.getElementById('subtitle-container');
 const audio = document.getElementById('voiceover');
+
+// create <p> elements for all lines
+srtLines.forEach(line=>{
+  const p = document.createElement('p');
+  p.className = 'subtitle-line';
+  p.textContent = line.text;
+  subtitleContainer.appendChild(p);
+  line.element = p; // store reference
+});
 
 button.addEventListener('click', () => {
   overlay.style.display = 'none';
   mainContent.style.opacity = 1;
 
-  // Play audio
   const playPromise = audio.play();
   if (playPromise !== undefined) {
     playPromise.catch(error => {
-      alert("Click anywhere on screen to start the voiceover.");
-      document.body.addEventListener('click', () => audio.play(), {once:true});
+      alert("Click anywhere to enable audio.");
+      document.body.addEventListener('click', ()=>audio.play(), {once:true});
     });
   }
 
-  // Sync subtitles
+  // animate lines based on audio time
   audio.addEventListener('timeupdate', () => {
     const t = audio.currentTime;
-    const currentLine = srtLines.find(l => t >= l.start && t <= l.end);
-    subtitle.textContent = currentLine ? currentLine.text : "";
+    srtLines.forEach(line=>{
+      if(t>=line.start && t<=line.end){
+        line.element.style.opacity = 1;
+      } else {
+        line.element.style.opacity = 0;
+      }
+    });
   });
 });
 </script>
