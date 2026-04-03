@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>You Have Been Summoned</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=IM+Fell+English:ital@0;1&display=swap');
+
+  :root {
+    --bg: #0a0806;
+    --paper: #111008;
+    --red: #8b0000;
+    --red-soft: #ffcccc;
+    --gold: #c9a84c;
+    --gold-dim: rgba(201,168,76,0.3);
+    --text: #c8c0a8;
+    --text-dim: #6a6050;
+    --white: #f0ead8;
+    --line: #2a2416;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'IM Fell English', Georgia, serif;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-x: hidden;
+  }
+
+  .envelope-wrap {
+    width: 100%;
+    max-width: 580px;
+    animation: fadeIn 1.8s ease both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .stamp-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+
+  .stamp {
+    border: 1px solid rgba(201,168,76,0.3);
+    font-size: 9px;
+    padding: 5px 10px;
+    font-family: 'Special Elite';
+  }
+
+  .letter {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 40px;
+  }
+
+  .heading {
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: 'Special Elite';
+    font-size: 22px;
+    color: var(--white);
+    letter-spacing: 2px;
+  }
+
+  .body-text {
+    margin-bottom: 16px;
+    line-height: 1.8;
+    color: #b0a890;
+  }
+
+  .body-text strong { color: var(--white); font-weight: normal; }
+  .body-text em { color: var(--gold); font-style: italic; }
+
+  .quote-block {
+    margin: 20px 0;
+    padding-left: 10px;
+    border-left: 2px solid var(--red);
+    font-style: italic;
+    font-size: 15px;
+    color: #c0b898;
+  }
+
+  .cta-wrap {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .cta {
+    background: var(--red);
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-family: 'Special Elite';
+    font-size: 11px;
+    letter-spacing: 3px;
+  }
+
+  /* Start overlay styling */
+  #start-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  #start-overlay h1 {
+    color: var(--text);
+    font-family: 'Special Elite';
+    font-size: 28px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  #start-overlay p {
+    color: rgba(255,180,180,0.6);
+    font-family: 'Special Elite';
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  #start-button {
+    padding: 14px 32px;
+    font-family: 'Special Elite';
+    font-size: 14px;
+    letter-spacing: 2px;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+
+  #start-button:hover {
+    filter: brightness(1.1);
+  }
+
+  @media (max-width: 480px) {
+    .letter { padding: 28px 20px 32px; }
+    .heading { font-size: 18px; }
+    .body-text { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Start Overlay -->
+<div id="start-overlay">
+  <h1>Internal Affairs — Case 0114-S</h1>
+  <p>⚠ Recommended: Increase your volume before proceeding</p>
+  <button id="start-button">Start Investigation</button>
+</div>
+
+<!-- Audio -->
+<audio id="voiceover">
+  <source src="https://seifeldinayman.github.io/New/0403.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Main Content -->
+<div id="main-content" style="display:none;">
+  <div class="envelope-wrap">
+
+    <div class="stamp-row">
+      <div class="stamp">Internal Affairs</div>
+      <div class="stamp">Urgent</div>
+    </div>
+
+    <div class="letter">
+
+      <h1 class="heading">YOU HAVE BEEN SUMMONED</h1>
+
+      <p class="body-text">
+        The victim has been found.
+      </p>
+
+      <p class="body-text">
+        Unconscious. Memory unstable. Signs of induced anesthesia.
+      </p>
+
+      <p class="body-text">
+        He does not remember the abduction.
+        He does not remember the moment it began.
+        He only remembers fragments… after.
+      </p>
+
+      <div class="quote-block">
+        "I never saw her clearly… but she was always there."
+      </div>
+
+      <p class="body-text">
+        The following recollections were recovered:
+      </p>
+
+      <p class="body-text">
+        — A locked door. Password protected.<br>
+        Display text: <strong>“Curse Ending Date.”</strong>
+      </p>
+
+      <p class="body-text">
+        — The suspect was referred to by a <em>code name</em>.
+      </p>
+
+      <p class="body-text">
+        — A tropical scent filled the air.
+      </p>
+
+      <p class="body-text">
+        — A television was running. Something familiar was playing.
+      </p>
+
+      <p class="body-text">
+        — The suspect had a defining facial feature.
+      </p>
+
+      <p class="body-text">
+        — An audiobook was playing continuously.
+      </p>
+
+      <p class="body-text">
+        — The environment resembled an office.
+      </p>
+
+      <p class="body-text">
+        — Food was ordered during the incident.
+      </p>
+
+      <p class="body-text">
+        — The victim was interrogated.
+      </p>
+
+      <div class="quote-block">
+        "She took something from me… I just don’t know what."
+      </div>
+
+      <p class="body-text">
+        The victim insists it was not material.
+      </p>
+
+      <p class="body-text">
+        He insists it was essential.
+      </p>
+
+      <p class="body-text">
+        He insists… it was his.
+      </p>
+
+    </div>
+
+    <div class="cta-wrap">
+      <a class="cta" href="#">Accept the Case</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const button = document.getElementById('start-button');
+  const overlay = document.getElementById('start-overlay');
+  const mainContent = document.getElementById('main-content');
+  const audio = document.getElementById('voiceover');
+
+  button.addEventListener('click', () => {
+    overlay.style.display = 'none';      // Hide overlay
+    mainContent.style.display = 'block'; // Show main page
+    audio.play();                         // Start voiceover
+  });
+</script>
+
+</body>
+</html>
