@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case File #114 — Restricted Wing</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --red: #8b0000;
+    --green: #00cc44;
+    --gold: rgba(201,168,76,0.8);
+    --bg: #030303;
+}
+
+body {
+    background: var(--bg);
+    font-family: "Courier New", monospace;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Scanlines */
+body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.016) 0px, rgba(255,255,255,0.016) 1px,
+        transparent 1px, transparent 4px
+    );
+    pointer-events: none; z-index: 9000;
+}
+
+#breathOverlay {
+    position: fixed; inset: 0; background: #000; opacity: 0;
+    pointer-events: none; z-index: 2;
+    animation: breathe 7s ease-in-out infinite;
+}
+@keyframes breathe { 0%,30%,70%,100% { opacity:0; } 50% { opacity:0.05; } }
+
+/* Corner labels */
+.corner-label {
+    position: fixed; font-size: 8px; letter-spacing: 2px;
+    color: #1e1e1e; text-transform: uppercase; z-index: 5; line-height: 1.8;
+}
+.tl { top:16px; left:16px; }
+.tr { top:16px; right:16px; text-align:right; }
+.bl { bottom:16px; left:16px; }
+.br { bottom:16px; right:16px; text-align:right; }
+
+/* Ambient center glow */
+.center-glow {
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, rgba(139,0,0,0.18) 0%, transparent 52%);
+    pointer-events: none; z-index: 1;
+    animation: glowPulse 3.5s ease-in-out infinite;
+}
+@keyframes glowPulse { 0%,100% { opacity:0.6; } 50% { opacity:1; } }
+
+/* ──────────────────────────────────────
+   PERSPECTIVE CORRIDOR LINES
+────────────────────────────────────── */
+.vp-lines {
+    position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden;
+}
+.vp-lines svg { width:100%; height:100%; }
+
+/* ──────────────────────────────────────
+   DOOR SCENE WRAPPER
+────────────────────────────────────── */
+#scene {
+    position: fixed; inset: 0;
+    perspective: 700px; perspective-origin: 50% 50%;
+    z-index: 10;
+    display: flex; align-items: center; justify-content: center;
+}
+
+#doorScene {
+    position: relative; z-index: 20;
+    display: flex; align-items: center; gap: 28px;
+    transform-style: preserve-3d;
+}
+
+/* ──────────────────────────────────────
+   DOOR FRAME
+────────────────────────────────────── */
+.door-frame {
+    position: relative;
+    width: 190px; height: 300px;
+    border: 3px solid #252525; border-bottom: none;
+    background: linear-gradient(180deg, #0c0c0c, #060606);
+    box-shadow:
+        inset 0 0 50px rgba(0,0,0,0.9),
+        0 0 80px rgba(0,0,0,0.95),
+        0 0 0 1px #0f0f0f,
+        14px 0 32px rgba(0,0,0,0.7),
+        -14px 0 32px rgba(0,0,0,0.7);
+}
+.door-frame::before {
+    content: "";
+    position: absolute; top: -14px; left: -14px; right: -14px; height: 14px;
+    background: #181818; border: 1px solid #2a2a2a; border-bottom: none;
+}
+.door-frame::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg,
+        rgba(0,0,0,0.55) 0%, transparent 22%,
+        transparent 78%, rgba(0,0,0,0.55) 100%
+    );
+    pointer-events: none; z-index: 3;
+}
+
+/* ──────────────────────────────────────
+   GLASS PANELS
+────────────────────────────────────── */
+.glass-door {
+    position: absolute; inset: 0; overflow: visible; transform-style: preserve-3d;
+}
+.door-panel-left, .door-panel-right {
+    position: absolute; top: 0; height: 100%; width: 50%;
+    transform-origin: left center;
+    transition: transform 1.8s cubic-bezier(0.25, 0, 0.1, 1);
+    overflow: hidden; backface-visibility: hidden;
+}
+.door-panel-right { left: 50%; transform-origin: right center; }
+
+.door-panel-left::before, .door-panel-right::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(145deg,
+        rgba(200,230,255,0.06) 0%, rgba(255,255,255,0.10) 25%,
+        rgba(150,200,240,0.03) 50%, rgba(255,255,255,0.07) 75%,
+        rgba(180,220,255,0.04) 100%
+    );
+    backdrop-filter: blur(8px) brightness(1.1) saturate(0.8);
+    -webkit-backdrop-filter: blur(8px) brightness(1.1) saturate(0.8);
+}
+.door-panel-left::after {
+    content: "";
+    position: absolute; top:0; left:18%; bottom:0; width:14%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+    animation: shimmer 7s ease-in-out infinite;
+}
+.door-panel-right::after {
+    content: "";
+    position: absolute; top:0; left:62%; bottom:0; width:10%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    animation: shimmer 9s ease-in-out infinite 3s;
+}
+@keyframes shimmer { 0%,100% { opacity:0.3; } 50% { opacity:1; } }
+
+.glass-inner {
+    position: absolute; inset: 7px;
+    border: 1px solid rgba(255,255,255,0.07);
+    background: rgba(255,255,255,0.015);
+}
+.glass-inner::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+        0deg, transparent, transparent 20px,
+        rgba(255,255,255,0.01) 20px, rgba(255,255,255,0.01) 21px
+    );
+}
+
+.door-handle {
+    position: absolute; right: 7px; top:50%; transform:translateY(-50%);
+    width:5px; height:38px;
+    background: linear-gradient(180deg, #2a2a2a, #181818, #2a2a2a);
+    border:1px solid #303030; border-radius:3px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.9), 1px 1px 0 rgba(255,255,255,0.04);
+    z-index:6;
+}
+.door-handle-right {
+    position: absolute; left:7px; top:50%; transform:translateY(-50%);
+    width:5px; height:38px;
+    background: linear-gradient(180deg, #2a2a2a, #181818, #2a2a2a);
+    border:1px solid #303030; border-radius:3px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.9), 1px 1px 0 rgba(255,255,255,0.04);
+    z-index:6;
+}
+.glass-text {
+    position:absolute; top:20px; left:0; right:0; text-align:center;
+    font-size:7px; letter-spacing:3px; color:rgba(139,0,0,0.3);
+    text-transform:uppercase; z-index:7;
+}
+.glass-icon {
+    position:absolute; bottom:18px; left:0; right:0; text-align:center;
+    font-size:18px; opacity:0.1; z-index:7;
+}
+
+.door-light {
+    position:absolute; left:0; right:0; height:3px;
+    background: linear-gradient(90deg, transparent, rgba(139,0,0,0.5), transparent);
+    box-shadow: 0 0 12px rgba(139,0,0,0.5);
+    animation: doorLightPulse 2.2s ease-in-out infinite;
+    z-index:8; transition: background 0.6s, box-shadow 0.6s;
+}
+.door-light-top  { top:0; }
+.door-light-bottom { bottom:0; }
+@keyframes doorLightPulse { 0%,100% { opacity:0.4; } 50% { opacity:1; } }
+
+/* Open state */
+.door-panel-left.open  { transform: perspective(500px) rotateY(-85deg); }
+.door-panel-right.open { transform: perspective(500px) rotateY(85deg); }
+
+/* ──────────────────────────────────────
+   KEYPAD MACHINE
+────────────────────────────────────── */
+.keypad-machine {
+    position: relative; width: 148px;
+    background: #0e0e0e; border: 1px solid #222; border-radius: 8px;
+    padding: 16px 14px 18px;
+    box-shadow: 0 0 50px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.03), 0 0 0 1px #0a0a0a;
+    z-index: 20;
+}
+.keypad-machine::after {
+    content: "";
+    position: absolute; top:50%; right:-30px;
+    width:28px; height:2px; background:#1a1a1a; box-shadow:0 1px 0 #0a0a0a;
+}
+.machine-label {
+    font-size:7px; letter-spacing:3px; color:#383838;
+    text-transform:uppercase; text-align:center;
+    margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid #181818;
+}
+
+.display {
+    background:#010901; border:1px solid #142014; border-radius:3px;
+    padding:10px 8px 8px; margin-bottom:14px; text-align:center;
+    position:relative; overflow:hidden;
+    box-shadow: inset 0 0 16px rgba(0,0,0,0.95), 0 0 4px rgba(0,30,0,0.3);
+}
+.display::after {
+    content:""; position:absolute; inset:0;
+    background: repeating-linear-gradient(
+        to bottom, rgba(0,255,0,0.012) 0px, rgba(0,255,0,0.012) 1px,
+        transparent 1px, transparent 3px
+    );
+    pointer-events:none;
+}
+.display-digits {
+    font-size:28px; letter-spacing:10px; color:var(--green);
+    text-shadow: 0 0 10px rgba(0,255,100,0.5), 0 0 25px rgba(0,200,80,0.25);
+    min-height:38px; padding-left:8px; transition: color 0.15s, text-shadow 0.15s;
+}
+.display-digits.error {
+    color:#cc2200;
+    text-shadow: 0 0 10px rgba(255,50,0,0.6), 0 0 25px rgba(200,30,0,0.3);
+    animation: dispShake 0.35s ease;
+}
+.display-digits.success {
+    color:#00ff88;
+    text-shadow: 0 0 14px rgba(0,255,150,0.7), 0 0 30px rgba(0,220,100,0.4);
+}
+@keyframes dispShake {
+    0%,100% { transform:translateX(0); }
+    15% { transform:translateX(-5px); }
+    35% { transform:translateX(5px); }
+    55% { transform:translateX(-3px); }
+    75% { transform:translateX(3px); }
+}
+.display-status {
+    font-size:7px; letter-spacing:2px; color:#1a2a1a;
+    text-transform:uppercase; margin-top:4px; transition:all 0.3s;
+}
+.display-status.active { color:#00aa44; text-shadow:0 0 6px rgba(0,180,80,0.3); }
+.display-status.error  { color:#880000; text-shadow:0 0 6px rgba(200,0,0,0.3); }
+
+.numpad { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:7px; }
+.num-btn {
+    background:#141414; border:1px solid #232323; color:#777;
+    font-family:"Courier New",monospace; font-size:14px;
+    padding:9px 0; cursor:pointer; border-radius:4px;
+    transition:background 0.1s,color 0.1s,border-color 0.1s;
+    text-align:center; position:relative; overflow:hidden;
+    box-shadow:0 2px 0 #090909,inset 0 1px 0 rgba(255,255,255,0.035);
+    user-select:none; -webkit-tap-highlight-color:transparent;
+}
+.num-btn:hover { background:#1c1c1c; border-color:#2e2e2e; color:#bbb; }
+.num-btn:active, .num-btn.pressed {
+    transform:translateY(1px); box-shadow:0 1px 0 #090909;
+    background:#111; border-color:rgba(201,168,76,0.3); color:rgba(201,168,76,0.9);
+}
+.action-row { display:grid; grid-template-columns:1fr 2fr; gap:6px; }
+.clear-btn {
+    background:#0f0f0f; border:1px solid #1c1c1c; color:#444;
+    font-family:"Courier New",monospace; font-size:8px; letter-spacing:1px;
+    text-transform:uppercase; padding:8px 0; cursor:pointer; border-radius:4px;
+    transition:all 0.15s; box-shadow:0 2px 0 #080808;
+}
+.clear-btn:hover { border-color:var(--red); color:#cc4444; }
+.clear-btn:active { transform:translateY(1px); }
+.enter-btn {
+    background:var(--red); border:1px solid rgba(139,0,0,0.5); color:#ffcccc;
+    font-family:"Courier New",monospace; font-size:8px; letter-spacing:2px;
+    text-transform:uppercase; padding:8px 0; cursor:pointer; border-radius:4px;
+    transition:all 0.15s; box-shadow:0 2px 0 #5a0000,0 0 16px rgba(139,0,0,0.25);
+}
+.enter-btn:hover { background:#a00000; box-shadow:0 2px 0 #5a0000,0 0 28px rgba(139,0,0,0.5); }
+.enter-btn:active { transform:translateY(1px); box-shadow:0 1px 0 #5a0000; }
+
+.machine-leds {
+    display:flex; align-items:center; justify-content:center;
+    gap:6px; margin-top:14px; padding-top:10px; border-top:1px solid #141414;
+}
+.led { width:6px; height:6px; border-radius:50%; background:#1a1a1a; transition:all 0.4s; }
+.led.red.on  { background:var(--red); box-shadow:0 0 8px rgba(139,0,0,0.9); animation:ledBlink 1.6s ease-in-out infinite; }
+.led.green.on{ background:#00aa44; box-shadow:0 0 8px rgba(0,180,80,0.9); }
+@keyframes ledBlink { 0%,100%{opacity:0.5;} 50%{opacity:1;} }
+
+/* ──────────────────────────────────────
+   GLITCH BAR
+────────────────────────────────────── */
+#glitchBar {
+    position:fixed; left:0; right:0; height:3px;
+    background:linear-gradient(90deg,transparent,rgba(139,0,0,0.8),rgba(255,50,50,0.5),transparent);
+    pointer-events:none; z-index:8000; opacity:0; top:0;
+}
+
+/* ──────────────────────────────────────
+   ERROR TOAST — one sentence at a time
+────────────────────────────────────── */
+#toastBg {
+    position:fixed; inset:0; z-index:5500;
+    background:rgba(0,0,0,0); pointer-events:none;
+    transition:background 0.45s;
+}
+#toastBg.dim { background:rgba(0,0,0,0.85); pointer-events:all; }
+
+#errorToast {
+    position:fixed; inset:0; z-index:6000;
+    display:flex; align-items:center; justify-content:center;
+    pointer-events:none;
+}
+.toast-inner {
+    position:relative; max-width:360px; width:90%;
+    text-align:center; padding:0 20px;
+    opacity:0; transform:scale(0.92) translateY(16px);
+    transition:opacity 0.5s ease, transform 0.5s ease;
+    pointer-events:none;
+}
+.toast-inner.show { opacity:1; transform:scale(1) translateY(0); pointer-events:all; }
+
+.toast-tag {
+    font-size:7px; letter-spacing:4px; color:#8b0000;
+    text-transform:uppercase; margin-bottom:22px;
+    display:flex; align-items:center; justify-content:center; gap:12px;
+}
+.toast-tag::before, .toast-tag::after {
+    content:""; flex:1; max-width:44px; height:1px; background:rgba(139,0,0,0.3);
+}
+
+.toast-sentence {
+    font-size: clamp(16px, 5vw, 22px);
+    letter-spacing: 2px;
+    color: #e8e8e8;
+    line-height: 1.7;
+    font-style: italic;
+    margin-bottom: 34px;
+    /* typewriter will fill this */
+}
+.toast-sentence.arabic {
+    direction:rtl;
+    font-size: clamp(17px, 5.5vw, 24px);
+    color:rgba(201,168,76,0.85);
+    font-style:normal; letter-spacing:1px;
+}
+
+/* blinking cursor during typewriter */
+.cursor {
+    display:inline-block; width:2px; background:#e8e8e8;
+    animation:cursorBlink 0.65s step-end infinite;
+    vertical-align:text-bottom; margin-left:2px; height:1.1em;
+}
+.cursor.gold { background:rgba(201,168,76,0.85); }
+@keyframes cursorBlink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+.toast-dismiss {
+    background:none; border:1px solid #2a2a2a; color:#444;
+    font-family:"Courier New",monospace; font-size:9px; letter-spacing:3px;
+    text-transform:uppercase; padding:9px 26px; cursor:pointer; transition:all 0.2s;
+    opacity:0; transition:opacity 0.4s, border-color 0.2s, color 0.2s;
+}
+.toast-dismiss.visible { opacity:1; }
+.toast-dismiss:hover { border-color:var(--red); color:#bb3333; }
+
+/* ──────────────────────────────────────
+   WALK-THROUGH CAMERA ANIMATION
+────────────────────────────────────── */
+#flashOverlay {
+    position:fixed; inset:0; z-index:7000;
+    background:#e8ffe8; opacity:0; pointer-events:none; transition:opacity 0.7s;
+}
+#flashOverlay.flash { opacity:0.25; }
+
+#corridorLight {
+    position:fixed; inset:0; z-index:4000;
+    background:radial-gradient(ellipse at 50% 55%, rgba(0,80,30,0) 0%, transparent 60%);
+    pointer-events:none; transition:background 1.4s ease;
+}
+#corridorLight.open {
+    background:radial-gradient(ellipse at 50% 55%, rgba(0,80,30,0.2) 0%, transparent 55%);
+}
+
+/* The zoom-in: camera rushes forward through the open door */
+@keyframes walkThrough {
+    0%   { transform:scale(1)   translateZ(0);    opacity:1; filter:brightness(1); }
+    30%  { transform:scale(1.6) translateZ(80px); opacity:1; filter:brightness(1.1); }
+    65%  { transform:scale(3.5) translateZ(260px);opacity:1; filter:brightness(1.2); }
+    85%  { transform:scale(6)   translateZ(450px);opacity:0.5; filter:brightness(1.4); }
+    100% { transform:scale(9)   translateZ(650px);opacity:0; filter:brightness(2); }
+}
+#doorScene.walking {
+    animation: walkThrough 3.2s cubic-bezier(0.3,0,0.7,1) forwards;
+    animation-delay: 0.9s;
+}
+
+/* perspective lines also zoom */
+@keyframes vpZoom {
+    0%   { transform:scale(1); opacity:1; }
+    100% { transform:scale(4) translateY(-8%); opacity:0; }
+}
+.vp-lines.walking { animation:vpZoom 4.1s cubic-bezier(0.3,0,1,1) forwards; }
+
+/* ──────────────────────────────────────
+   SUCCESS OVERLAY
+────────────────────────────────────── */
+#successOverlay {
+    position:fixed; inset:0; z-index:9500;
+    background:#000; opacity:0; pointer-events:none;
+    transition:opacity 0.9s;
+    display:flex; align-items:center; justify-content:center;
+}
+#successOverlay.active { opacity:1; pointer-events:all; }
+.success-content { text-align:center; }
+.success-badge {
+    font-size:9px; letter-spacing:4px; color:#00aa44; text-transform:uppercase;
+    margin-bottom:16px; text-shadow:0 0 12px rgba(0,200,80,0.4);
+}
+.success-title { font-size:20px; letter-spacing:4px; color:#f0f0f0; text-transform:uppercase; margin-bottom:8px; }
+.success-sub   { font-size:10px; letter-spacing:2px; color:#444; text-transform:uppercase; }
+</style>
+</head>
+<body>
+
+<div id="breathOverlay"></div>
+<div id="glitchBar"></div>
+<div id="flashOverlay"></div>
+<div id="corridorLight"></div>
+
+<div class="corner-label tl">Case File #114<br>Wing C — Restricted</div>
+<div class="corner-label tr">Clearance Required<br>Level Ω</div>
+<div class="corner-label bl">Internal Affairs Division</div>
+<div class="corner-label br">Keypad Unit 03 · Active</div>
+
+<div class="center-glow"></div>
+
+<!-- Corridor perspective lines -->
+<div class="vp-lines" id="vpLines">
+    <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+        <line x1="0"   y1="100" x2="50" y2="57" stroke="rgba(255,255,255,0.030)" stroke-width="0.25"/>
+        <line x1="15"  y1="100" x2="50" y2="57" stroke="rgba(255,255,255,0.020)" stroke-width="0.18"/>
+        <line x1="30"  y1="100" x2="50" y2="57" stroke="rgba(255,255,255,0.013)" stroke-width="0.14"/>
+        <line x1="100" y1="100" x2="50" y2="57" stroke="rgba(255,255,255,0.030)" stroke-width="0.25"/>
+        <line x1="85"  y1="100" x2="50" y2="57" stroke="rgba(255,255,255,0.020)" stroke-width="0.18"/>
+        <line x1="70"  y1="100" x2="50" y2="57" stroke="rgba(255,255,255,0.013)" stroke-width="0.14"/>
+        <line x1="0"   y1="0"   x2="50" y2="43" stroke="rgba(255,255,255,0.030)" stroke-width="0.25"/>
+        <line x1="15"  y1="0"   x2="50" y2="43" stroke="rgba(255,255,255,0.020)" stroke-width="0.18"/>
+        <line x1="30"  y1="0"   x2="50" y2="43" stroke="rgba(255,255,255,0.013)" stroke-width="0.14"/>
+        <line x1="100" y1="0"   x2="50" y2="43" stroke="rgba(255,255,255,0.030)" stroke-width="0.25"/>
+        <line x1="85"  y1="0"   x2="50" y2="43" stroke="rgba(255,255,255,0.020)" stroke-width="0.18"/>
+        <line x1="70"  y1="0"   x2="50" y2="43" stroke="rgba(255,255,255,0.013)" stroke-width="0.14"/>
+        <rect x="40" y="43" width="20" height="14" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.3"/>
+    </svg>
+</div>
+
+<!-- ═══════════ MAIN SCENE ═══════════ -->
+<div id="scene">
+<div id="doorScene">
+
+    <!-- KEYPAD -->
+    <div class="keypad-machine">
+        <div class="machine-label">Access Control Unit</div>
+        <div class="display">
+            <div class="display-digits" id="displayDigits">_ _ _</div>
+            <div class="display-status" id="displayStatus">Awaiting Input</div>
+        </div>
+        <div class="numpad">
+            <button class="num-btn" onclick="pressNum('1')">1</button>
+            <button class="num-btn" onclick="pressNum('2')">2</button>
+            <button class="num-btn" onclick="pressNum('3')">3</button>
+            <button class="num-btn" onclick="pressNum('4')">4</button>
+            <button class="num-btn" onclick="pressNum('5')">5</button>
+            <button class="num-btn" onclick="pressNum('6')">6</button>
+            <button class="num-btn" onclick="pressNum('7')">7</button>
+            <button class="num-btn" onclick="pressNum('8')">8</button>
+            <button class="num-btn" onclick="pressNum('9')">9</button>
+            <button class="num-btn" onclick="pressNum('0')" style="grid-column:2">0</button>
+        </div>
+        <div class="action-row">
+            <button class="clear-btn" onclick="clearCode()">CLR</button>
+            <button class="enter-btn" onclick="submitCode()">Enter ▶</button>
+        </div>
+        <div class="machine-leds">
+            <div class="led red on" id="ledRed"></div>
+            <div class="led" style="width:4px;height:4px;background:#111"></div>
+            <div class="led green" id="ledGreen"></div>
+        </div>
+    </div>
+
+    <!-- GLASS DOOR -->
+    <div class="door-frame" id="doorFrame">
+        <div class="door-light door-light-top"    id="doorLightTop"></div>
+        <div class="door-light door-light-bottom" id="doorLightBottom"></div>
+        <div class="glass-door">
+            <div class="door-panel-left"  id="doorLeft">
+                <div class="glass-inner"></div>
+                <div class="door-handle"></div>
+                <div class="glass-text">Restricted</div>
+                <div class="glass-icon">⊘</div>
+            </div>
+            <div class="door-panel-right" id="doorRight">
+                <div class="glass-inner"></div>
+                <div class="door-handle-right"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<!-- ═══════════ ERROR TOAST ═══════════ -->
+<div id="toastBg" onclick="dismissError()"></div>
+<div id="errorToast">
+    <div class="toast-inner" id="toastInner">
+        <div class="toast-tag">Access Denied</div>
+        <div class="toast-sentence" id="toastSentence"></div>
+        <button class="toast-dismiss" id="dismissBtn" onclick="dismissError()">— Try Again —</button>
+    </div>
+</div>
+
+<!-- ═══════════ SUCCESS ═══════════ -->
+<div id="successOverlay">
+    <div class="success-content">
+        <div class="success-badge">▶ Access Granted</div>
+        <div class="success-title">Wing C Unlocked</div>
+        <div class="success-sub">Redirecting to restricted archive...</div>
+    </div>
+</div>
+
+<script>
+/* ═══════════════════════════
+   CONFIG
+═══════════════════════════ */
+const CORRECT      = "312";
+const REDIRECT_URL = "YOUR_NEXT_PAGE_URL_HERE"; // ← replace
+
+/* The three sentences shown one at a time, cycling */
+const ERROR_SENTENCES = [
+    { text: "where it all started",      arabic: false },
+    { text: "where knives were drawn",   arabic: false },
+    { text: "ربنا عفانا من العفانة",    arabic: true  }
+];
+let errorIndex = 0;
+
+/* ═══════════════════════════
+   STATE
+═══════════════════════════ */
+let code   = "";
+let locked = false;
+
+const display = document.getElementById('displayDigits');
+const status  = document.getElementById('displayStatus');
+const ledRed  = document.getElementById('ledRed');
+const ledGreen= document.getElementById('ledGreen');
+
+function updateDisplay() {
+    let s = "";
+    for (let i = 0; i < 3; i++) {
+        s += i < code.length ? code[i] : "_";
+        if (i < 2) s += " ";
+    }
+    display.textContent = s;
+}
+updateDisplay();
+
+/* ═══════════════════════════
+   NUMPAD
+═══════════════════════════ */
+function pressNum(n) {
+    if (locked || code.length >= 3) return;
+    document.querySelectorAll('.num-btn').forEach(b => {
+        if (b.textContent.trim() === n) {
+            b.classList.add('pressed');
+            setTimeout(() => b.classList.remove('pressed'), 180);
+        }
+    });
+    code += n;
+    updateDisplay();
+    status.textContent = code.length === 3 ? "Press Enter" : "Entering...";
+    status.className = 'display-status active';
+}
+
+function clearCode() {
+    if (locked) return;
+    code = "";
+    updateDisplay();
+    display.className = 'display-digits';
+    status.textContent = "Awaiting Input";
+    status.className = 'display-status';
+}
+
+function submitCode() {
+    if (locked || code.length === 0) return;
+    code === CORRECT ? grantAccess() : denyAccess();
+}
+
+/* ═══════════════════════════
+   GRANT — cinematic walk-through
+═══════════════════════════ */
+function grantAccess() {
+    locked = true;
+    display.className = 'display-digits success';
+    status.textContent = "ACCESS GRANTED";
+    status.className = 'display-status active';
+
+    ledRed.classList.remove('on');
+    ledGreen.classList.add('on');
+
+    // Door lights → green
+    ['doorLightTop','doorLightBottom'].forEach(id => {
+        const el = document.getElementById(id);
+        el.style.background  = 'linear-gradient(90deg, transparent, rgba(0,180,80,0.65), transparent)';
+        el.style.boxShadow   = '0 0 20px rgba(0,180,80,0.65)';
+        el.style.animation   = 'none';
+    });
+
+    // Panels swing open
+    setTimeout(() => {
+        document.getElementById('doorLeft').classList.add('open');
+        document.getElementById('doorRight').classList.add('open');
+        document.getElementById('corridorLight').classList.add('open');
+    }, 300);
+
+    // Flash of light through the opening
+    setTimeout(() => {
+        const f = document.getElementById('flashOverlay');
+        f.classList.add('flash');
+        setTimeout(() => f.classList.remove('flash'), 650);
+    }, 1700);
+
+    // Camera rushes forward
+    setTimeout(() => {
+        document.getElementById('doorScene').classList.add('walking');
+        document.getElementById('vpLines').classList.add('walking');
+    }, 2000);
+
+    // Success screen fades in after camera finishes
+    setTimeout(() => {
+        document.getElementById('successOverlay').classList.add('active');
+    }, 5000);
+
+    // Redirect
+    setTimeout(() => {
+        window.location.href = REDIRECT_URL;
+    }, 7000);
+}
+
+/* ═══════════════════════════
+   DENY — one sentence typewriter
+═══════════════════════════ */
+function denyAccess() {
+    locked = true;
+    display.className = 'display-digits error';
+    status.textContent = "DENIED";
+    status.className = 'display-status error';
+
+    triggerGlitch();
+
+    const entry    = ERROR_SENTENCES[errorIndex % ERROR_SENTENCES.length];
+    errorIndex++;
+
+    const sentEl   = document.getElementById('toastSentence');
+    const dismissEl= document.getElementById('dismissBtn');
+
+    // Reset
+    sentEl.textContent = "";
+    sentEl.className   = 'toast-sentence' + (entry.arabic ? ' arabic' : '');
+    dismissEl.classList.remove('visible');
+
+    // Show backdrop + toast shell
+    setTimeout(() => {
+        document.getElementById('toastBg').classList.add('dim');
+        setTimeout(() => {
+            document.getElementById('toastInner').classList.add('show');
+            // Start typewriter after toast fades in
+            setTimeout(() => typeWriter(entry.text, sentEl, entry.arabic, () => {
+                dismissEl.classList.add('visible');
+            }), 300);
+        }, 80);
+    }, 380);
+}
+
+/* Typewriter effect */
+function typeWriter(text, el, arabic, onDone) {
+    const cursorClass = arabic ? 'cursor gold' : 'cursor';
+    let i = 0;
+    el.innerHTML = `<span class="${cursorClass}"></span>`;
+    const cursor = el.querySelector('span');
+
+    const tick = () => {
+        if (i < text.length) {
+            const char = text[i];
+            if (arabic) {
+                cursor.insertAdjacentText('beforebegin', char);
+            } else {
+                cursor.insertAdjacentText('beforebegin', char);
+            }
+            i++;
+            // Arabic chars slightly faster feel
+            setTimeout(tick, arabic ? 55 : 68);
+        } else {
+            // Remove cursor after done
+            setTimeout(() => cursor.remove(), 800);
+            if (onDone) onDone();
+        }
+    };
+    tick();
+}
+
+function dismissError() {
+    if (!document.getElementById('toastBg').classList.contains('dim')) return;
+    document.getElementById('toastBg').classList.remove('dim');
+    document.getElementById('toastInner').classList.remove('show');
+
+    setTimeout(() => {
+        code = "";
+        locked = false;
+        display.className = 'display-digits';
+        updateDisplay();
+        status.textContent = "Awaiting Input";
+        status.className = 'display-status';
+    }, 400);
+}
+
+/* ═══════════════════════════
+   GLITCH SCAN
+═══════════════════════════ */
+function triggerGlitch() {
+    const bar = document.getElementById('glitchBar');
+    bar.style.opacity = '1'; bar.style.top = '-4px';
+    let pos = -4;
+    const sweep = () => {
+        pos += 18; bar.style.top = pos + 'px';
+        if (pos < window.innerHeight + 10) requestAnimationFrame(sweep);
+        else bar.style.opacity = '0';
+    };
+    requestAnimationFrame(sweep);
+    document.body.style.filter = 'brightness(1.1) hue-rotate(3deg)';
+    setTimeout(() => { document.body.style.filter = ''; }, 110);
+}
+
+/* ═══════════════════════════
+   KEYBOARD
+═══════════════════════════ */
+document.addEventListener('keydown', e => {
+    if (e.key >= '0' && e.key <= '9') pressNum(e.key);
+    if (e.key === 'Enter') submitCode();
+    if (['Backspace','Delete','Escape'].includes(e.key)) {
+        if (document.getElementById('toastBg').classList.contains('dim')) dismissError();
+        else clearCode();
+    }
+});
+</script>
+</body>
+</html>
