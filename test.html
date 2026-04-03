@@ -167,7 +167,7 @@
 </div>
 
 <!-- Audio -->
-<audio id="voiceover">
+<audio id="voiceover" preload="auto">
   <source src="https://seifeldinayman.github.io/New/0403.MP3" type="audio/mpeg">
 </audio>
 
@@ -269,16 +269,24 @@
 </div>
 
 <script>
-  const button = document.getElementById('start-button');
-  const overlay = document.getElementById('start-overlay');
-  const mainContent = document.getElementById('main-content');
-  const audio = document.getElementById('voiceover');
+const button = document.getElementById('start-button');
+const overlay = document.getElementById('start-overlay');
+const mainContent = document.getElementById('main-content');
+const audio = document.getElementById('voiceover');
 
-  button.addEventListener('click', () => {
-    overlay.style.display = 'none';      // Hide overlay
-    mainContent.style.display = 'block'; // Show main page
-    audio.play();                         // Start voiceover
+button.addEventListener('click', () => {
+  overlay.style.display = 'none';      // Hide overlay
+  mainContent.style.display = 'block'; // Show main content
+
+  // Play audio and catch potential errors
+  audio.play().catch(error => {
+    console.log("Playback blocked:", error);
+    alert("Please click anywhere to start the voiceover.");
+    document.body.addEventListener('click', () => {
+      audio.play();
+    }, { once: true });
   });
+});
 </script>
 
 </body>
