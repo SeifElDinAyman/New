@@ -285,7 +285,7 @@ button:disabled {
     </div>
 
     <div class="container back" id="backMessage">
-        Interrogation Video will be shown now...
+        Case File #114-S will be shown now...
     </div>
 </div>
 
@@ -359,14 +359,8 @@ function startProgress() {
 }
 
 function triggerScript() {
-    try {
-        const iframe = document.createElement("iframe");
-        iframe.style.display = "none";
-        iframe.src = scriptUrl + "?t=" + Date.now();
-        document.body.appendChild(iframe);
-    } catch (e) {
-        error.textContent = "Could not trigger script.";
-    }
+    // ✅ redirect instead of hidden iframe
+    window.location.href = scriptUrl;
 }
 
 function showAccessGranted() {
