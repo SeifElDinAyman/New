@@ -71,12 +71,7 @@ body::before {
     text-transform: uppercase;
 }
 
-.topmeta {
-    color: #666;
-    font-size: 10px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
+.topmeta { color: #666; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
 
 /* ── PANEL ── */
 .panel {
@@ -103,30 +98,11 @@ body::before {
     pointer-events: none;
 }
 
-.section-tag {
-    color: #666;
-    font-size: 9px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-}
+.section-tag { color: #666; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
 
-h1 {
-    font-size: 17px;
-    color: #f0f0f0;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    font-weight: normal;
-    margin-bottom: 4px;
-}
+h1 { font-size: 17px; color: #f0f0f0; letter-spacing: 2px; text-transform: uppercase; font-weight: normal; margin-bottom: 4px; }
 
-.subtitle {
-    color: #555;
-    font-size: 9px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 18px;
-}
+.subtitle { color: #555; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 18px; }
 
 .divider { border: none; border-top: 1px solid #1e1e1e; margin: 18px 0; }
 
@@ -135,14 +111,26 @@ p strong { color: #f0f0f0; font-weight: normal; }
 p em { color: #e0c060; font-style: italic; }
 
 .list-item {
-    position: relative;
-    padding-left: 16px;
-    font-size: 12px;
-    color: #aaa;
-    line-height: 1.85;
-    margin-bottom: 5px;
+    position: relative; padding-left: 16px;
+    font-size: 12px; color: #aaa; line-height: 1.85; margin-bottom: 5px;
 }
 .list-item::before { content: "▸"; position: absolute; left: 0; color: #8b0000; }
+
+/* ── WARNING BOX ── */
+.warning-box {
+    background: #080808;
+    border: 1px solid #1e1e1e;
+    border-left: 2px solid rgba(139,0,0,0.6);
+    padding: 12px 14px;
+    margin: 14px 0;
+}
+
+.warning-box p {
+    font-size: 11px; color: #999; line-height: 1.9; margin-bottom: 6px;
+}
+.warning-box p:last-child { margin-bottom: 0; }
+.warning-box strong { color: #f0f0f0; font-weight: normal; }
+.warning-box em { color: rgba(255,160,160,0.8); font-style: normal; }
 
 /* ── SCREEN ── */
 .screen-outer {
@@ -164,8 +152,7 @@ p em { color: #e0c060; font-style: italic; }
         rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px,
         rgba(0,0,0,0.22) 2px, rgba(0,0,0,0.22) 4px
     );
-    pointer-events: none;
-    z-index: 20;
+    pointer-events: none; z-index: 20;
 }
 
 /* Vignette */
@@ -173,8 +160,7 @@ p em { color: #e0c060; font-style: italic; }
     content: '';
     position: absolute; inset: 0;
     background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.65) 100%);
-    pointer-events: none;
-    z-index: 21;
+    pointer-events: none; z-index: 21;
 }
 
 .channel-poster {
@@ -183,7 +169,7 @@ p em { color: #e0c060; font-style: italic; }
     display: block;
     position: absolute; inset: 0;
     z-index: 1;
-    transition: opacity 0.06s;
+    transition: opacity 0.05s;
 }
 
 /* Static */
@@ -202,125 +188,98 @@ p em { color: #e0c060; font-style: italic; }
 }
 
 @keyframes staticAnim {
-    0%   { transform: translateY(0)   scaleX(1);    opacity: 1; }
+    0%   { transform: translateY(0)    scaleX(1);    opacity: 1; }
     25%  { transform: translateY(-4px) scaleX(1.02); opacity: 0.5; }
     50%  { transform: translateY(3px)  scaleX(0.98); opacity: 0.9; }
     75%  { transform: translateY(-2px) scaleX(1);    opacity: 0.4; }
     100% { transform: translateY(1px)  scaleX(1);    opacity: 0.8; }
 }
 
-/* ── HEAVY GLITCH (Breaking Bad) ── */
+/* ── HEAVY GLITCH ── */
 .glitch-bars {
     position: absolute; inset: 0; z-index: 15;
     opacity: 0; pointer-events: none; overflow: hidden;
 }
-.glitch-bars.fire { animation: glitchFireAnim 2s steps(1) forwards; }
+
+.glitch-bars.fire { animation: glitchFireAnim 2.2s steps(1) forwards; }
 
 @keyframes glitchFireAnim {
-    0%  { opacity: 1; }
-    6%  { opacity: 0; }
-    10% { opacity: 1; }
-    13% { opacity: 0; }
-    17% { opacity: 1; }
-    21% { opacity: 0; }
-    24% { opacity: 1; }
-    28% { opacity: 0; }
-    100%{ opacity: 0; }
+    0%  { opacity: 1; } 6%  { opacity: 0; } 10% { opacity: 1; }
+    13% { opacity: 0; } 17% { opacity: 1; } 21% { opacity: 0; }
+    24% { opacity: 1; } 28% { opacity: 0; } 100%{ opacity: 0; }
 }
 
 .gb { position: absolute; left: 0; right: 0; mix-blend-mode: screen; }
-.gb1 { top: 12%; height: 10px; background: rgba(139,0,0,0.9);   animation: gbSlide1 0.09s steps(3) infinite; }
-.gb2 { top: 33%; height: 5px;  background: rgba(255,255,255,0.8); animation: gbSlide2 0.07s steps(2) infinite; }
-.gb3 { top: 54%; height: 12px; background: rgba(139,0,0,0.7);   animation: gbSlide3 0.11s steps(4) infinite; }
-.gb4 { top: 70%; height: 4px;  background: rgba(255,255,255,0.6); animation: gbSlide4 0.05s steps(2) infinite; }
-.gb5 { top: 22%; height: 7px;  background: rgba(180,0,0,0.5);   animation: gbSlide5 0.08s steps(3) infinite; }
-.gb6 { top: 82%; height: 8px;  background: rgba(255,200,200,0.4); animation: gbSlide1 0.12s steps(4) infinite; }
+.gb1 { top: 10%; height: 11px; background: rgba(139,0,0,0.95);   animation: gbS1 0.09s steps(3) infinite; }
+.gb2 { top: 28%; height: 5px;  background: rgba(255,255,255,0.85);animation: gbS2 0.06s steps(2) infinite; }
+.gb3 { top: 47%; height: 14px; background: rgba(139,0,0,0.75);   animation: gbS3 0.11s steps(4) infinite; }
+.gb4 { top: 65%; height: 4px;  background: rgba(255,255,255,0.7); animation: gbS4 0.05s steps(2) infinite; }
+.gb5 { top: 20%; height: 8px;  background: rgba(180,0,0,0.6);    animation: gbS5 0.08s steps(3) infinite; }
+.gb6 { top: 80%; height: 9px;  background: rgba(255,180,180,0.4);animation: gbS1 0.12s steps(4) infinite; }
+.gb7 { top: 58%; height: 3px;  background: rgba(255,255,255,0.5);animation: gbS2 0.07s steps(3) infinite; }
 
-@keyframes gbSlide1 { 0%{transform:translateX(-40px)} 33%{transform:translateX(30px)} 66%{transform:translateX(-15px)} 100%{transform:translateX(10px)} }
-@keyframes gbSlide2 { 0%{transform:translateX(50px)}  50%{transform:translateX(-30px)} 100%{transform:translateX(20px)} }
-@keyframes gbSlide3 { 0%{transform:translateX(-25px)} 25%{transform:translateX(45px)} 50%{transform:translateX(-8px)} 75%{transform:translateX(30px)} 100%{transform:translateX(-20px)} }
-@keyframes gbSlide4 { 0%{transform:translateX(20px)}  50%{transform:translateX(-50px)} 100%{transform:translateX(15px)} }
-@keyframes gbSlide5 { 0%{transform:translateX(-60px)} 33%{transform:translateX(15px)} 66%{transform:translateX(-40px)} 100%{transform:translateX(25px)} }
+@keyframes gbS1 { 0%{transform:translateX(-45px)} 33%{transform:translateX(30px)}  66%{transform:translateX(-15px)} 100%{transform:translateX(10px)} }
+@keyframes gbS2 { 0%{transform:translateX(55px)}  50%{transform:translateX(-35px)} 100%{transform:translateX(20px)} }
+@keyframes gbS3 { 0%{transform:translateX(-28px)} 25%{transform:translateX(50px)}  50%{transform:translateX(-10px)} 75%{transform:translateX(35px)} 100%{transform:translateX(-22px)} }
+@keyframes gbS4 { 0%{transform:translateX(22px)}  50%{transform:translateX(-55px)} 100%{transform:translateX(18px)} }
+@keyframes gbS5 { 0%{transform:translateX(-65px)} 33%{transform:translateX(18px)}  66%{transform:translateX(-45px)} 100%{transform:translateX(28px)} }
 
 /* Color split clone */
 .glitch-clone {
     position: absolute; inset: 0; z-index: 14;
     opacity: 0; pointer-events: none; overflow: hidden;
 }
-.glitch-clone.fire { animation: cloneAnim 2s steps(1) forwards; }
+
+.glitch-clone.fire { animation: cloneAnim 2.2s steps(1) forwards; }
 
 @keyframes cloneAnim {
     0%  { opacity: 0; }
-    5%  { opacity: 1; transform: translate(-10px, 4px);  filter: hue-rotate(90deg)  saturate(4) brightness(1.5); }
+    5%  { opacity: 1; transform: translate(-12px, 5px);  filter: hue-rotate(90deg)  saturate(5) brightness(1.8); }
     10% { opacity: 0; }
-    15% { opacity: 1; transform: translate(8px, -5px);   filter: hue-rotate(180deg) saturate(6) brightness(2); }
+    15% { opacity: 1; transform: translate(10px, -6px);  filter: hue-rotate(180deg) saturate(7) brightness(2.2); }
     20% { opacity: 0; }
-    27% { opacity: 1; transform: translate(-15px, 3px);  filter: hue-rotate(270deg) saturate(5) brightness(1.8); }
-    32% { opacity: 0; }
+    26% { opacity: 1; transform: translate(-18px, 4px);  filter: hue-rotate(270deg) saturate(6) brightness(2); }
+    31% { opacity: 0; }
     100%{ opacity: 0; }
 }
 
-.glitch-clone img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    position: absolute; inset: 0;
-}
+.glitch-clone img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
 
-/* Overlay info */
+/* Channel overlay */
 .ch-overlay {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    background: linear-gradient(transparent, rgba(0,0,0,0.93));
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.94));
     padding: 24px 14px 10px;
     z-index: 22;
 }
 
-.ch-num-label {
-    font-size: 9px;
-    color: rgba(255,255,255,0.35);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 3px;
-}
+.ch-num-label { font-size: 9px; color: rgba(255,255,255,0.35); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 3px; }
 
-.ch-title {
-    font-size: 15px;
-    color: #f0f0f0;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    transition: color 0.3s;
-}
+.ch-title { font-size: 15px; color: #f0f0f0; letter-spacing: 2px; text-transform: uppercase; }
 
-.ch-title.glitching {
-    animation: titleGlitch 2s steps(1) forwards;
-}
+.ch-title.glitching { animation: titleGlitch 2.2s steps(1) forwards; }
 
 @keyframes titleGlitch {
-    0%  { color: #f0f0f0; text-shadow: none; letter-spacing: 2px; }
-    5%  { color: #ff0000; text-shadow: 4px 0 #00ffff, -4px 0 #ff00ff; letter-spacing: 6px; transform: translateX(-5px); }
-    10% { color: #ffffff; text-shadow: -3px 0 #ff0000; letter-spacing: 2px; transform: none; }
-    15% { color: #ff0000; text-shadow: 5px 0 #0000ff, -5px 0 #ff0000; letter-spacing: 8px; transform: translateX(8px); }
+    0%  { color: #f0f0f0; text-shadow: none; letter-spacing: 2px; transform: none; }
+    5%  { color: #ff0000; text-shadow: 5px 0 #00ffff, -5px 0 #ff00ff; letter-spacing: 8px; transform: translateX(-6px); }
+    10% { color: #ffffff; text-shadow: -4px 0 #ff0000; letter-spacing: 2px; transform: none; }
+    15% { color: #ff0000; text-shadow: 6px 0 #0000ff, -6px 0 #ff0000; letter-spacing: 10px; transform: translateX(9px); }
     20% { color: #f0f0f0; text-shadow: none; transform: none; letter-spacing: 2px; }
-    28% { color: #8b0000; text-shadow: 2px 0 #ff0000; transform: translateX(-2px); }
-    32% { color: #f0f0f0; text-shadow: none; transform: none; }
-    100%{ color: #e0c060; text-shadow: 0 0 14px rgba(224,192,96,0.6); letter-spacing: 2px; }
+    28% { color: #8b0000; text-shadow: 3px 0 #ff0000; transform: translateX(-3px); }
+    33% { color: #f0f0f0; text-shadow: none; transform: none; }
+    100%{ color: #e0c060; text-shadow: 0 0 16px rgba(224,192,96,0.7); letter-spacing: 2px; }
 }
 
 .rec-dot {
-    position: absolute;
-    top: 10px; right: 12px;
-    font-size: 9px;
-    color: rgba(139,0,0,0.65);
-    letter-spacing: 2px;
-    z-index: 22;
+    position: absolute; top: 10px; right: 12px;
+    font-size: 9px; color: rgba(139,0,0,0.65);
+    letter-spacing: 2px; z-index: 22;
     animation: recBlink 1.4s ease infinite;
 }
 
-@keyframes recBlink {
-    0%,100% { opacity: 1; } 50% { opacity: 0.15; }
-}
+@keyframes recBlink { 0%,100%{opacity:1} 50%{opacity:0.15} }
 
-/* ── SCREEN FOOTER ── */
+/* Screen footer */
 .screen-footer {
     background: #0a0a0a;
     border: 1px solid #1a1a1a;
@@ -329,122 +288,214 @@ p em { color: #e0c060; font-style: italic; }
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 14px;
+    margin-bottom: 18px;
 }
 
 .sf-label { font-size: 9px; color: #2a2a2a; letter-spacing: 2px; text-transform: uppercase; }
-
 .sf-lights { display: flex; gap: 5px; align-items: center; }
 .sf-light  { width: 5px; height: 5px; border-radius: 50%; background: #1a1a1a; }
-.sf-light.on {
-    background: #8b0000;
-    box-shadow: 0 0 5px rgba(139,0,0,0.7);
-    animation: recBlink 2s ease infinite;
+.sf-light.on { background: #8b0000; box-shadow: 0 0 5px rgba(139,0,0,0.7); animation: recBlink 2s ease infinite; }
+
+/* ── REAL REMOTE ── */
+.remote-body {
+    background: linear-gradient(175deg, #222222, #141414, #0e0e0e);
+    border: 1px solid #2a2a2a;
+    border-radius: 28px 28px 40px 40px;
+    padding: 18px 20px 28px;
+    margin: 0 auto;
+    max-width: 200px;
+    box-shadow:
+        4px 8px 24px rgba(0,0,0,0.9),
+        -2px -2px 6px rgba(255,255,255,0.02) inset,
+        0 0 0 1px rgba(255,255,255,0.03) inset;
+    position: relative;
 }
 
-/* ── CONTROLS ── */
-.controls {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 10px;
-    align-items: center;
+/* IR emitter at top */
+.remote-ir {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, #2a1a00, #0a0800);
+    border: 1px solid #333;
+    margin: 0 auto 14px;
+    box-shadow: 0 0 6px rgba(255,120,0,0.15);
 }
 
-/* Ch counter */
-.ch-display {
-    background: #000;
-    border: 1px solid #1a1a1a;
-    border-radius: 6px;
-    padding: 10px 14px;
+/* Brand label */
+.remote-brand {
     text-align: center;
-    min-width: 64px;
-}
-
-.ch-display-num {
-    font-size: 28px;
-    color: #8b0000;
-    letter-spacing: 3px;
-    text-shadow: 0 0 12px rgba(139,0,0,0.6);
-    line-height: 1;
-    font-family: "Courier New", monospace;
-}
-
-.ch-display-label {
     font-size: 8px;
-    color: #333;
-    letter-spacing: 2px;
+    letter-spacing: 4px;
+    color: #2a2a2a;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+}
+
+/* Power button row */
+.remote-power-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 14px;
+}
+
+.btn-power {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #4a0000, #1a0000);
+    border: 1px solid #5a0000;
+    color: #cc0000;
+    font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.7), 0 0 8px rgba(139,0,0,0.25);
+    user-select: none;
+}
+
+/* Channel display */
+.remote-display {
+    background: #000;
+    border: 1px solid #111;
+    border-radius: 6px;
+    padding: 6px 10px;
+    text-align: center;
+    margin-bottom: 14px;
+    box-shadow: 0 0 0 1px #0a0a0a inset;
+}
+
+.remote-display-num {
+    font-size: 22px;
+    color: #cc0000;
+    letter-spacing: 4px;
+    text-shadow: 0 0 10px rgba(200,0,0,0.6);
+    font-family: "Courier New", monospace;
+    line-height: 1;
+}
+
+.remote-display-label {
+    font-size: 7px;
+    color: #1a1a1a;
+    letter-spacing: 3px;
     text-transform: uppercase;
     margin-top: 3px;
 }
 
-/* Buttons */
-.ch-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+/* D-pad style channel controls */
+.remote-dpad {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 4px;
+    margin-bottom: 14px;
+    place-items: center;
 }
 
-.btn-ch {
-    padding: 11px 16px;
-    background: #111;
+.btn-dpad {
+    width: 44px; height: 36px;
+    background: radial-gradient(circle at 40% 30%, #2a2a2a, #111);
     border: 1px solid #222;
     border-radius: 6px;
     color: #c0c0c0;
     font-family: "Courier New", monospace;
-    font-size: 11px;
+    font-size: 10px;
     letter-spacing: 1px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.02) inset;
-    transition: filter 0.1s, transform 0.1s, background 0.1s;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 1px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.02) inset;
+    transition: filter 0.1s, transform 0.1s;
     user-select: none;
 }
 
-.btn-ch:active, .btn-ch.pressed {
-    filter: brightness(1.6);
+.btn-dpad:active, .btn-dpad.pressed {
+    filter: brightness(1.8);
     transform: translateY(1px);
-    background: #181818;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.6);
 }
 
-.btn-ch .arr { color: #e0c060; font-size: 13px; }
+.btn-dpad .darr { font-size: 14px; color: #e0c060; line-height: 1; }
+.btn-dpad .dlbl { font-size: 7px; color: #444; letter-spacing: 1px; }
 
-/* ── CONFIRM BUTTON ── */
+/* Center button */
+.btn-center {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #2a2a2a, #0d0d0d);
+    border: 1px solid #222;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #555;
+    user-select: none;
+}
+
+/* Empty grid cells */
+.dpad-empty { width: 44px; height: 36px; }
+
+/* Volume row */
+.remote-vol {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.btn-vol {
+    flex: 1; padding: 8px 4px;
+    background: radial-gradient(circle at 40% 30%, #1e1e1e, #0d0d0d);
+    border: 1px solid #1e1e1e;
+    border-radius: 6px;
+    color: #444;
+    font-family: "Courier New", monospace;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    transition: filter 0.1s;
+    user-select: none;
+}
+.btn-vol:active { filter: brightness(1.4); }
+
+/* Confirm button on remote */
 .btn-confirm {
     width: 100%;
-    padding: 13px;
+    padding: 10px;
     background: #8b0000;
-    border: 1px solid #8b0000;
+    border: 1px solid #aa0000;
+    border-radius: 8px;
     color: #ffcccc;
     font-family: "Courier New", monospace;
-    font-size: 11px;
-    letter-spacing: 3px;
+    font-size: 9px;
+    letter-spacing: 2px;
     text-transform: uppercase;
     cursor: pointer;
-    border-radius: 6px;
-    margin-top: 12px;
-    box-shadow: 0 0 20px rgba(139,0,0,0.35), 0 2px 8px rgba(0,0,0,0.5);
-    transition: filter 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 18px rgba(139,0,0,0.4), 0 2px 6px rgba(0,0,0,0.6);
     animation: confirmPulse 2s ease infinite;
+    user-select: none;
+    transition: filter 0.2s;
 }
 
 @keyframes confirmPulse {
-    0%,100% { box-shadow: 0 0 20px rgba(139,0,0,0.35), 0 2px 8px rgba(0,0,0,0.5); }
-    50%      { box-shadow: 0 0 38px rgba(139,0,0,0.65), 0 2px 8px rgba(0,0,0,0.5); }
+    0%,100% { box-shadow: 0 0 18px rgba(139,0,0,0.4), 0 2px 6px rgba(0,0,0,0.6); }
+    50%      { box-shadow: 0 0 34px rgba(139,0,0,0.7), 0 2px 6px rgba(0,0,0,0.6); }
 }
 
-.btn-confirm:hover  { filter: brightness(1.15); }
-.btn-confirm:active { filter: brightness(1.3); transform: translateY(1px); }
+.btn-confirm:hover  { filter: brightness(1.2); }
+.btn-confirm:active { filter: brightness(1.4); transform: translateY(1px); }
 
 .btn-confirm.locked {
-    animation: none;
-    opacity: 0.45;
-    cursor: default;
-    box-shadow: none;
+    animation: none; opacity: 0.4;
+    cursor: default; box-shadow: none;
 }
 
-/* Wrong flash */
+/* Decorative dots at bottom of remote */
+.remote-dots {
+    display: flex; justify-content: center;
+    gap: 5px; margin-top: 14px;
+}
+
+.r-dot { width: 5px; height: 5px; border-radius: 50%; background: #1a1a1a; border: 1px solid #222; }
+
+/* Wrong message */
 .wrong-msg {
     display: none;
     margin-top: 10px;
@@ -468,14 +519,7 @@ p em { color: #e0c060; font-style: italic; }
 }
 .analyst-note.show { display: block; }
 
-.note-label {
-    font-size: 9px;
-    letter-spacing: 3px;
-    color: #555;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-}
-
+.note-label { font-size: 9px; letter-spacing: 3px; color: #555; text-transform: uppercase; margin-bottom: 10px; }
 .analyst-note p { font-size: 11px; color: #aaa; line-height: 1.9; margin-bottom: 8px; }
 .analyst-note p:last-child { margin-bottom: 0; }
 .analyst-note strong { color: #f0f0f0; font-weight: normal; }
@@ -491,8 +535,8 @@ p em { color: #e0c060; font-style: italic; }
 .gate-input {
     width: 100%; padding: 13px;
     background: #000; border: 1px solid #2a2a2a;
-    color: #f0f0f0; text-align: center; border-radius: 6px;
-    outline: none; font-family: "Courier New", monospace;
+    color: #f0f0f0; text-align: center; border-radius: 6px; outline: none;
+    font-family: "Courier New", monospace;
     font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -505,16 +549,11 @@ p em { color: #e0c060; font-style: italic; }
     background: #8b0000; border: none; color: #fff;
     cursor: pointer; border-radius: 6px; letter-spacing: 2px;
     font-size: 11px; font-family: "Courier New", monospace;
-    text-transform: uppercase;
-    transition: filter 0.2s, box-shadow 0.2s;
+    text-transform: uppercase; transition: filter 0.2s, box-shadow 0.2s;
 }
 .gate-btn:hover { filter: brightness(1.15); box-shadow: 0 0 20px rgba(139,0,0,0.5); }
 
-.gate-error {
-    margin-top: 10px; font-size: 10px;
-    color: rgba(255,100,100,0.7); letter-spacing: 1px;
-    text-transform: uppercase; text-align: center; min-height: 14px;
-}
+.gate-error { margin-top: 10px; font-size: 10px; color: rgba(255,100,100,0.7); letter-spacing: 1px; text-transform: uppercase; text-align: center; min-height: 14px; }
 
 /* ── TERMINAL / PROGRESS / PROCEED ── */
 #terminal {
@@ -524,17 +563,8 @@ p em { color: #e0c060; font-style: italic; }
     text-shadow: 0 0 6px rgba(0,255,156,0.4);
 }
 
-.progress {
-    width: 100%; height: 4px; background: #111;
-    margin-top: 10px; display: none;
-    border-radius: 10px; overflow: hidden;
-}
-.progress-bar {
-    height: 100%; width: 0%;
-    background: #00ff9c; border-radius: 10px;
-    box-shadow: 0 0 8px rgba(0,255,156,0.5);
-    transition: width 0.2s;
-}
+.progress { width: 100%; height: 4px; background: #111; margin-top: 10px; display: none; border-radius: 10px; overflow: hidden; }
+.progress-bar { height: 100%; width: 0%; background: #00ff9c; border-radius: 10px; box-shadow: 0 0 8px rgba(0,255,156,0.5); transition: width 0.2s; }
 
 .proceed-wrap { display: none; margin-top: 14px; }
 .proceed-btn {
@@ -581,19 +611,28 @@ p em { color: #e0c060; font-style: italic; }
 
         <hr class="divider">
 
-        <p>A television was running in the background at the time of the incident. The subject did not register the content clearly — but audio fragments were recovered.</p>
+        <p>A television was running in the background at the time of the incident. Audio fragments were recovered. Cross-referencing the broadcast against the airtime log would allow us to establish an accurate crime timestamp.</p>
 
-        <div class="list-item">Genre: Crime. American production.</div>
-        <div class="list-item">Setting: Southwest United States.</div>
-        <div class="list-item">Commercial establishment visible in background.</div>
-        <div class="list-item">Subject in white uniform. Controlled demeanor.</div>
-        <div class="list-item" style="margin-top:4px;">Broadcast channel: <strong>unknown.</strong> Identify it.</div>
 
-        <hr class="divider">
 
-        <p style="font-size:11px;color:#555;font-style:italic;">
-            Eight channels recovered from the airtime log.
-            Cycle through them. When you find the correct broadcast — confirm it.
+        <div class="warning-box">
+            <p>
+                <em>⚠ INTERNAL NOTICE — RESTRICTED</em>
+            </p>
+            <p>
+                There has been an <strong>inside job</strong> to jam this investigation.
+                Someone does not want this broadcast identified.
+            </p>
+            <p>
+                Our analysts have detected interference in the signal recovery process.
+                If you reach the correct channel — <strong>you may notice an anomaly.</strong>
+                That anomaly is your confirmation.
+            </p>
+        </div>
+
+        <p style="font-size:11px;color:#555;font-style:italic;margin-top:4px;">
+            Eight channels recovered. Use the remote to cycle through them.
+            Confirm when you identify the correct broadcast.
         </p>
 
         <!-- SCREEN -->
@@ -601,12 +640,10 @@ p em { color: #e0c060; font-style: italic; }
             <div class="rec-dot">● REC</div>
             <div class="static-layer"  id="staticLayer"></div>
             <div class="glitch-bars"   id="glitchBars">
-                <div class="gb gb1"></div>
-                <div class="gb gb2"></div>
-                <div class="gb gb3"></div>
-                <div class="gb gb4"></div>
-                <div class="gb gb5"></div>
-                <div class="gb gb6"></div>
+                <div class="gb gb1"></div><div class="gb gb2"></div>
+                <div class="gb gb3"></div><div class="gb gb4"></div>
+                <div class="gb gb5"></div><div class="gb gb6"></div>
+                <div class="gb gb7"></div>
             </div>
             <div class="glitch-clone"  id="glitchClone">
                 <img id="glitchImg" src="" alt="" />
@@ -628,23 +665,61 @@ p em { color: #e0c060; font-style: italic; }
             </div>
         </div>
 
-        <!-- CONTROLS -->
-        <div class="controls">
-            <div class="ch-display">
-                <div class="ch-display-num"   id="chDisplayNum">01</div>
-                <div class="ch-display-label">CH</div>
+        <!-- REMOTE -->
+        <div class="remote-body">
+            <div class="remote-ir"></div>
+            <div class="remote-brand">Internal Affairs</div>
+
+            <div class="remote-power-row">
+                <div class="btn-power">⏻</div>
             </div>
-            <div class="ch-buttons">
-                <div class="btn-ch" id="chUp">
-                    <span class="arr">▲</span> CH +
+
+            <div class="remote-display">
+                <div class="remote-display-num"   id="chDisplayNum">01</div>
+                <div class="remote-display-label">CHANNEL</div>
+            </div>
+
+            <!-- D-PAD -->
+            <div class="remote-dpad">
+                <!-- Row 1: empty, CH+, empty -->
+                <div class="dpad-empty"></div>
+                <div class="btn-dpad" id="chUp">
+                    <span class="darr">▲</span>
+                    <span class="dlbl">CH+</span>
                 </div>
-                <div class="btn-ch" id="chDown">
-                    <span class="arr">▼</span> CH −
+                <div class="dpad-empty"></div>
+
+                <!-- Row 2: empty, center, empty -->
+                <div class="dpad-empty"></div>
+                <div class="btn-center">OK</div>
+                <div class="dpad-empty"></div>
+
+                <!-- Row 3: empty, CH-, empty -->
+                <div class="dpad-empty"></div>
+                <div class="btn-dpad" id="chDown">
+                    <span class="darr">▼</span>
+                    <span class="dlbl">CH−</span>
                 </div>
+                <div class="dpad-empty"></div>
+            </div>
+
+            <!-- VOLUME -->
+            <div class="remote-vol">
+                <div class="btn-vol">−</div>
+                <div class="btn-vol">+</div>
+            </div>
+
+            <button class="btn-confirm" id="confirmBtn">
+                CONFIRM BROADCAST
+            </button>
+
+            <div class="remote-dots">
+                <div class="r-dot"></div><div class="r-dot"></div>
+                <div class="r-dot"></div><div class="r-dot"></div>
+                <div class="r-dot"></div>
             </div>
         </div>
 
-        <button class="btn-confirm" id="confirmBtn">✦ &nbsp; CONFIRM BROADCAST &nbsp; ✦</button>
         <div class="wrong-msg" id="wrongMsg"></div>
 
         <!-- ANALYST NOTE -->
@@ -655,18 +730,18 @@ p em { color: #e0c060; font-style: italic; }
             <p>
                 <strong>Season 2. Episode 11.</strong><br>
                 Jump to exactly <strong>26 minutes and 28 seconds.</strong><br>
-                Look at the wall behind him.<br>
-                Read the name of the establishment.<br>
+                Look at the establishment sign — it is <strong>in front of him.</strong><br>
+                Read the name clearly.<br>
                 That is your next key.
             </p>
         </div>
 
         <!-- GATE -->
         <div class="gate" id="gate">
-            <div class="gate-label">Report What You See On The Wall</div>
+            <div class="gate-label">Report The Establishment Name</div>
             <p class="gate-hint">
-                Read the sign carefully.<br>
-                Enter the full establishment name exactly as it appears.
+                Read the sign in front of him.<br>
+                Enter the full name exactly as it appears on screen.
             </p>
             <input
                 class="gate-input" id="gateInput"
@@ -695,57 +770,92 @@ p em { color: #e0c060; font-style: italic; }
 </div>
 
 <script>
-// ── CHANNELS ──────────────────────────────────────────────────────────────────
-// Replace each img with:
-// https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/FILENAME.jpg
-// ──────────────────────────────────────────────────────────────────────────────
+// ── CHANNELS ──────────────────────────────────────────
 const channels = [
     { num:"CH 01", name:"Love Death & Robots", img:"https://seifeldinayman.github.io/New/lovedeathrobots.jpg" },
-
-    { num:"CH 02", name:"Dark", img:"https://seifeldinayman.github.io/New/dark.jpeg" },
-
-    { num:"CH 03", name:"Chernobyl", img:"https://seifeldinayman.github.io/New/chernobyl.jpeg" },
-
-    { num:"CH 04", name:"Breaking Bad", img:"https://seifeldinayman.github.io/New/breakingbad.jpg", correct:true },
-
-    { num:"CH 05", name:"Black Mirror", img:"https://seifeldinayman.github.io/New/blackmirror.jpg" },
-
-    { num:"CH 06", name:"Behind Her Eyes", img:"https://seifeldinayman.github.io/New/behindhereyes.jpg" },
-
-    { num:"CH 07", name:"Dune", img:"https://seifeldinayman.github.io/New/dune.jpeg" },
-
-    { num:"CH 08", name:"Zero Day", img:"https://seifeldinayman.github.io/New/zeroday.jpeg" }
+    { num:"CH 02", name:"Dark",                img:"https://seifeldinayman.github.io/New/dark.jpeg" },
+    { num:"CH 03", name:"Chernobyl",           img:"https://seifeldinayman.github.io/New/chernobyl.jpeg" },
+    { num:"CH 04", name:"Black Mirror",        img:"https://seifeldinayman.github.io/New/blackmirror.jpg" },
+    { num:"CH 05", name:"Behind Her Eyes",     img:"https://seifeldinayman.github.io/New/behindhereyes.jpg" },
+    { num:"CH 06", name:"Dune",                img:"https://seifeldinayman.github.io/New/dune.jpeg" },
+    { num:"CH 07", name:"Zero Day",            img:"https://seifeldinayman.github.io/New/zeroday.jpeg" },
+    { num:"CH 08", name:"Breaking Bad",        img:"https://seifeldinayman.github.io/New/breakingbad.jpg", correct:true }
 ];
 
+// ── AUDIO (channel click sound) ───────────────────────
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+
+function playClick() {
+    try {
+        if (!audioCtx) audioCtx = new AudioCtx();
+        const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.06, audioCtx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.015));
+        }
+        const src = audioCtx.createBufferSource();
+        src.buffer = buf;
+        const gain = audioCtx.createGain();
+        gain.gain.value = 0.35;
+        src.connect(gain);
+        gain.connect(audioCtx.destination);
+        src.start();
+    } catch(e) {}
+}
+
+function playGlitchSound() {
+    try {
+        if (!audioCtx) audioCtx = new AudioCtx();
+        // Distorted buzz
+        const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.4, audioCtx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            const t = i / audioCtx.sampleRate;
+            data[i] = Math.sin(2 * Math.PI * 60 * t) * Math.exp(-t * 3) * (Math.random() > 0.05 ? 1 : -1);
+        }
+        const src = audioCtx.createBufferSource();
+        src.buffer = buf;
+        const gain = audioCtx.createGain();
+        gain.gain.value = 0.5;
+        src.connect(gain);
+        gain.connect(audioCtx.destination);
+        src.start();
+    } catch(e) {}
+}
+
+// ── STATE ─────────────────────────────────────────────
 let currentCh  = 0;
 let confirmed  = false;
 let isRunning  = false;
-let glitchDone = false;
 
-const poster      = document.getElementById('channelPoster');
-const chNumLabel  = document.getElementById('chNumLabel');
-const chTitle     = document.getElementById('chTitle');
-const chDisplayNum= document.getElementById('chDisplayNum');
-const staticLayer = document.getElementById('staticLayer');
-const glitchBars  = document.getElementById('glitchBars');
-const glitchClone = document.getElementById('glitchClone');
-const glitchImg   = document.getElementById('glitchImg');
-const confirmBtn  = document.getElementById('confirmBtn');
-const wrongMsg    = document.getElementById('wrongMsg');
-const analystNote = document.getElementById('analystNote');
-const gate        = document.getElementById('gate');
-const gateInput   = document.getElementById('gateInput');
-const gateBtn     = document.getElementById('gateBtn');
-const gateError   = document.getElementById('gateError');
-const termEl      = document.getElementById('terminal');
-const progressEl  = document.getElementById('progress');
-const barEl       = document.getElementById('progressBar');
-const proceedEl   = document.getElementById('proceedWrap');
-const panel       = document.querySelector('.panel');
+
+// ── ELEMENTS ──────────────────────────────────────────
+const poster       = document.getElementById('channelPoster');
+const chNumLabel   = document.getElementById('chNumLabel');
+const chTitle      = document.getElementById('chTitle');
+const chDisplayNum = document.getElementById('chDisplayNum');
+const staticLayer  = document.getElementById('staticLayer');
+const glitchBars   = document.getElementById('glitchBars');
+const glitchClone  = document.getElementById('glitchClone');
+const glitchImg    = document.getElementById('glitchImg');
+const confirmBtn   = document.getElementById('confirmBtn');
+const wrongMsg     = document.getElementById('wrongMsg');
+const analystNote  = document.getElementById('analystNote');
+const gate         = document.getElementById('gate');
+const gateInput    = document.getElementById('gateInput');
+const gateBtn      = document.getElementById('gateBtn');
+const gateError    = document.getElementById('gateError');
+const termEl       = document.getElementById('terminal');
+const progressEl   = document.getElementById('progress');
+const barEl        = document.getElementById('progressBar');
+const proceedEl    = document.getElementById('proceedWrap');
+const panel        = document.querySelector('.panel');
 
 // ── LOAD CHANNEL ──────────────────────────────────────
 function loadChannel(idx) {
     if (confirmed) return;
+    playClick();
 
     staticLayer.classList.add('show');
     poster.style.opacity = '0';
@@ -762,29 +872,31 @@ function loadChannel(idx) {
         chDisplayNum.textContent = String(idx + 1).padStart(2, '0');
         staticLayer.classList.remove('show');
 
-        // Heavy glitch — Breaking Bad only, once
-        if (ch.correct && !glitchDone) {
-            glitchDone = true;
+        if (ch.correct) {
             glitchImg.src = ch.img;
-            setTimeout(triggerHeavyGlitch, 180);
+            setTimeout(triggerGlitch, 200);
         }
-    }, 230);
+    }, 240);
 }
 
-function triggerHeavyGlitch() {
+function triggerGlitch() {
+    glitchBars.classList.remove('fire');
+    glitchClone.classList.remove('fire');
+    chTitle.classList.remove('glitching');
+    void glitchBars.offsetWidth;
+    playGlitchSound();
     glitchBars.classList.add('fire');
     glitchClone.classList.add('fire');
     chTitle.classList.add('glitching');
-
     setTimeout(() => {
         glitchBars.classList.remove('fire');
         glitchClone.classList.remove('fire');
-    }, 2000);
+    }, 2200);
 }
 
 loadChannel(currentCh);
 
-// ── CHANNEL BUTTONS ───────────────────────────────────
+// ── REMOTE BUTTONS ────────────────────────────────────
 document.getElementById('chUp').addEventListener('click', () => {
     if (confirmed) return;
     press('chUp');
@@ -805,7 +917,7 @@ function press(id) {
     setTimeout(() => b.classList.remove('pressed'), 140);
 }
 
-// ── CONFIRM (always active) ───────────────────────────
+// ── CONFIRM ───────────────────────────────────────────
 confirmBtn.addEventListener('click', () => {
     if (confirmed) return;
     const ch = channels[currentCh];
@@ -813,7 +925,7 @@ confirmBtn.addEventListener('click', () => {
     if (ch.correct) {
         confirmed = true;
         confirmBtn.classList.add('locked');
-        confirmBtn.textContent = '✓ Broadcast Confirmed — Breaking Bad';
+        confirmBtn.textContent = '✓ Broadcast Confirmed';
         wrongMsg.style.display = 'none';
 
         setTimeout(() => {
@@ -823,7 +935,6 @@ confirmBtn.addEventListener('click', () => {
         }, 500);
 
     } else {
-        // Wrong — show error, shake, don't lock
         wrongMsg.textContent   = `"${ch.name}" — not the broadcast. Keep searching.`;
         wrongMsg.style.display = 'block';
         panel.classList.add('shake');
@@ -859,7 +970,7 @@ function check() {
     } else {
         gateInput.classList.add('wrong');
         panel.classList.add('shake');
-        gateError.textContent = 'SIGNAL NOT RECOGNISED — CHECK THE WALL AGAIN';
+        gateError.textContent = 'SIGNAL NOT RECOGNISED — CHECK THE SIGN AGAIN';
         setTimeout(() => {
             panel.classList.remove('shake');
             gateInput.classList.remove('wrong');
@@ -868,7 +979,7 @@ function check() {
     }
 }
 
-// ── TERMINAL + PROGRESS ───────────────────────────────
+// ── TERMINAL ──────────────────────────────────────────
 const logs = [
     "Broadcast signal confirmed...",
     "Cross-referencing airtime logs...",
