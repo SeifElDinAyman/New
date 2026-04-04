@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Flashback 05 — Broadcast | Case #114</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+    background: #050505;
+    font-family: "Courier New", monospace;
+    color: #ddd;
+    min-height: 100vh;
+    padding: 15px;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle at top, rgba(139,0,0,0.18), transparent 35%),
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.025) 0px,
+            rgba(255,255,255,0.025) 1px,
+            transparent 2px,
+            transparent 4px
+        );
+    pointer-events: none;
+    z-index: 0;
+}
+
+.wrap {
+    max-width: 420px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    animation: fadeIn 1.2s ease both;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── TOPBAR ── */
+.topbar {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    padding: 11px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.badge {
+    background: #8b0000;
+    color: #ffcccc;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    box-shadow: 0 0 14px rgba(139,0,0,0.4);
+    text-transform: uppercase;
+}
+
+.topmeta {
+    color: #666;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* ── PANEL ── */
+.panel {
+    background: #0d0d0d;
+    border: 1px solid #2a2a2a;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    padding: 24px 20px 28px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.9);
+    position: relative;
+    overflow: hidden;
+}
+
+.panel::before {
+    content: "BROADCAST LOG";
+    position: absolute;
+    top: 22px; right: -38px;
+    transform: rotate(28deg);
+    border: 1px solid rgba(139,0,0,0.25);
+    color: rgba(139,0,0,0.18);
+    font-size: 8px;
+    letter-spacing: 3px;
+    padding: 4px 14px;
+    pointer-events: none;
+}
+
+.section-tag {
+    color: #666;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+h1 {
+    font-size: 17px;
+    color: #f0f0f0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: normal;
+    margin-bottom: 4px;
+}
+
+.subtitle {
+    color: #555;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+}
+
+.divider { border: none; border-top: 1px solid #1e1e1e; margin: 18px 0; }
+
+p { font-size: 12px; color: #b8b8b8; line-height: 1.9; margin-bottom: 10px; }
+p strong { color: #f0f0f0; font-weight: normal; }
+p em { color: #e0c060; font-style: italic; }
+
+.list-item {
+    position: relative;
+    padding-left: 16px;
+    font-size: 12px;
+    color: #aaa;
+    line-height: 1.85;
+    margin-bottom: 5px;
+}
+.list-item::before { content: "▸"; position: absolute; left: 0; color: #8b0000; }
+
+/* ── SCREEN ── */
+.screen-outer {
+    position: relative;
+    background: #000;
+    border: 1px solid #1a1a1a;
+    border-bottom: none;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    margin-top: 18px;
+}
+
+/* Scanlines */
+.screen-outer::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px,
+        rgba(0,0,0,0.22) 2px, rgba(0,0,0,0.22) 4px
+    );
+    pointer-events: none;
+    z-index: 20;
+}
+
+/* Vignette */
+.screen-outer::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.65) 100%);
+    pointer-events: none;
+    z-index: 21;
+}
+
+.channel-poster {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    position: absolute; inset: 0;
+    z-index: 1;
+    transition: opacity 0.06s;
+}
+
+/* Static */
+.static-layer {
+    position: absolute; inset: 0; z-index: 10;
+    opacity: 0; pointer-events: none;
+    background:
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 3px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 4px);
+    transition: opacity 0.05s;
+}
+
+.static-layer.show {
+    opacity: 1;
+    animation: staticAnim 0.07s steps(4) infinite;
+}
+
+@keyframes staticAnim {
+    0%   { transform: translateY(0)   scaleX(1);    opacity: 1; }
+    25%  { transform: translateY(-4px) scaleX(1.02); opacity: 0.5; }
+    50%  { transform: translateY(3px)  scaleX(0.98); opacity: 0.9; }
+    75%  { transform: translateY(-2px) scaleX(1);    opacity: 0.4; }
+    100% { transform: translateY(1px)  scaleX(1);    opacity: 0.8; }
+}
+
+/* ── HEAVY GLITCH (Breaking Bad) ── */
+.glitch-bars {
+    position: absolute; inset: 0; z-index: 15;
+    opacity: 0; pointer-events: none; overflow: hidden;
+}
+.glitch-bars.fire { animation: glitchFireAnim 2s steps(1) forwards; }
+
+@keyframes glitchFireAnim {
+    0%  { opacity: 1; }
+    6%  { opacity: 0; }
+    10% { opacity: 1; }
+    13% { opacity: 0; }
+    17% { opacity: 1; }
+    21% { opacity: 0; }
+    24% { opacity: 1; }
+    28% { opacity: 0; }
+    100%{ opacity: 0; }
+}
+
+.gb { position: absolute; left: 0; right: 0; mix-blend-mode: screen; }
+.gb1 { top: 12%; height: 10px; background: rgba(139,0,0,0.9);   animation: gbSlide1 0.09s steps(3) infinite; }
+.gb2 { top: 33%; height: 5px;  background: rgba(255,255,255,0.8); animation: gbSlide2 0.07s steps(2) infinite; }
+.gb3 { top: 54%; height: 12px; background: rgba(139,0,0,0.7);   animation: gbSlide3 0.11s steps(4) infinite; }
+.gb4 { top: 70%; height: 4px;  background: rgba(255,255,255,0.6); animation: gbSlide4 0.05s steps(2) infinite; }
+.gb5 { top: 22%; height: 7px;  background: rgba(180,0,0,0.5);   animation: gbSlide5 0.08s steps(3) infinite; }
+.gb6 { top: 82%; height: 8px;  background: rgba(255,200,200,0.4); animation: gbSlide1 0.12s steps(4) infinite; }
+
+@keyframes gbSlide1 { 0%{transform:translateX(-40px)} 33%{transform:translateX(30px)} 66%{transform:translateX(-15px)} 100%{transform:translateX(10px)} }
+@keyframes gbSlide2 { 0%{transform:translateX(50px)}  50%{transform:translateX(-30px)} 100%{transform:translateX(20px)} }
+@keyframes gbSlide3 { 0%{transform:translateX(-25px)} 25%{transform:translateX(45px)} 50%{transform:translateX(-8px)} 75%{transform:translateX(30px)} 100%{transform:translateX(-20px)} }
+@keyframes gbSlide4 { 0%{transform:translateX(20px)}  50%{transform:translateX(-50px)} 100%{transform:translateX(15px)} }
+@keyframes gbSlide5 { 0%{transform:translateX(-60px)} 33%{transform:translateX(15px)} 66%{transform:translateX(-40px)} 100%{transform:translateX(25px)} }
+
+/* Color split clone */
+.glitch-clone {
+    position: absolute; inset: 0; z-index: 14;
+    opacity: 0; pointer-events: none; overflow: hidden;
+}
+.glitch-clone.fire { animation: cloneAnim 2s steps(1) forwards; }
+
+@keyframes cloneAnim {
+    0%  { opacity: 0; }
+    5%  { opacity: 1; transform: translate(-10px, 4px);  filter: hue-rotate(90deg)  saturate(4) brightness(1.5); }
+    10% { opacity: 0; }
+    15% { opacity: 1; transform: translate(8px, -5px);   filter: hue-rotate(180deg) saturate(6) brightness(2); }
+    20% { opacity: 0; }
+    27% { opacity: 1; transform: translate(-15px, 3px);  filter: hue-rotate(270deg) saturate(5) brightness(1.8); }
+    32% { opacity: 0; }
+    100%{ opacity: 0; }
+}
+
+.glitch-clone img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    position: absolute; inset: 0;
+}
+
+/* Overlay info */
+.ch-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.93));
+    padding: 24px 14px 10px;
+    z-index: 22;
+}
+
+.ch-num-label {
+    font-size: 9px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+}
+
+.ch-title {
+    font-size: 15px;
+    color: #f0f0f0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.3s;
+}
+
+.ch-title.glitching {
+    animation: titleGlitch 2s steps(1) forwards;
+}
+
+@keyframes titleGlitch {
+    0%  { color: #f0f0f0; text-shadow: none; letter-spacing: 2px; }
+    5%  { color: #ff0000; text-shadow: 4px 0 #00ffff, -4px 0 #ff00ff; letter-spacing: 6px; transform: translateX(-5px); }
+    10% { color: #ffffff; text-shadow: -3px 0 #ff0000; letter-spacing: 2px; transform: none; }
+    15% { color: #ff0000; text-shadow: 5px 0 #0000ff, -5px 0 #ff0000; letter-spacing: 8px; transform: translateX(8px); }
+    20% { color: #f0f0f0; text-shadow: none; transform: none; letter-spacing: 2px; }
+    28% { color: #8b0000; text-shadow: 2px 0 #ff0000; transform: translateX(-2px); }
+    32% { color: #f0f0f0; text-shadow: none; transform: none; }
+    100%{ color: #e0c060; text-shadow: 0 0 14px rgba(224,192,96,0.6); letter-spacing: 2px; }
+}
+
+.rec-dot {
+    position: absolute;
+    top: 10px; right: 12px;
+    font-size: 9px;
+    color: rgba(139,0,0,0.65);
+    letter-spacing: 2px;
+    z-index: 22;
+    animation: recBlink 1.4s ease infinite;
+}
+
+@keyframes recBlink {
+    0%,100% { opacity: 1; } 50% { opacity: 0.15; }
+}
+
+/* ── SCREEN FOOTER ── */
+.screen-footer {
+    background: #0a0a0a;
+    border: 1px solid #1a1a1a;
+    border-top: 1px solid #000;
+    padding: 7px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.sf-label { font-size: 9px; color: #2a2a2a; letter-spacing: 2px; text-transform: uppercase; }
+
+.sf-lights { display: flex; gap: 5px; align-items: center; }
+.sf-light  { width: 5px; height: 5px; border-radius: 50%; background: #1a1a1a; }
+.sf-light.on {
+    background: #8b0000;
+    box-shadow: 0 0 5px rgba(139,0,0,0.7);
+    animation: recBlink 2s ease infinite;
+}
+
+/* ── CONTROLS ── */
+.controls {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Ch counter */
+.ch-display {
+    background: #000;
+    border: 1px solid #1a1a1a;
+    border-radius: 6px;
+    padding: 10px 14px;
+    text-align: center;
+    min-width: 64px;
+}
+
+.ch-display-num {
+    font-size: 28px;
+    color: #8b0000;
+    letter-spacing: 3px;
+    text-shadow: 0 0 12px rgba(139,0,0,0.6);
+    line-height: 1;
+    font-family: "Courier New", monospace;
+}
+
+.ch-display-label {
+    font-size: 8px;
+    color: #333;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 3px;
+}
+
+/* Buttons */
+.ch-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.btn-ch {
+    padding: 11px 16px;
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 6px;
+    color: #c0c0c0;
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.02) inset;
+    transition: filter 0.1s, transform 0.1s, background 0.1s;
+    user-select: none;
+}
+
+.btn-ch:active, .btn-ch.pressed {
+    filter: brightness(1.6);
+    transform: translateY(1px);
+    background: #181818;
+}
+
+.btn-ch .arr { color: #e0c060; font-size: 13px; }
+
+/* ── CONFIRM BUTTON ── */
+.btn-confirm {
+    width: 100%;
+    padding: 13px;
+    background: #8b0000;
+    border: 1px solid #8b0000;
+    color: #ffcccc;
+    font-family: "Courier New", monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 6px;
+    margin-top: 12px;
+    box-shadow: 0 0 20px rgba(139,0,0,0.35), 0 2px 8px rgba(0,0,0,0.5);
+    transition: filter 0.2s, box-shadow 0.2s;
+    animation: confirmPulse 2s ease infinite;
+}
+
+@keyframes confirmPulse {
+    0%,100% { box-shadow: 0 0 20px rgba(139,0,0,0.35), 0 2px 8px rgba(0,0,0,0.5); }
+    50%      { box-shadow: 0 0 38px rgba(139,0,0,0.65), 0 2px 8px rgba(0,0,0,0.5); }
+}
+
+.btn-confirm:hover  { filter: brightness(1.15); }
+.btn-confirm:active { filter: brightness(1.3); transform: translateY(1px); }
+
+.btn-confirm.locked {
+    animation: none;
+    opacity: 0.45;
+    cursor: default;
+    box-shadow: none;
+}
+
+/* Wrong flash */
+.wrong-msg {
+    display: none;
+    margin-top: 10px;
+    font-size: 10px;
+    color: rgba(255,100,100,0.7);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+    min-height: 14px;
+}
+
+/* ── ANALYST NOTE ── */
+.analyst-note {
+    display: none;
+    background: #080808;
+    border: 1px solid #1e1e1e;
+    border-left: 2px solid #8b0000;
+    padding: 16px 14px;
+    margin-top: 20px;
+    animation: fadeIn 0.8s ease both;
+}
+.analyst-note.show { display: block; }
+
+.note-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #555;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.analyst-note p { font-size: 11px; color: #aaa; line-height: 1.9; margin-bottom: 8px; }
+.analyst-note p:last-child { margin-bottom: 0; }
+.analyst-note strong { color: #f0f0f0; font-weight: normal; }
+.analyst-note em { color: #e0c060; font-style: italic; }
+
+/* ── GATE ── */
+.gate { display: none; margin-top: 18px; padding-top: 16px; border-top: 1px solid #1e1e1e; }
+.gate.show { display: block; }
+
+.gate-label { font-size: 9px; letter-spacing: 3px; color: #555; text-transform: uppercase; margin-bottom: 6px; }
+.gate-hint  { font-size: 11px; color: #666; font-style: italic; line-height: 1.8; margin-bottom: 14px; }
+
+.gate-input {
+    width: 100%; padding: 13px;
+    background: #000; border: 1px solid #2a2a2a;
+    color: #f0f0f0; text-align: center; border-radius: 6px;
+    outline: none; font-family: "Courier New", monospace;
+    font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.gate-input:focus   { border-color: #444; box-shadow: 0 0 12px rgba(201,168,76,0.1); }
+.gate-input.correct { border-color: #e0c060; box-shadow: 0 0 16px rgba(224,192,96,0.25); color: #e0c060; }
+.gate-input.wrong   { border-color: #8b0000; box-shadow: 0 0 12px rgba(139,0,0,0.3); color: #ff6666; }
+
+.gate-btn {
+    margin-top: 10px; width: 100%; padding: 12px;
+    background: #8b0000; border: none; color: #fff;
+    cursor: pointer; border-radius: 6px; letter-spacing: 2px;
+    font-size: 11px; font-family: "Courier New", monospace;
+    text-transform: uppercase;
+    transition: filter 0.2s, box-shadow 0.2s;
+}
+.gate-btn:hover { filter: brightness(1.15); box-shadow: 0 0 20px rgba(139,0,0,0.5); }
+
+.gate-error {
+    margin-top: 10px; font-size: 10px;
+    color: rgba(255,100,100,0.7); letter-spacing: 1px;
+    text-transform: uppercase; text-align: center; min-height: 14px;
+}
+
+/* ── TERMINAL / PROGRESS / PROCEED ── */
+#terminal {
+    display: none; margin-top: 14px; font-size: 10px;
+    color: #00ff9c; height: 34px; overflow: hidden;
+    line-height: 1.6; white-space: pre-wrap;
+    text-shadow: 0 0 6px rgba(0,255,156,0.4);
+}
+
+.progress {
+    width: 100%; height: 4px; background: #111;
+    margin-top: 10px; display: none;
+    border-radius: 10px; overflow: hidden;
+}
+.progress-bar {
+    height: 100%; width: 0%;
+    background: #00ff9c; border-radius: 10px;
+    box-shadow: 0 0 8px rgba(0,255,156,0.5);
+    transition: width 0.2s;
+}
+
+.proceed-wrap { display: none; margin-top: 14px; }
+.proceed-btn {
+    display: block; width: 100%; padding: 13px;
+    background: #0d0d0d; border: 1px solid #e0c060;
+    color: #e0c060; border-radius: 6px; letter-spacing: 2px;
+    font-size: 11px; font-family: "Courier New", monospace;
+    text-transform: uppercase; text-decoration: none;
+    text-align: center; transition: background 0.2s, box-shadow 0.2s;
+    animation: fadeIn 0.8s ease both;
+}
+.proceed-btn:hover { background: rgba(224,192,96,0.07); box-shadow: 0 0 18px rgba(224,192,96,0.2); }
+
+.system { margin-top: 14px; font-size: 10px; color: #333; line-height: 1.6; text-align: center; }
+
+.shake { animation: shake 0.28s linear; }
+@keyframes shake {
+    0%  { transform: translateX(0); }   25% { transform: translateX(-6px); }
+    50% { transform: translateX(6px); } 75% { transform: translateX(-4px); }
+    100%{ transform: translateX(0); }
+}
+
+@keyframes termFlicker {
+    0%,19%,21%,23%,25%,54%,56%,100% { text-shadow: 0 0 4px #00ff9c; }
+    20%,22%,24%,55% { text-shadow: 0 0 14px #00ff9c; }
+}
+.term-flicker { animation: termFlicker 0.15s infinite; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+    <div class="topbar">
+        <span class="badge">Flashback 05 — Broadcast</span>
+        <span class="topmeta">Case #114 | Airtime Log</span>
+    </div>
+
+    <div class="panel">
+
+        <div class="section-tag">Evidence — Background Broadcast</div>
+        <h1>Identify The Programme</h1>
+        <div class="subtitle">Airtime cross-reference — timestamp recovery</div>
+
+        <hr class="divider">
+
+        <p>A television was running in the background at the time of the incident. The subject did not register the content clearly — but audio fragments were recovered.</p>
+
+        <div class="list-item">Genre: Crime. American production.</div>
+        <div class="list-item">Setting: Southwest United States.</div>
+        <div class="list-item">Commercial establishment visible in background.</div>
+        <div class="list-item">Subject in white uniform. Controlled demeanor.</div>
+        <div class="list-item" style="margin-top:4px;">Broadcast channel: <strong>unknown.</strong> Identify it.</div>
+
+        <hr class="divider">
+
+        <p style="font-size:11px;color:#555;font-style:italic;">
+            Eight channels recovered from the airtime log.
+            Cycle through them. When you find the correct broadcast — confirm it.
+        </p>
+
+        <!-- SCREEN -->
+        <div class="screen-outer" id="screenOuter">
+            <div class="rec-dot">● REC</div>
+            <div class="static-layer"  id="staticLayer"></div>
+            <div class="glitch-bars"   id="glitchBars">
+                <div class="gb gb1"></div>
+                <div class="gb gb2"></div>
+                <div class="gb gb3"></div>
+                <div class="gb gb4"></div>
+                <div class="gb gb5"></div>
+                <div class="gb gb6"></div>
+            </div>
+            <div class="glitch-clone"  id="glitchClone">
+                <img id="glitchImg" src="" alt="" />
+            </div>
+            <img class="channel-poster" id="channelPoster" src="" alt="" />
+            <div class="ch-overlay">
+                <div class="ch-num-label" id="chNumLabel">CH 01</div>
+                <div class="ch-title"     id="chTitle">—</div>
+            </div>
+        </div>
+
+        <!-- SCREEN FOOTER -->
+        <div class="screen-footer">
+            <div class="sf-label">IA — CASE #114</div>
+            <div class="sf-lights">
+                <div class="sf-light"></div>
+                <div class="sf-light"></div>
+                <div class="sf-light on"></div>
+            </div>
+        </div>
+
+        <!-- CONTROLS -->
+        <div class="controls">
+            <div class="ch-display">
+                <div class="ch-display-num"   id="chDisplayNum">01</div>
+                <div class="ch-display-label">CH</div>
+            </div>
+            <div class="ch-buttons">
+                <div class="btn-ch" id="chUp">
+                    <span class="arr">▲</span> CH +
+                </div>
+                <div class="btn-ch" id="chDown">
+                    <span class="arr">▼</span> CH −
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-confirm" id="confirmBtn">✦ &nbsp; CONFIRM BROADCAST &nbsp; ✦</button>
+        <div class="wrong-msg" id="wrongMsg"></div>
+
+        <!-- ANALYST NOTE -->
+        <div class="analyst-note" id="analystNote">
+            <div class="note-label">Analyst Note — Broadcast Confirmed</div>
+            <p>Programme identified. Airtime cross-reference complete. Our copy of the footage is <strong>corrupted past this point.</strong></p>
+            <p>You have access to the full broadcast. Open <em>Netflix</em> now.</p>
+            <p>
+                <strong>Season 2. Episode 11.</strong><br>
+                Jump to exactly <strong>26 minutes and 28 seconds.</strong><br>
+                Look at the wall behind him.<br>
+                Read the name of the establishment.<br>
+                That is your next key.
+            </p>
+        </div>
+
+        <!-- GATE -->
+        <div class="gate" id="gate">
+            <div class="gate-label">Report What You See On The Wall</div>
+            <p class="gate-hint">
+                Read the sign carefully.<br>
+                Enter the full establishment name exactly as it appears.
+            </p>
+            <input
+                class="gate-input" id="gateInput"
+                type="text"
+                placeholder="_ _ _   _ _ _ _ _ _   _ _ _ _ _ _ _"
+                maxlength="30"
+                autocomplete="off" autocorrect="off" spellcheck="false"
+            />
+            <button class="gate-btn" id="gateBtn">CONFIRM BROADCAST SIGNAL</button>
+            <div class="gate-error" id="gateError"></div>
+        </div>
+
+        <div id="terminal"></div>
+        <div class="progress" id="progress"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="proceed-wrap" id="proceedWrap">
+            <a class="proceed-btn" href="YOUR_NEXT_STAGE_LINK">SIGNAL CONFIRMED — PROCEED →</a>
+        </div>
+
+    </div>
+
+    <div class="system">
+        IP Logged: Cairo, Egypt<br>
+        Broadcast Archive — Internal Affairs Division
+    </div>
+
+</div>
+
+<script>
+// ── CHANNELS ──────────────────────────────────────────────────────────────────
+// Replace each img with:
+// https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/FILENAME.jpg
+// ──────────────────────────────────────────────────────────────────────────────
+const channels = [
+    { num:"CH 01", name:"Collateral",     img:"https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/collateral.jpg" },
+    { num:"CH 02", name:"Dark",           img:"https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/dark.jpg" },
+    { num:"CH 03", name:"Chernobyl",      img:"https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/chernobyl.jpg" },
+    { num:"CH 04", name:"Breaking Bad",   img:"https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/breakingbad.jpg", correct:true },
+    { num:"CH 05", name:"The Irishman",   img:"https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/irishman.jpg" },
+    { num:"CH 06", name:"Memento",        img:"https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/memento.jpg" },
+    { num:"CH 07", name:"Black Mirror",   img:"https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/blackmirror.jpg" },
+    { num:"CH 08", name:"Behind Her Eyes",img:"https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/behindereyes.jpg" }
+];
+
+let currentCh  = 0;
+let confirmed  = false;
+let isRunning  = false;
+let glitchDone = false;
+
+const poster      = document.getElementById('channelPoster');
+const chNumLabel  = document.getElementById('chNumLabel');
+const chTitle     = document.getElementById('chTitle');
+const chDisplayNum= document.getElementById('chDisplayNum');
+const staticLayer = document.getElementById('staticLayer');
+const glitchBars  = document.getElementById('glitchBars');
+const glitchClone = document.getElementById('glitchClone');
+const glitchImg   = document.getElementById('glitchImg');
+const confirmBtn  = document.getElementById('confirmBtn');
+const wrongMsg    = document.getElementById('wrongMsg');
+const analystNote = document.getElementById('analystNote');
+const gate        = document.getElementById('gate');
+const gateInput   = document.getElementById('gateInput');
+const gateBtn     = document.getElementById('gateBtn');
+const gateError   = document.getElementById('gateError');
+const termEl      = document.getElementById('terminal');
+const progressEl  = document.getElementById('progress');
+const barEl       = document.getElementById('progressBar');
+const proceedEl   = document.getElementById('proceedWrap');
+const panel       = document.querySelector('.panel');
+
+// ── LOAD CHANNEL ──────────────────────────────────────
+function loadChannel(idx) {
+    if (confirmed) return;
+
+    staticLayer.classList.add('show');
+    poster.style.opacity = '0';
+    chNumLabel.textContent = '· · ·';
+    chTitle.textContent    = '';
+    chTitle.classList.remove('glitching');
+
+    setTimeout(() => {
+        const ch = channels[idx];
+        poster.src             = ch.img;
+        poster.style.opacity   = '1';
+        chNumLabel.textContent = ch.num;
+        chTitle.textContent    = ch.name;
+        chDisplayNum.textContent = String(idx + 1).padStart(2, '0');
+        staticLayer.classList.remove('show');
+
+        // Heavy glitch — Breaking Bad only, once
+        if (ch.correct && !glitchDone) {
+            glitchDone = true;
+            glitchImg.src = ch.img;
+            setTimeout(triggerHeavyGlitch, 180);
+        }
+    }, 230);
+}
+
+function triggerHeavyGlitch() {
+    glitchBars.classList.add('fire');
+    glitchClone.classList.add('fire');
+    chTitle.classList.add('glitching');
+
+    setTimeout(() => {
+        glitchBars.classList.remove('fire');
+        glitchClone.classList.remove('fire');
+    }, 2000);
+}
+
+loadChannel(currentCh);
+
+// ── CHANNEL BUTTONS ───────────────────────────────────
+document.getElementById('chUp').addEventListener('click', () => {
+    if (confirmed) return;
+    press('chUp');
+    currentCh = (currentCh + 1) % channels.length;
+    loadChannel(currentCh);
+});
+
+document.getElementById('chDown').addEventListener('click', () => {
+    if (confirmed) return;
+    press('chDown');
+    currentCh = (currentCh - 1 + channels.length) % channels.length;
+    loadChannel(currentCh);
+});
+
+function press(id) {
+    const b = document.getElementById(id);
+    b.classList.add('pressed');
+    setTimeout(() => b.classList.remove('pressed'), 140);
+}
+
+// ── CONFIRM (always active) ───────────────────────────
+confirmBtn.addEventListener('click', () => {
+    if (confirmed) return;
+    const ch = channels[currentCh];
+
+    if (ch.correct) {
+        confirmed = true;
+        confirmBtn.classList.add('locked');
+        confirmBtn.textContent = '✓ Broadcast Confirmed — Breaking Bad';
+        wrongMsg.style.display = 'none';
+
+        setTimeout(() => {
+            analystNote.classList.add('show');
+            gate.classList.add('show');
+            analystNote.scrollIntoView({ behavior:'smooth', block:'start' });
+        }, 500);
+
+    } else {
+        // Wrong — show error, shake, don't lock
+        wrongMsg.textContent   = `"${ch.name}" — not the broadcast. Keep searching.`;
+        wrongMsg.style.display = 'block';
+        panel.classList.add('shake');
+        setTimeout(() => {
+            panel.classList.remove('shake');
+            setTimeout(() => { wrongMsg.style.display = 'none'; }, 2500);
+        }, 300);
+    }
+});
+
+// ── GATE ──────────────────────────────────────────────
+const CORRECT = "LOS POLLOS HERMANOS";
+
+gateBtn.addEventListener('click', check);
+gateInput.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+
+function check() {
+    if (isRunning) return;
+    const val = gateInput.value.trim().toUpperCase();
+    gateError.textContent = '';
+
+    if (!val) { gateError.textContent = 'ENTER THE ESTABLISHMENT NAME'; return; }
+
+    if (val === CORRECT) {
+        isRunning = true;
+        gateInput.classList.add('correct');
+        gateInput.disabled    = true;
+        gateBtn.disabled      = true;
+        gateBtn.style.opacity = '0.5';
+        termEl.style.display  = 'block';
+        termEl.classList.add('term-flicker');
+        setTimeout(() => { termEl.classList.remove('term-flicker'); streamLogs(); }, 300);
+    } else {
+        gateInput.classList.add('wrong');
+        panel.classList.add('shake');
+        gateError.textContent = 'SIGNAL NOT RECOGNISED — CHECK THE WALL AGAIN';
+        setTimeout(() => {
+            panel.classList.remove('shake');
+            gateInput.classList.remove('wrong');
+            gateInput.value = '';
+        }, 500);
+    }
+}
+
+// ── TERMINAL + PROGRESS ───────────────────────────────
+const logs = [
+    "Broadcast signal confirmed...",
+    "Cross-referencing airtime logs...",
+    "Crime window narrowed — timestamp recovered...",
+    "Next evidence package unlocked..."
+];
+
+function typeLine(text, cb) {
+    let i = 0;
+    function t() {
+        if (i < text.length) { termEl.innerHTML += text[i++]; setTimeout(t, 22); }
+        else { termEl.innerHTML += '\n'; if (cb) setTimeout(cb, 70); }
+    }
+    t();
+}
+
+function streamLogs(i = 0) {
+    if (i < logs.length) typeLine(logs[i], () => streamLogs(i + 1));
+    else {
+        progressEl.style.display = 'block';
+        let w = 0;
+        const iv = setInterval(() => {
+            w += Math.random() * 11; w = Math.min(w, 100);
+            barEl.style.width = w + '%';
+            if (w >= 100) { clearInterval(iv); proceedEl.style.display = 'block'; }
+        }, 150);
+    }
+}
+</script>
+
+</body>
+</html>
