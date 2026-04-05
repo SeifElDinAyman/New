@@ -2,1104 +2,184 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Chase — Case #114</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case #114 — Chase</title>
+
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
 body {
-    background: #050505;
-    font-family: "Courier New", monospace;
-    color: #ddd;
-    min-height: 100vh;
-    padding: 15px;
-    overflow-x: hidden;
+    margin:0;
+    background:#0a0a0a;
+    color:#eee;
+    font-family: monospace;
+    text-align:center;
 }
 
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background:
-        radial-gradient(circle at top, rgba(139,0,0,0.18), transparent 35%),
-        repeating-linear-gradient(
-            to bottom,
-            rgba(255,255,255,0.025) 0px,
-            rgba(255,255,255,0.025) 1px,
-            transparent 2px,
-            transparent 4px
-        );
-    pointer-events: none;
-    z-index: 0;
+input {
+    padding:10px;
+    font-size:16px;
+    margin:10px;
 }
 
-.wrap {
-    max-width: 420px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
+button {
+    padding:10px 20px;
+    margin:10px;
+    font-size:16px;
+    cursor:pointer;
 }
 
-/* ── ROLE SELECT SCREEN ── */
-#roleScreen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 90vh;
-    gap: 20px;
-    animation: fadeIn 1s ease both;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-.role-badge {
-    background: #8b0000;
-    color: #ffcccc;
-    font-size: 10px;
-    letter-spacing: 2px;
-    padding: 6px 12px;
-    border-radius: 4px;
-    box-shadow: 0 0 16px rgba(139,0,0,0.4);
-    text-transform: uppercase;
-    text-align: center;
-}
-
-.role-title {
-    font-size: 20px;
-    color: #f0f0f0;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    text-align: center;
-    line-height: 1.4;
-}
-
-.role-sub {
-    font-size: 11px;
-    color: #666;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    text-align: center;
-    line-height: 1.8;
-}
-
-.room-input {
-    width: 100%;
-    padding: 14px;
-    background: #000;
-    border: 1px solid #2a2a2a;
-    color: #f0f0f0;
-    text-align: center;
-    border-radius: 6px;
-    outline: none;
-    font-family: "Courier New", monospace;
-    font-size: 20px;
-    letter-spacing: 6px;
-    text-transform: uppercase;
-    transition: border-color 0.2s;
-}
-
-.room-input:focus { border-color: #555; }
-
-.role-btn {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 6px;
-    font-family: "Courier New", monospace;
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: filter 0.2s, box-shadow 0.2s;
-}
-
-.btn-host {
-    background: #8b0000;
-    color: #ffcccc;
-    box-shadow: 0 0 16px rgba(139,0,0,0.3);
-}
-
-.btn-player {
-    background: #111;
-    color: #c0c0c0;
-    border: 1px solid #2a2a2a;
-}
-
-.role-btn:hover { filter: brightness(1.2); }
-
-.role-divider {
-    width: 100%;
-    border: none;
-    border-top: 1px solid #1e1e1e;
-}
-
-.role-note {
-    font-size: 10px;
-    color: #444;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    text-align: center;
-    line-height: 1.7;
-}
-
-/* ── WAITING SCREEN ── */
-#waitScreen {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 90vh;
-    gap: 16px;
-    text-align: center;
-}
-
-.wait-code {
-    font-size: 36px;
-    color: #8b0000;
-    letter-spacing: 10px;
-    text-shadow: 0 0 20px rgba(139,0,0,0.5);
-    font-family: "Courier New", monospace;
-}
-
-.wait-label {
-    font-size: 9px;
-    color: #555;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-}
-
-.wait-pulse {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: #8b0000;
-    animation: waitPulse 1.2s ease infinite;
-    box-shadow: 0 0 10px rgba(139,0,0,0.6);
-}
-
-@keyframes waitPulse {
-    0%,100% { transform: scale(1); opacity: 1; }
-    50%      { transform: scale(1.4); opacity: 0.5; }
-}
-
-/* ── GAME SCREEN ── */
-#gameScreen { display: none; }
-
-.topbar {
-    background: #111;
-    border: 1px solid #2a2a2a;
-    border-bottom: none;
-    border-radius: 10px 10px 0 0;
-    padding: 10px 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.badge {
-    background: #8b0000;
-    color: #ffcccc;
-    font-size: 10px;
-    letter-spacing: 2px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    box-shadow: 0 0 10px rgba(139,0,0,0.3);
-    text-transform: uppercase;
-}
-
-.game-meta {
-    font-size: 10px;
-    color: #555;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.panel {
-    background: #0d0d0d;
-    border: 1px solid #2a2a2a;
-    border-top: none;
-    border-radius: 0 0 10px 10px;
-    padding: 20px 16px 24px;
-    box-shadow: 0 0 40px rgba(0,0,0,0.9);
-}
-
-/* Score */
-.score-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #1e1e1e;
-}
-
-.score-item { text-align: center; }
-
-.score-num {
-    font-size: 28px;
-    color: #f0f0f0;
-    line-height: 1;
-    font-family: "Courier New", monospace;
-}
-
-.score-num.red  { color: #8b0000; text-shadow: 0 0 10px rgba(139,0,0,0.5); }
-.score-num.gold { color: #e0c060; text-shadow: 0 0 10px rgba(224,192,96,0.4); }
-
-.score-lbl {
-    font-size: 8px;
-    color: #444;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-top: 3px;
-}
-
-.score-sep { font-size: 20px; color: #222; }
-
-/* Round indicator */
-.round-bar {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 16px;
-}
-
-.round-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: #1a1a1a;
-    border: 1px solid #2a2a2a;
-    transition: background 0.3s, box-shadow 0.3s;
-}
-
-.round-dot.active {
-    background: #8b0000;
-    box-shadow: 0 0 8px rgba(139,0,0,0.6);
-}
-
-.round-dot.done { background: #333; }
-
-/* ── MAZE ── */
-.maze-section {
-    margin-bottom: 16px;
-}
-
-.maze-label {
-    font-size: 9px;
-    color: #555;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-}
-
-.maze-grid {
-    display: grid;
-    gap: 3px;
-    margin: 0 auto;
-    width: fit-content;
-}
-
-.maze-cell {
-    width: 36px;
-    height: 36px;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    transition: background 0.15s;
-    position: relative;
-}
-
-/* Host view */
-.cell-wall   { background: #0a0a0a; border: 1px solid #111; }
-.cell-path   { background: #141414; border: 1px solid #1e1e1e; }
-.cell-player { background: rgba(224,192,96,0.15); border: 1px solid rgba(224,192,96,0.3); }
-.cell-exit   { background: rgba(0,255,156,0.1); border: 1px solid rgba(0,255,156,0.3); }
-.cell-visited{ background: rgba(139,0,0,0.08); border: 1px solid rgba(139,0,0,0.15); }
-
-/* Player view — dark/fog */
-.cell-fog    { background: #000; border: 1px solid #0a0a0a; }
-.cell-visible{ background: #141414; border: 1px solid #1e1e1e; }
-.cell-visible.cell-player { background: rgba(224,192,96,0.2); border-color: rgba(224,192,96,0.4); }
-.cell-visible.cell-exit   { background: rgba(0,255,156,0.15); border-color: rgba(0,255,156,0.4); }
-
-/* Direction controls */
-.maze-controls {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    max-width: 160px;
-    margin: 12px auto 0;
-}
-
-.btn-move {
-    padding: 12px 8px;
-    background: #111;
-    border: 1px solid #222;
-    border-radius: 6px;
-    color: #c0c0c0;
-    font-family: "Courier New", monospace;
-    font-size: 16px;
-    cursor: pointer;
-    text-align: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-    transition: filter 0.1s, transform 0.1s;
-    user-select: none;
-}
-
-.btn-move:active {
-    filter: brightness(1.8);
-    transform: translateY(1px);
-}
-
-.btn-move.empty { background: transparent; border-color: transparent; pointer-events: none; }
-
-/* ── INTERROGATION ── */
-.interrogation {
-    background: #080808;
-    border: 1px solid #1e1e1e;
-    border-left: 2px solid #8b0000;
-    padding: 14px;
-    margin-bottom: 14px;
-}
-
-.int-label {
-    font-size: 9px;
-    color: #555;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-}
-
-.int-question {
-    font-size: 13px;
-    color: #d0d0d0;
-    line-height: 1.8;
-    margin-bottom: 12px;
-    min-height: 40px;
-    font-style: italic;
-}
-
-.int-buttons {
-    display: flex;
-    gap: 8px;
-}
-
-.btn-answer {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #2a2a2a;
-    border-radius: 6px;
-    font-family: "Courier New", monospace;
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: filter 0.15s, box-shadow 0.15s;
-}
-
-.btn-yes { background: rgba(0,100,0,0.2); color: #7CFC98; border-color: rgba(0,150,0,0.3); }
-.btn-no  { background: rgba(100,0,0,0.2); color: #ff8888; border-color: rgba(150,0,0,0.3); }
-
-.btn-answer:hover { filter: brightness(1.3); }
-.btn-answer:disabled { opacity: 0.4; cursor: default; }
-
-/* Host catch buttons */
-.catch-buttons {
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
-}
-
-.btn-catch {
-    flex: 1;
-    padding: 10px;
-    border-radius: 6px;
-    font-family: "Courier New", monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    border: 1px solid #2a2a2a;
-    transition: filter 0.15s;
-}
-
-.btn-lie    { background: rgba(139,0,0,0.3); color: #ffcccc; border-color: rgba(139,0,0,0.4); }
-.btn-truth  { background: rgba(0,80,0,0.3);  color: #aaffaa; border-color: rgba(0,120,0,0.4); }
-.btn-catch:disabled { opacity: 0.4; cursor: default; }
-.btn-catch:hover:not(:disabled) { filter: brightness(1.3); }
-
-/* Answer display */
-.answer-display {
-    margin-top: 8px;
-    font-size: 12px;
-    color: #888;
-    font-style: italic;
-    min-height: 18px;
-    text-align: center;
-}
-
-.answer-display.yes { color: #7CFC98; }
-.answer-display.no  { color: #ff8888; }
-
-/* Status message */
-.status-msg {
-    text-align: center;
-    font-size: 11px;
-    color: #666;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    min-height: 16px;
-    margin-bottom: 10px;
-    transition: color 0.3s;
-}
-
-.status-msg.good  { color: #7CFC98; text-shadow: 0 0 8px rgba(124,252,152,0.4); }
-.status-msg.bad   { color: #ff5555; text-shadow: 0 0 8px rgba(255,85,85,0.4); }
-.status-msg.gold  { color: #e0c060; text-shadow: 0 0 8px rgba(224,192,96,0.4); }
-
-/* ── END SCREEN ── */
-#endScreen {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 90vh;
-    gap: 16px;
-    text-align: center;
-    animation: fadeIn 1s ease both;
-}
-
-.end-verdict {
-    font-size: 24px;
-    color: #f0f0f0;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    line-height: 1.4;
-}
-
-.end-sub {
-    font-size: 12px;
-    color: #888;
-    line-height: 1.9;
-    font-style: italic;
-    max-width: 300px;
-}
-
-.btn-next {
-    width: 100%;
-    padding: 14px;
-    background: #8b0000;
-    border: none;
-    color: #fff;
-    border-radius: 6px;
-    font-family: "Courier New", monospace;
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    cursor: pointer;
-    box-shadow: 0 0 20px rgba(139,0,0,0.35);
-    text-decoration: none;
-    display: block;
-    text-align: center;
-    transition: filter 0.2s;
-}
-
-.btn-next:hover { filter: brightness(1.15); }
-
-.system { margin-top: 14px; font-size: 10px; color: #333; line-height: 1.6; text-align: center; }
-
-.divider { border: none; border-top: 1px solid #1e1e1e; margin: 14px 0; width: 100%; }
+#game { display:none; }
 </style>
 </head>
 <body>
-<div class="wrap">
 
-<!-- ── ROLE SELECT ── -->
-<div id="roleScreen">
-    <div class="role-badge">Chase Sequence — Case #114</div>
-    <div class="role-title">Who Are You?</div>
-    <div class="role-sub">
-        Enter the same room code<br>on both phones to connect.
+<h2>CASE #114 — CHASE</h2>
+
+<div id="menu">
+    <input id="roomInput" placeholder="Enter Room Code" />
+    <br>
+    <button onclick="startHost()">Hunter (Host)</button>
+    <button onclick="startPlayer()">Fugitive (Player)</button>
+</div>
+
+<div id="game">
+    <h3 id="role"></h3>
+    <p id="status">Waiting...</p>
+
+    <div id="hostUI" style="display:none;">
+        <button onclick="sendQuestion()">Send Question</button>
+        <button onclick="catchLie()">She Lied</button>
     </div>
-    <input class="room-input" id="roomInput" type="text" maxlength="4" placeholder="CODE" autocomplete="off" autocorrect="off" spellcheck="false" />
-    <button class="role-btn btn-host" id="btnHost">I AM THE HUNTER</button>
-    <hr class="role-divider">
-    <button class="role-btn btn-player" id="btnPlayer">I AM THE FUGITIVE</button>
-    <div class="role-note">
-        Hunter sees the full maze.<br>
-        Fugitive navigates in the dark.
+
+    <div id="playerUI" style="display:none;">
+        <button onclick="answer('YES')">YES</button>
+        <button onclick="answer('NO')">NO</button>
     </div>
 </div>
 
-<!-- ── WAITING ── -->
-<div id="waitScreen" style="display:none;flex-direction:column;align-items:center;justify-content:center;min-height:90vh;gap:16px;text-align:center;">
-    <div class="role-badge">Waiting for connection</div>
-    <div class="wait-label">Room Code</div>
-    <div class="wait-code" id="waitCode">----</div>
-    <div class="wait-pulse"></div>
-    <div class="role-sub" id="waitMsg">Share this code with the other player.<br>Both must enter the same code.</div>
-</div>
-
-<!-- ── GAME ── -->
-<div id="gameScreen" style="display:none;">
-    <div class="topbar">
-        <span class="badge" id="roleLabel">FUGITIVE</span>
-        <span class="game-meta" id="roundLabel">ROUND 1 OF 3</span>
-    </div>
-    <div class="panel">
-
-        <div class="score-bar">
-            <div class="score-item">
-                <div class="score-num red" id="hunterScore">0</div>
-                <div class="score-lbl">Hunter</div>
-            </div>
-            <div class="score-sep">—</div>
-            <div class="score-item">
-                <div class="score-num gold" id="fugitiveScore">0</div>
-                <div class="score-lbl">Fugitive</div>
-            </div>
-        </div>
-
-        <div class="round-bar">
-            <div class="round-dot active" id="rd0"></div>
-            <div class="round-dot" id="rd1"></div>
-            <div class="round-dot" id="rd2"></div>
-        </div>
-
-        <div class="status-msg" id="statusMsg">Find the exit before he finds you.</div>
-
-        <!-- INTERROGATION -->
-        <div class="interrogation">
-            <div class="int-label" id="intLabel">Interrogation</div>
-            <div class="int-question" id="intQuestion">Waiting for question...</div>
-
-            <!-- Player answers -->
-            <div class="int-buttons" id="playerAnswers" style="display:none;">
-                <button class="btn-answer btn-yes" id="btnYes">YES</button>
-                <button class="btn-answer btn-no"  id="btnNo">NO</button>
-            </div>
-
-            <!-- Host catches -->
-            <div id="hostCatch" style="display:none;">
-                <div class="answer-display" id="answerDisplay">Waiting for answer...</div>
-                <div class="catch-buttons">
-                    <button class="btn-catch btn-lie"   id="btnLie"   disabled>She Lied</button>
-                    <button class="btn-catch btn-truth" id="btnTruth" disabled>She's Honest</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- MAZE -->
-        <div class="maze-section">
-            <div class="maze-label" id="mazeLabel">Navigate — Find The Exit</div>
-            <div class="maze-grid" id="mazeGrid"></div>
-
-            <!-- Player controls only -->
-            <div class="maze-controls" id="mazeControls" style="display:none;">
-                <div class="btn-move empty"></div>
-                <div class="btn-move" id="btnUp">▲</div>
-                <div class="btn-move empty"></div>
-                <div class="btn-move" id="btnLeft">◀</div>
-                <div class="btn-move empty"></div>
-                <div class="btn-move" id="btnRight">▶</div>
-                <div class="btn-move empty"></div>
-                <div class="btn-move" id="btnDown">▼</div>
-                <div class="btn-move empty"></div>
-            </div>
-        </div>
-
-    </div>
-    <div class="system">Case #114 — Chase Sequence — Live</div>
-</div>
-
-<!-- ── END ── -->
-<div id="endScreen">
-    <div class="role-badge">Chase Complete</div>
-    <div class="end-verdict" id="endVerdict">—</div>
-    <div class="end-sub"    id="endSub">—</div>
-    <hr class="divider">
-    <a class="btn-next" href="YOUR_NEXT_STAGE_LINK" id="endBtn">CONTINUE INVESTIGATION →</a>
-</div>
-
-</div><!-- end wrap -->
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
 <script>
-// ── STORAGE-BASED SYNC ─────────────────────────────────────────────────────
-// Uses window.storage (Claude artifact storage) for real-time sync.
-// Both players use the same room code as the key prefix.
+// 🔥 Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyAmwZlfuzoulkQMkILWGVF1pFM-I5Tiq0E",
+  authDomain: "case114117.firebaseapp.com",
+  databaseURL: "https://case114117-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "case114117",
+  storageBucket: "case114117.firebasestorage.app",
+  messagingSenderId: "868073802486",
+  appId: "1:868073802486:web:cca0c4a033524f706bfad7"
+};
 
-let ROOM    = '';
-let IS_HOST = false;
-let pollInterval = null;
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-// ── MAZE DEFINITION ────────────────────────────────────────────────────────
-// 7x7 grid. 1 = path, 0 = wall
-const MAZES = [
-    [
-        [0,0,0,0,0,0,0],
-        [0,1,1,0,1,1,0],
-        [0,1,0,0,0,1,0],
-        [0,1,1,1,1,1,0],
-        [0,0,0,1,0,0,0],
-        [0,1,1,1,1,1,0],
-        [0,0,0,0,0,0,0],
-    ],
-    [
-        [0,0,0,0,0,0,0],
-        [0,1,1,1,0,1,0],
-        [0,0,0,1,0,1,0],
-        [0,1,1,1,1,1,0],
-        [0,1,0,0,0,0,0],
-        [0,1,1,1,1,1,0],
-        [0,0,0,0,0,0,0],
-    ],
-    [
-        [0,0,0,0,0,0,0],
-        [0,1,0,1,1,1,0],
-        [0,1,0,1,0,1,0],
-        [0,1,1,1,0,1,0],
-        [0,0,0,1,0,1,0],
-        [0,1,1,1,1,1,0],
-        [0,0,0,0,0,0,0],
-    ]
-];
+let ROOM = "";
+let role = "";
 
-const STARTS = [[1,1],[1,1],[1,1]];
-const EXITS  = [[5,5],[5,5],[5,5]];
-
-// ── QUESTIONS ──────────────────────────────────────────────────────────────
-const QUESTIONS = [
-    "Did you know who he was before today?",
-    "Have you been to Maadi before this?",
-    "Did anyone tell you to come here?",
-    "Are you working alone?",
-    "Do you know what was really stolen?",
-    "Have you spoken to the victim before today?",
-    "Do you trust everyone in this investigation?",
-    "Did you recognize the codename immediately?",
-    "Have you lied to us at any point?",
-    "Do you believe this case is over?"
-];
-
-// ── GAME STATE ─────────────────────────────────────────────────────────────
-let round        = 0;
-let hunterPts    = 0;
-let fugitivePts  = 0;
-let playerPos    = {r:1, c:1};
-let mazeEscaped  = false;
-let answerGiven  = false;
-let catchMade    = false;
-let currentQ     = '';
-let currentA     = '';
-let gameOver     = false;
-
-// ── ELEMENTS ───────────────────────────────────────────────────────────────
-const roleScreen    = document.getElementById('roleScreen');
-const waitScreen    = document.getElementById('waitScreen');
-const gameScreen    = document.getElementById('gameScreen');
-const endScreen     = document.getElementById('endScreen');
-const roomInput     = document.getElementById('roomInput');
-const waitCode      = document.getElementById('waitCode');
-const waitMsg       = document.getElementById('waitMsg');
-const roleLabel     = document.getElementById('roleLabel');
-const roundLabel    = document.getElementById('roundLabel');
-const hunterScore   = document.getElementById('hunterScore');
-const fugitiveScore = document.getElementById('fugitiveScore');
-const statusMsg     = document.getElementById('statusMsg');
-const intQuestion   = document.getElementById('intQuestion');
-const intLabel      = document.getElementById('intLabel');
-const playerAnswers = document.getElementById('playerAnswers');
-const hostCatch     = document.getElementById('hostCatch');
-const answerDisplay = document.getElementById('answerDisplay');
-const btnYes        = document.getElementById('btnYes');
-const btnNo         = document.getElementById('btnNo');
-const btnLie        = document.getElementById('btnLie');
-const btnTruth      = document.getElementById('btnTruth');
-const mazeGrid      = document.getElementById('mazeGrid');
-const mazeControls  = document.getElementById('mazeControls');
-const mazeLabel     = document.getElementById('mazeLabel');
-const endVerdict    = document.getElementById('endVerdict');
-const endSub        = document.getElementById('endSub');
-
-roomInput.addEventListener('input', () => {
-    roomInput.value = roomInput.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,4);
-});
-
-// ── ROLE SELECTION ─────────────────────────────────────────────────────────
-document.getElementById('btnHost').addEventListener('click', () => {
-    const code = roomInput.value.trim();
-    if (code.length < 2) { alert('Enter a room code first'); return; }
-    ROOM    = code;
-    IS_HOST = true;
-    startWaiting();
-});
-
-document.getElementById('btnPlayer').addEventListener('click', () => {
-    const code = roomInput.value.trim();
-    if (code.length < 2) { alert('Enter the room code Seif gave you'); return; }
-    ROOM    = code;
-    IS_HOST = false;
-    startWaiting();
-});
-
-// ── WAITING ────────────────────────────────────────────────────────────────
-async function startWaiting() {
-    roleScreen.style.display = 'none';
-    waitScreen.style.display = 'flex';
-    waitCode.textContent     = ROOM;
-
-    if (IS_HOST) {
-        waitMsg.textContent = 'Share this code with the Fugitive.\nWaiting for her to join...';
-        await syncWrite({ phase:'waiting', round:0, hPts:0, fPts:0, pos:{r:1,c:1}, q:'', a:'', escaped:false });
-        pollInterval = setInterval(waitForPlayer, 1500);
-    } else {
-        waitMsg.textContent = 'Connecting to Hunter...\nMake sure you have the same code.';
-        pollInterval = setInterval(waitForHost, 1500);
-    }
+// 🔁 Realtime listener
+function subscribe(callback){
+    db.ref("chase/" + ROOM).on("value", snap=>{
+        if(snap.exists()){
+            console.log("STATE:", snap.val()); // 🔥 DEBUG
+            callback(snap.val());
+        }
+    });
 }
 
-async function waitForPlayer() {
-    const state = await syncRead();
-    if (!state) return;
-    if (state.joined) {
-        clearInterval(pollInterval);
-        beginGame(state);
-    }
-}
+// 🎮 HOST
+function startHost(){
+    ROOM = document.getElementById("roomInput").value.trim().toUpperCase();
+    console.log("ROOM:", ROOM);
 
-async function waitForHost() {
-    const state = await syncRead();
-    if (!state) return;
-    // Player sees waiting state — signal joined
-    await syncWrite({ ...state, joined: true });
-    clearInterval(pollInterval);
-    beginGame(state);
-}
-
-// ── BEGIN GAME ─────────────────────────────────────────────────────────────
-function beginGame(state) {
-    waitScreen.style.display = 'none';
-    gameScreen.style.display = 'block';
-    roleLabel.textContent    = IS_HOST ? 'HUNTER' : 'FUGITIVE';
-
-    if (IS_HOST) {
-        mazeLabel.textContent   = 'Full Map — Track Her Position';
-        intLabel.textContent    = 'Ask The Question';
-        hostCatch.style.display = 'block';
-    } else {
-        mazeControls.style.display = 'grid';
-        playerAnswers.style.display = 'flex';
-    }
-
-    startRound(0);
-}
-
-// ── ROUND ──────────────────────────────────────────────────────────────────
-async function startRound(r) {
-    round        = r;
-    mazeEscaped  = false;
-    answerGiven  = false;
-    catchMade    = false;
-    playerPos    = { r: STARTS[r][0], c: STARTS[r][1] };
-    currentQ     = QUESTIONS[r * 3 + Math.floor(Math.random() * 3)];
-    currentA     = '';
-
-    roundLabel.textContent = `ROUND ${r+1} OF 3`;
-
-    // Round dots
-    for (let i = 0; i < 3; i++) {
-        const d = document.getElementById('rd' + i);
-        d.classList.remove('active','done');
-        if (i < r)  d.classList.add('done');
-        if (i === r) d.classList.add('active');
-    }
-
-    updateScores();
-
-    if (IS_HOST) {
-        intQuestion.textContent = currentQ;
-        answerDisplay.textContent = 'Waiting for her answer...';
-        answerDisplay.className = 'answer-display';
-        btnLie.disabled   = true;
-        btnTruth.disabled = true;
-        statusMsg.textContent = 'Watch the map. Wait for her answer.';
-        statusMsg.className   = 'status-msg';
-
-        await syncWrite({
-            phase: 'round',
-            round: r,
-            hPts: hunterPts,
-            fPts: fugitivePts,
-            pos: playerPos,
-            q: currentQ,
-            a: '',
-            escaped: false,
-            joined: true
-        });
-
-        pollInterval = setInterval(hostPoll, 800);
-    } else {
-        intQuestion.textContent = 'Loading question...';
-        btnYes.disabled = false;
-        btnNo.disabled  = false;
-        statusMsg.textContent = 'Navigate the maze. Answer honestly — or lie.';
-        statusMsg.className   = 'status-msg';
-
-        pollInterval = setInterval(playerPoll, 800);
-    }
-
-    renderMaze();
-}
-
-// ── HOST POLL ──────────────────────────────────────────────────────────────
-async function hostPoll() {
-    const state = await syncRead();
-    if (!state || state.phase !== 'round' || state.round !== round) return;
-
-    // Update player position on map
-    if (state.pos) {
-        playerPos = state.pos;
-        renderMaze();
-    }
-
-    // Check escape
-    if (state.escaped && !mazeEscaped) {
-        mazeEscaped = true;
-        clearInterval(pollInterval);
-        fugitivePts++;
-        updateScores();
-        statusMsg.textContent = 'She escaped the maze! +1 Fugitive';
-        statusMsg.className   = 'status-msg good';
-        btnLie.disabled  = true;
-        btnTruth.disabled = true;
-        setTimeout(() => nextRound(), 2000);
+    if(!ROOM){
+        alert("Enter room code!");
         return;
     }
 
-    // Answer came in
-    if (state.a && state.a !== currentA) {
-        currentA = state.a;
-        answerDisplay.textContent = `She said: ${state.a}`;
-        answerDisplay.className   = `answer-display ${state.a.toLowerCase()}`;
-        btnLie.disabled   = false;
-        btnTruth.disabled = false;
-    }
-}
+    role = "host";
 
-// ── PLAYER POLL ────────────────────────────────────────────────────────────
-async function playerPoll() {
-    const state = await syncRead();
-    if (!state || state.phase !== 'round' || state.round !== round) return;
+    document.getElementById("menu").style.display="none";
+    document.getElementById("game").style.display="block";
+    document.getElementById("role").textContent="Hunter";
 
-    // Get question from host
-    if (state.q && state.q !== currentQ) {
-        currentQ = state.q;
-        intQuestion.textContent = currentQ;
-    }
+    document.getElementById("hostUI").style.display="block";
 
-    // Check if caught
-    if (state.caught && !catchMade) {
-        catchMade = true;
-        clearInterval(pollInterval);
-        statusMsg.textContent = 'He caught your lie! You\'ve been caught.';
-        statusMsg.className   = 'status-msg bad';
-        btnYes.disabled = true;
-        btnNo.disabled  = true;
-        setTimeout(() => nextRound(), 2000);
-    }
-}
-
-// ── PLAYER MOVES ───────────────────────────────────────────────────────────
-function tryMove(dr, dc) {
-    if (gameOver || mazeEscaped || catchMade) return;
-    const maze = MAZES[round];
-    const nr   = playerPos.r + dr;
-    const nc   = playerPos.c + dc;
-    if (nr < 0 || nr >= 7 || nc < 0 || nc >= 7) return;
-    if (maze[nr][nc] === 0) return;
-
-    playerPos = { r: nr, c: nc };
-    renderMaze();
-
-    const exit = EXITS[round];
-    const escaped = (nr === exit[0] && nc === exit[1]);
-
-    syncWrite({
-        phase: 'round', round, hPts: hunterPts, fPts: fugitivePts,
-        pos: playerPos, q: currentQ, a: currentA,
-        escaped, joined: true
+    db.ref("chase/"+ROOM).set({
+        phase:"waiting",
+        joined:false
     });
 
-    if (escaped) {
-        mazeEscaped = true;
-        clearInterval(pollInterval);
-        fugitivePts++;
-        updateScores();
-        statusMsg.textContent = 'You escaped! +1 for you.';
-        statusMsg.className   = 'status-msg good';
-        btnYes.disabled = true;
-        btnNo.disabled  = true;
-        setTimeout(() => nextRound(), 2000);
-    }
+    subscribe(state=>{
+        if(state.joined){
+            document.getElementById("status").textContent="Player connected!";
+        }
+
+        if(state.a){
+            document.getElementById("status").textContent="She said: "+state.a;
+        }
+
+        if(state.caught){
+            document.getElementById("status").textContent="You caught her!";
+        }
+    });
 }
 
-document.getElementById('btnUp').addEventListener('click',    () => tryMove(-1, 0));
-document.getElementById('btnDown').addEventListener('click',  () => tryMove(1,  0));
-document.getElementById('btnLeft').addEventListener('click',  () => tryMove(0, -1));
-document.getElementById('btnRight').addEventListener('click', () => tryMove(0,  1));
+// 🏃 PLAYER
+function startPlayer(){
+    ROOM = document.getElementById("roomInput").value.trim().toUpperCase();
+    console.log("ROOM:", ROOM);
 
-// ── ANSWER ─────────────────────────────────────────────────────────────────
-async function giveAnswer(ans) {
-    if (answerGiven) return;
-    answerGiven = true;
-    currentA    = ans;
-    btnYes.disabled = true;
-    btnNo.disabled  = true;
-    statusMsg.textContent = `You answered: ${ans}. Keep moving.`;
-    statusMsg.className   = 'status-msg gold';
-
-    const state = await syncRead();
-    await syncWrite({ ...state, a: ans });
-}
-
-btnYes.addEventListener('click', () => giveAnswer('YES'));
-btnNo.addEventListener('click',  () => giveAnswer('NO'));
-
-// ── HOST CATCH ─────────────────────────────────────────────────────────────
-async function makeCatch(lied) {
-    if (catchMade) return;
-    catchMade = true;
-    btnLie.disabled   = true;
-    btnTruth.disabled = true;
-
-    if (lied) {
-        hunterPts++;
-        updateScores();
-        statusMsg.textContent = 'You caught her lie! +1 Hunter.';
-        statusMsg.className   = 'status-msg bad';
-        const state = await syncRead();
-        await syncWrite({ ...state, caught: true });
-    } else {
-        statusMsg.textContent = 'She was honest. No point.';
-        statusMsg.className   = 'status-msg';
-    }
-
-    clearInterval(pollInterval);
-    setTimeout(() => nextRound(), 2000);
-}
-
-btnLie.addEventListener('click',   () => makeCatch(true));
-btnTruth.addEventListener('click', () => makeCatch(false));
-
-// ── NEXT ROUND ─────────────────────────────────────────────────────────────
-function nextRound() {
-    if (round >= 2) {
-        endGame();
+    if(!ROOM){
+        alert("Enter room code!");
         return;
     }
 
-    if (IS_HOST) {
-        clearInterval(pollInterval);
-        startRound(round + 1);
-    } else {
-        // Player waits for host to advance
-        statusMsg.textContent = 'Next round starting...';
-        setTimeout(() => startRound(round + 1), 1000);
-    }
-}
+    role = "player";
 
-// ── END GAME ───────────────────────────────────────────────────────────────
-function endGame() {
-    gameOver = true;
-    clearInterval(pollInterval);
-    gameScreen.style.display = 'none';
-    endScreen.style.display  = 'flex';
+    document.getElementById("menu").style.display="none";
+    document.getElementById("game").style.display="block";
+    document.getElementById("role").textContent="Fugitive";
 
-    if (hunterPts > fugitivePts) {
-        endVerdict.textContent = IS_HOST ? 'YOU CAUGHT HER.' : 'YOU WERE CAUGHT.';
-        endSub.textContent     = IS_HOST
-            ? 'She could not escape. The case is closed. The criminal has been found.'
-            : 'He was always one step ahead. The hunt is over. The truth has been delivered.';
-    } else if (fugitivePts > hunterPts) {
-        endVerdict.textContent = IS_HOST ? 'SHE ESCAPED.' : 'YOU ESCAPED.';
-        endSub.textContent     = IS_HOST
-            ? 'She outran you. But the investigation does not end here.'
-            : 'You made it out. But the case still has one more secret waiting for you.';
-    } else {
-        endVerdict.textContent = 'A DRAW.';
-        endSub.textContent     = 'Neither caught nor free. The truth lies somewhere in between. Keep going.';
-    }
-}
+    document.getElementById("playerUI").style.display="block";
 
-// ── MAZE RENDER ────────────────────────────────────────────────────────────
-function renderMaze() {
-    const maze = MAZES[round];
-    const exit = EXITS[round];
-    mazeGrid.style.gridTemplateColumns = `repeat(7, 36px)`;
-    mazeGrid.innerHTML = '';
+    db.ref("chase/"+ROOM).update({
+        joined:true
+    });
 
-    for (let r = 0; r < 7; r++) {
-        for (let c = 0; c < 7; c++) {
-            const cell = document.createElement('div');
-            cell.className = 'maze-cell';
-
-            const isWall   = maze[r][c] === 0;
-            const isPlayer = playerPos.r === r && playerPos.c === c;
-            const isExit   = exit[0] === r && exit[1] === c;
-
-            if (IS_HOST) {
-                // Full visibility
-                if (isWall)        cell.classList.add('cell-wall');
-                else if (isPlayer) cell.classList.add('cell-path', 'cell-player');
-                else if (isExit)   cell.classList.add('cell-exit');
-                else               cell.classList.add('cell-path');
-
-                if (isPlayer)  cell.textContent = '●';
-                if (isExit && !isPlayer) cell.textContent = '◎';
-            } else {
-                // Fog of war — only show adjacent cells
-                const dist = Math.abs(r - playerPos.r) + Math.abs(c - playerPos.c);
-                if (dist <= 1) {
-                    cell.classList.add('cell-visible');
-                    if (isWall)        cell.classList.add('cell-wall');
-                    else if (isPlayer) cell.classList.add('cell-player');
-                    else if (isExit)   cell.classList.add('cell-exit');
-                    if (isPlayer)  cell.textContent = '●';
-                    if (isExit && !isPlayer) cell.textContent = '◎';
-                } else {
-                    cell.classList.add('cell-fog');
-                }
-            }
-
-            mazeGrid.appendChild(cell);
+    subscribe(state=>{
+        if(state.q){
+            document.getElementById("status").textContent="Question received!";
         }
-    }
+
+        if(state.caught){
+            document.getElementById("status").textContent="You've been caught!";
+        }
+    });
 }
 
-// ── SCORES ─────────────────────────────────────────────────────────────────
-function updateScores() {
-    hunterScore.textContent   = hunterPts;
-    fugitiveScore.textContent = fugitivePts;
+// ❓ Host sends question
+function sendQuestion(){
+    db.ref("chase/"+ROOM).update({
+        q:"Is she lying?"
+    });
 }
 
-// ── SYNC ───────────────────────────────────────────────────────────────────
-async function syncWrite(data) {
-    try {
-        await window.storage.set(`chase:${ROOM}`, JSON.stringify(data), true);
-    } catch(e) {}
+// 🙋 Player answers
+function answer(val){
+    db.ref("chase/"+ROOM).update({
+        a:val
+    });
 }
 
-async function syncRead() {
-    try {
-        const res = await window.storage.get(`chase:${ROOM}`, true);
-        if (!res) return null;
-        return JSON.parse(res.value);
-    } catch(e) { return null; }
+// 🎯 Host catches
+function catchLie(){
+    db.ref("chase/"+ROOM).update({
+        caught:true
+    });
 }
 </script>
+
 </body>
 </html>
