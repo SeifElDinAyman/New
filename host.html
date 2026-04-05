@@ -14,12 +14,6 @@ body {
     text-align:center;
 }
 
-input {
-    padding:10px;
-    font-size:16px;
-    margin:10px;
-}
-
 button {
     padding:10px 20px;
     margin:10px;
@@ -61,7 +55,7 @@ button {
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
 <script>
-// 🔥 Firebase config
+// 🔥 Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyAmwZlfuzoulkQMkILWGVF1pFM-I5Tiq0E",
   authDomain: "case114117.firebaseapp.com",
@@ -78,26 +72,16 @@ const db = firebase.database();
 let ROOM = "";
 let role = "";
 
-// 🔁 Realtime listener
+// 🔁 Subscribe realtime
 function subscribe(callback){
     db.ref("chase/" + ROOM).on("value", snap=>{
-        if(snap.exists()){
-            console.log("STATE:", snap.val()); // 🔥 DEBUG
-            callback(snap.val());
-        }
+        if(snap.exists()) callback(snap.val());
     });
 }
 
 // 🎮 HOST
 function startHost(){
-    ROOM = document.getElementById("roomInput").value.trim().toUpperCase();
-    console.log("ROOM:", ROOM);
-
-    if(!ROOM){
-        alert("Enter room code!");
-        return;
-    }
-
+    ROOM = document.getElementById("roomInput").value;
     role = "host";
 
     document.getElementById("menu").style.display="none";
@@ -128,14 +112,7 @@ function startHost(){
 
 // 🏃 PLAYER
 function startPlayer(){
-    ROOM = document.getElementById("roomInput").value.trim().toUpperCase();
-    console.log("ROOM:", ROOM);
-
-    if(!ROOM){
-        alert("Enter room code!");
-        return;
-    }
-
+    ROOM = document.getElementById("roomInput").value;
     role = "player";
 
     document.getElementById("menu").style.display="none";
