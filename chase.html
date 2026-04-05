@@ -454,7 +454,6 @@ function audio() {
     return audioCtx;
 }
 
-// Tense heartbeat loop for fugitive, tense sweep for hunter
 function startBG(isHunter) {
     bgOn = true;
     const ctx = audio();
@@ -464,7 +463,6 @@ function startBG(isHunter) {
         if (!bgOn) return;
 
         if (isHunter) {
-            // Low mechanical sweep
             const osc  = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.type   = 'sawtooth';
@@ -474,7 +472,6 @@ function startBG(isHunter) {
             osc.connect(gain); gain.connect(ctx.destination);
             osc.start(); osc.stop(ctx.currentTime + 0.35);
         } else {
-            // Heartbeat
             if (step % 4 === 0 || step % 4 === 1) {
                 const osc  = ctx.createOscillator();
                 const gain = ctx.createGain();
@@ -540,17 +537,16 @@ let gameRunning   = false;
 let gameOver      = false;
 let timeLeft      = 60;
 let timerIv       = null;
-let exposureLevel = 0;   // 0-100, fugitive's exposure to beam
+let exposureLevel = 0;
 let lastSync      = 0;
 
-const SPEED       = 3.2;
-const FRICTION    = 0.80;
-const PLAYER_R    = 14;
-const BEAM_ANGLE  = Math.PI / 5;  // ~36 degrees
-const BEAM_LENGTH = 0.55;         // relative to screen height
-const CATCH_EXPOSURE = 100;       // exposure level to trigger catch
+const SPEED          = 3.2;
+const FRICTION       = 0.80;
+const PLAYER_R       = 14;
+const BEAM_ANGLE     = Math.PI / 5;
+const BEAM_LENGTH    = 0.55;
+const CATCH_EXPOSURE = 100;
 
-// Walls (relative 0-1)
 const WALLS = [
     {x:0.1,  y:0.1,  w:0.18, h:0.04},
     {x:0.72, y:0.15, w:0.04, h:0.22},
@@ -609,21 +605,29 @@ async function initHunter() {
     showScreen('waitScreen');
 
     gameRef = ref(db, `flash/${ROOM}`);
+
+    // FIX: Explicitly reset playerReady so stale data from old sessions
+    // doesn't immediately trigger the listener below.
     await set(gameRef, {
-        phase:      'waiting',
-        hx: 0.2,   hy: 0.2,
-        fx: 0.8,   fy: 0.8,
-        hAngle:     0,
-        timeLeft:   60,
-        caught:     false,
-        escaped:    false,
-        started:    false,
-        hostReady:  true
+        phase:        'waiting',
+        hx: 0.2,     hy: 0.2,
+        fx: 0.8,     fy: 0.8,
+        hAngle:       0,
+        timeLeft:     60,
+        caught:       false,
+        escaped:      false,
+        started:      false,
+        hostReady:    true,
+        playerReady:  false,   // ← explicit reset
+        hunterCalib:  false,
+        fugitiveCalib: false
     });
 
-    onValue(gameRef, snap => {
+    // FIX: Store unsub so we only fire once and avoid double-transitions.
+    const unsub = onValue(gameRef, snap => {
         const s = snap.val();
         if (s && s.playerReady && !s.started) {
+            unsub();  // detach immediately
             update(gameRef, { started: true });
             goCalibrate();
         }
@@ -638,12 +642,24 @@ function initFugitive() {
     showScreen('waitScreen');
 
     gameRef = ref(db, `flash/${ROOM}`);
-    update(gameRef, { playerReady: true });
 
+    // FIX: First confirm the room exists before signalling ready,
+    // so we don't write into a non-existent room.
     onValue(gameRef, snap => {
         const s = snap.val();
-        if (s && s.started) goCalibrate();
+        if (!s) return; // Room not created by hunter yet — keep waiting
+        update(gameRef, { playerReady: true });
     }, { onlyOnce: true });
+
+    // FIX: Persistent listener — removed onlyOnce so it doesn't
+    // miss the started:true update if it fires after the first snapshot.
+    const unsub = onValue(gameRef, snap => {
+        const s = snap.val();
+        if (s && s.started) {
+            unsub(); // detach to avoid re-triggering
+            goCalibrate();
+        }
+    });
 }
 
 // ── CALIBRATE ──────────────────────────────────────────────────────────────
@@ -670,9 +686,14 @@ $('calibBtn').addEventListener('click', () => {
     const key = IS_HUNTER ? 'hunterCalib' : 'fugitiveCalib';
     update(gameRef, { [key]: true });
 
-    onValue(gameRef, snap => {
+    // FIX: Store unsub so countdown only fires once even if DB
+    // triggers multiple times (e.g. both flags already true on attach).
+    const unsub = onValue(gameRef, snap => {
         const s = snap.val();
-        if (s && s.hunterCalib && s.fugitiveCalib) startCountdown();
+        if (s && s.hunterCalib && s.fugitiveCalib) {
+            unsub(); // detach — prevents double countdown
+            startCountdown();
+        }
     });
 });
 
@@ -725,21 +746,17 @@ function beginArena() {
     otherPos = IS_HUNTER ? {x:0.85, y:0.85} : {x:0.15, y:0.15};
     myVel    = {x:0, y:0};
 
-    // Show HUD
     const hud = $('hud');
     hud.style.display = 'flex';
     $('hudRole').textContent = IS_HUNTER ? '🔦 HUNTER' : '🌑 FUGITIVE';
     $('hudRole').className   = IS_HUNTER ? 'hud-badge red' : 'hud-badge gold';
 
-    // Beam meter (fugitive only)
     if (!IS_HUNTER) {
         $('beamBar').style.display = 'flex';
     }
 
-    // Start bg music
     startBG(IS_HUNTER);
 
-    // Timer
     timerIv = setInterval(() => {
         if (!gameRunning) return;
         timeLeft--;
@@ -751,7 +768,6 @@ function beginArena() {
         if (timeLeft <= 0) endGame('escaped');
     }, 1000);
 
-    // DB listener
     unsubDB = onValue(gameRef, snap => {
         const s = snap.val();
         if (!s || gameOver) return;
@@ -766,10 +782,8 @@ function beginArena() {
         if (s.escaped && !gameOver) endGame('escaped');
     });
 
-    // Hunter beam angle — tracks tilt direction
-    let beamAngle = -Math.PI / 2; // starts pointing up
+    let beamAngle = -Math.PI / 2;
 
-    // Game loop
     function loop() {
         if (!gameRunning) return;
         resize(canvas);
@@ -806,7 +820,6 @@ function updateMove(canvas) {
     let nx   = myPos.x + myVel.x / W;
     let ny   = myPos.y + myVel.y / H;
 
-    // Wall collision
     for (const w of WALLS) {
         const wx1 = w.x, wy1 = w.y, wx2 = w.x + w.w, wy2 = w.y + w.h;
         const pr  = PLAYER_R / Math.min(W, H);
@@ -829,9 +842,8 @@ function updateMove(canvas) {
     myPos.y = Math.max(m + 60/canvas.height, Math.min(1-m, ny));
 }
 
-// ── BEAM ANGLE (hunter tilts phone to aim beam) ────────────────────────────
+// ── BEAM ANGLE ─────────────────────────────────────────────────────────────
 function getBeamAngle() {
-    // Horizontal tilt = beam direction
     const tx = (rawG - calibG) / 25;
     const ty = (rawB - calibB) / 25;
     return Math.atan2(ty, tx);
@@ -841,7 +853,6 @@ function getBeamAngle() {
 function drawScene(ctx, canvas, beamAngle) {
     const W = canvas.width, H = canvas.height;
 
-    // Pure black
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, W, H);
 
@@ -852,16 +863,8 @@ function drawScene(ctx, canvas, beamAngle) {
 
     const bLen = BEAM_LENGTH * H;
 
-    // ── FLASHLIGHT CONE ──
-    // Soft outer glow
-    const coneGrad = ctx.createConicalGradient
-        ? null // not standard
-        : null;
-
-    // Use clipping cone instead
     ctx.save();
 
-    // Build cone path
     const halfAngle = BEAM_ANGLE;
     const a1 = beamAngle - halfAngle;
     const a2 = beamAngle + halfAngle;
@@ -872,7 +875,6 @@ function drawScene(ctx, canvas, beamAngle) {
     ctx.closePath();
     ctx.clip();
 
-    // Flashlight gradient inside cone
     const grad = ctx.createRadialGradient(hpx, hpy, 0, hpx, hpy, bLen);
     grad.addColorStop(0,   'rgba(255,240,200,0.95)');
     grad.addColorStop(0.15,'rgba(255,220,150,0.7)');
@@ -883,7 +885,6 @@ function drawScene(ctx, canvas, beamAngle) {
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
 
-    // Draw walls inside beam (lit)
     ctx.strokeStyle = 'rgba(200,180,140,0.5)';
     ctx.lineWidth   = 2;
     ctx.fillStyle   = 'rgba(40,35,25,0.8)';
@@ -896,7 +897,6 @@ function drawScene(ctx, canvas, beamAngle) {
 
     ctx.restore();
 
-    // ── WALLS in ambient darkness (barely visible) ──
     ctx.strokeStyle = 'rgba(30,30,30,0.8)';
     ctx.fillStyle   = 'rgba(15,15,15,0.9)';
     ctx.lineWidth   = 1;
@@ -907,8 +907,6 @@ function drawScene(ctx, canvas, beamAngle) {
         ctx.stroke();
     }
 
-    // ── HUNTER DOT ──
-    // Small dim glow around hunter body
     const hAura = ctx.createRadialGradient(hpx, hpy, 0, hpx, hpy, PLAYER_R*2.5);
     hAura.addColorStop(0,   'rgba(255,200,80,0.25)');
     hAura.addColorStop(1,   'rgba(0,0,0,0)');
@@ -928,7 +926,6 @@ function drawScene(ctx, canvas, beamAngle) {
     ctx.stroke();
     ctx.shadowBlur = 0;
 
-    // Beam direction indicator (small line)
     ctx.strokeStyle = 'rgba(255,200,80,0.5)';
     ctx.lineWidth   = 2;
     ctx.beginPath();
@@ -936,12 +933,9 @@ function drawScene(ctx, canvas, beamAngle) {
     ctx.lineTo(hpx + Math.cos(beamAngle) * (PLAYER_R + 12), hpy + Math.sin(beamAngle) * (PLAYER_R + 12));
     ctx.stroke();
 
-    // ── FUGITIVE DOT ──
-    // Only visible if inside beam OR fugitive's own screen
     const inBeam = isFugitiveInBeam(hpx, hpy, fpx, fpy, beamAngle, bLen);
 
     if (!IS_HUNTER) {
-        // Always show yourself if you're the fugitive
         const fAura = ctx.createRadialGradient(fpx, fpy, 0, fpx, fpy, PLAYER_R*2);
         fAura.addColorStop(0, 'rgba(200,160,255,0.2)');
         fAura.addColorStop(1, 'rgba(0,0,0,0)');
@@ -961,7 +955,6 @@ function drawScene(ctx, canvas, beamAngle) {
         ctx.stroke();
         ctx.shadowBlur = 0;
     } else if (inBeam) {
-        // Hunter only sees fugitive if in beam
         ctx.fillStyle   = '#cc3333';
         ctx.strokeStyle = '#ff5555';
         ctx.lineWidth   = 2;
@@ -973,14 +966,12 @@ function drawScene(ctx, canvas, beamAngle) {
         ctx.stroke();
         ctx.shadowBlur = 0;
 
-        // Exclamation
         ctx.fillStyle = '#ffffff';
         ctx.font      = 'bold 14px Courier New';
         ctx.textAlign = 'center';
         ctx.fillText('!', fpx, fpy + 5);
     }
 
-    // ── DARKNESS VIGNETTE ──
     const vig = ctx.createRadialGradient(W/2, H/2, H*0.2, W/2, H/2, H*0.8);
     vig.addColorStop(0,   'rgba(0,0,0,0)');
     vig.addColorStop(0.6, 'rgba(0,0,0,0.3)');
@@ -997,7 +988,6 @@ function isFugitiveInBeam(hx, hy, fx, fy, angle, bLen) {
     if (dist > bLen) return false;
     const angleToF  = Math.atan2(dy, dx);
     let   angleDiff = angleToF - angle;
-    // Normalize
     while (angleDiff >  Math.PI) angleDiff -= Math.PI*2;
     while (angleDiff < -Math.PI) angleDiff += Math.PI*2;
     return Math.abs(angleDiff) < BEAM_ANGLE;
@@ -1017,7 +1007,6 @@ function checkExposure(canvas, beamAngle) {
     const inBeam = isFugitiveInBeam(hpx, hpy, fpx, fpy, beamAngle, bLen);
 
     if (inBeam) {
-        // Calculate proximity for exposure rate
         const dx   = fpx - hpx;
         const dy   = fpy - hpy;
         const dist = Math.sqrt(dx*dx + dy*dy);
@@ -1027,13 +1016,11 @@ function checkExposure(canvas, beamAngle) {
         if (Math.random() < 0.15) sfxExposed();
         if (exposureLevel > 60 && Math.random() < 0.1) sfxAlarm();
 
-        // Update beam bar (fugitive)
         if (!IS_HUNTER) {
             const fill = $('beamFill');
             fill.style.width = exposureLevel + '%';
             fill.className   = exposureLevel > 60 ? 'beam-fill danger' : 'beam-fill';
 
-            // Flash red tint
             if (exposureLevel > 70) {
                 $('flashOverlay').style.background  = '#cc0000';
                 $('flashOverlay').style.opacity     = String(0.08 * (exposureLevel/100));
@@ -1045,7 +1032,6 @@ function checkExposure(canvas, beamAngle) {
             endGame('caught');
         }
     } else {
-        // Decay exposure
         exposureLevel = Math.max(0, exposureLevel - 1.5);
         if (!IS_HUNTER) {
             $('beamFill').style.width = exposureLevel + '%';
