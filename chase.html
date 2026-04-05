@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Chase — Case #114</title>
+<title>Flashlight Chase — Case #114</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 body {
-    background: #050505;
+    background: #000;
     font-family: "Courier New", monospace;
     color: #ddd;
     min-height: 100vh;
@@ -16,7 +16,24 @@ body {
     user-select: none;
 }
 
-body::before {
+/* ── SCREENS ── */
+.screen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    gap: 18px;
+    background: #050505;
+    animation: fadeIn 0.6s ease both;
+}
+
+.screen.active { display: flex; }
+
+.screen::before {
     content: "";
     position: fixed;
     inset: 0;
@@ -33,29 +50,15 @@ body::before {
     z-index: 0;
 }
 
-/* ── SCREENS ── */
-.screen {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    gap: 16px;
-    animation: fadeIn 0.6s ease both;
-}
-
-.screen.active { display: flex; }
+.screen > * { position: relative; z-index: 1; }
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── ROLE SELECT ── */
-.role-badge {
+/* ── COMMON UI ── */
+.badge {
     background: #8b0000;
     color: #ffcccc;
     font-size: 10px;
@@ -67,8 +70,8 @@ body::before {
     text-align: center;
 }
 
-.role-title {
-    font-size: 22px;
+.screen-title {
+    font-size: 20px;
     color: #f0f0f0;
     letter-spacing: 3px;
     text-transform: uppercase;
@@ -76,7 +79,7 @@ body::before {
     line-height: 1.4;
 }
 
-.role-sub {
+.screen-sub {
     font-size: 11px;
     color: #555;
     letter-spacing: 1px;
@@ -87,7 +90,7 @@ body::before {
 
 .room-input {
     width: 100%;
-    max-width: 320px;
+    max-width: 300px;
     padding: 14px;
     background: #000;
     border: 1px solid #2a2a2a;
@@ -101,12 +104,11 @@ body::before {
     text-transform: uppercase;
     transition: border-color 0.2s;
 }
-
 .room-input:focus { border-color: #555; }
 
-.role-btn {
+.big-btn {
     width: 100%;
-    max-width: 320px;
+    max-width: 300px;
     padding: 14px;
     border: none;
     border-radius: 6px;
@@ -118,22 +120,13 @@ body::before {
     transition: filter 0.2s;
 }
 
-.btn-hunter {
-    background: #8b0000;
-    color: #ffcccc;
-    box-shadow: 0 0 20px rgba(139,0,0,0.35);
-}
+.btn-red  { background: #8b0000; color: #ffcccc; box-shadow: 0 0 20px rgba(139,0,0,0.35); }
+.btn-dark { background: #111; color: #c0c0c0; border: 1px solid #2a2a2a; }
+.big-btn:hover { filter: brightness(1.2); }
 
-.btn-fugitive {
-    background: #111;
-    color: #c0c0c0;
-    border: 1px solid #2a2a2a;
-}
+.divider { width: 100%; max-width: 300px; border: none; border-top: 1px solid #1e1e1e; }
 
-.role-btn:hover { filter: brightness(1.2); }
-.role-divider { width: 100%; max-width: 320px; border: none; border-top: 1px solid #1e1e1e; }
-
-.role-note {
+.small-note {
     font-size: 10px;
     color: #333;
     letter-spacing: 1px;
@@ -142,7 +135,7 @@ body::before {
     line-height: 1.8;
 }
 
-/* ── WAITING ── */
+/* ── WAIT SCREEN ── */
 .wait-code {
     font-size: 52px;
     color: #8b0000;
@@ -151,19 +144,12 @@ body::before {
     font-family: "Courier New", monospace;
 }
 
-.wait-label {
-    font-size: 9px;
-    color: #444;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-}
-
 .wait-pulse {
     width: 12px; height: 12px;
     border-radius: 50%;
     background: #8b0000;
-    animation: waitPulse 1.2s ease infinite;
     box-shadow: 0 0 12px rgba(139,0,0,0.7);
+    animation: waitPulse 1.2s ease infinite;
 }
 
 @keyframes waitPulse {
@@ -171,72 +157,62 @@ body::before {
     50%      { transform: scale(1.6); opacity: 0.3; }
 }
 
-.wait-sub {
-    font-size: 11px;
-    color: #444;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    text-align: center;
-    line-height: 1.9;
-}
-
 /* ── CALIBRATION ── */
-.calib-title {
-    font-size: 18px;
-    color: #f0f0f0;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    text-align: center;
-}
-
-.calib-sub {
-    font-size: 11px;
-    color: #666;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    text-align: center;
-    line-height: 1.9;
-}
-
-.calib-btn {
-    padding: 14px 32px;
-    background: #8b0000;
-    border: none;
-    color: #fff;
-    border-radius: 6px;
-    font-family: "Courier New", monospace;
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    cursor: pointer;
-    box-shadow: 0 0 20px rgba(139,0,0,0.4);
-    transition: filter 0.2s;
-}
-
-.calib-btn:hover { filter: brightness(1.15); }
-
-.calib-indicator {
-    width: 60px; height: 60px;
+.calib-circle {
+    width: 80px; height: 80px;
     border-radius: 50%;
-    border: 2px solid #2a2a2a;
+    border: 1px solid #222;
+    display: flex; align-items: center; justify-content: center;
+    background: #0a0a0a;
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .calib-dot {
-    width: 14px; height: 14px;
+    width: 16px; height: 16px;
     border-radius: 50%;
     background: #8b0000;
-    box-shadow: 0 0 8px rgba(139,0,0,0.6);
+    box-shadow: 0 0 10px rgba(139,0,0,0.6);
     transition: transform 0.1s;
+    position: absolute;
 }
 
-/* ── ARENA ── */
+/* ── COUNTDOWN OVERLAY ── */
+#countdownOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: rgba(0,0,0,0.95);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.cd-num {
+    font-size: 110px;
+    color: #8b0000;
+    text-shadow: 0 0 50px rgba(139,0,0,0.9);
+    font-family: "Courier New", monospace;
+    line-height: 1;
+    animation: cdPop 0.35s ease both;
+}
+
+@keyframes cdPop {
+    from { transform: scale(1.5); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+}
+
+.cd-sub {
+    font-size: 11px;
+    color: #444;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+/* ── ARENA (pure canvas) ── */
 #arenaScreen {
     padding: 0;
-    justify-content: flex-start;
     background: #000;
 }
 
@@ -245,25 +221,24 @@ body::before {
     inset: 0;
     width: 100%;
     height: 100%;
-    touch-action: none;
 }
 
-/* HUD */
-.hud {
+/* HUD over canvas */
+#hud {
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 10;
-    padding: 10px 14px;
-    display: flex;
+    padding: 10px 16px;
+    display: none;
     align-items: center;
     justify-content: space-between;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
     pointer-events: none;
 }
 
 .hud-badge {
-    background: rgba(139,0,0,0.8);
-    color: #ffcccc;
+    background: rgba(0,0,0,0.7);
+    border: 1px solid #1a1a1a;
+    color: #888;
     font-size: 9px;
     letter-spacing: 2px;
     padding: 4px 8px;
@@ -271,70 +246,81 @@ body::before {
     text-transform: uppercase;
 }
 
-.hud-timer {
-    font-size: 28px;
-    color: #f0f0f0;
-    letter-spacing: 3px;
-    text-shadow: 0 0 10px rgba(255,255,255,0.3);
+.hud-badge.red  { color: #cc4444; border-color: rgba(139,0,0,0.4); }
+.hud-badge.gold { color: #c9a84c; border-color: rgba(201,168,76,0.4); }
+
+#hudTimer {
+    font-size: 32px;
+    color: rgba(255,255,255,0.8);
+    text-shadow: 0 0 10px rgba(255,255,255,0.2);
     font-family: "Courier New", monospace;
+    letter-spacing: 3px;
+    background: rgba(0,0,0,0.5);
+    padding: 2px 10px;
+    border-radius: 4px;
 }
 
-.hud-timer.danger { color: #ff4444; text-shadow: 0 0 14px rgba(255,68,68,0.6); animation: timerPulse 0.5s ease infinite; }
-@keyframes timerPulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+#hudTimer.danger {
+    color: #ff4444;
+    text-shadow: 0 0 16px rgba(255,68,68,0.8);
+    animation: timerDanger 0.5s ease infinite;
+}
 
-.hud-role {
+@keyframes timerDanger { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* FUGITIVE status bar — shows if caught in beam */
+#beamBar {
+    position: fixed;
+    bottom: 30px; left: 50%; transform: translateX(-50%);
+    z-index: 10;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    pointer-events: none;
+}
+
+.beam-label {
     font-size: 9px;
-    color: #666;
+    color: rgba(255,255,255,0.3);
     letter-spacing: 2px;
     text-transform: uppercase;
 }
 
-/* Countdown overlay */
-#countdownOverlay {
+.beam-track {
+    width: 200px;
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.beam-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #8b0000, #ff4444);
+    border-radius: 3px;
+    transition: width 0.15s, background 0.3s;
+}
+
+.beam-fill.danger { background: linear-gradient(90deg, #ff4444, #ff8800); }
+
+/* Flash overlay */
+#flashOverlay {
     position: fixed;
     inset: 0;
-    z-index: 20;
-    background: rgba(0,0,0,0.85);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
+    z-index: 40;
+    pointer-events: none;
+    opacity: 0;
 }
 
-.cd-num {
-    font-size: 100px;
-    color: #8b0000;
-    letter-spacing: 0;
-    text-shadow: 0 0 40px rgba(139,0,0,0.8);
-    font-family: "Courier New", monospace;
-    line-height: 1;
-    animation: cdPop 0.4s ease both;
-}
-
-@keyframes cdPop {
-    from { transform: scale(1.4); opacity: 0; }
-    to   { transform: scale(1);   opacity: 1; }
-}
-
-.cd-sub {
-    font-size: 11px;
-    color: #555;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-}
-
-/* End screen */
-#endScreen {
-    gap: 20px;
-    text-align: center;
-}
-
+/* ── END SCREEN ── */
 .end-verdict {
-    font-size: 26px;
+    font-size: 24px;
     color: #f0f0f0;
     letter-spacing: 3px;
     text-transform: uppercase;
+    text-align: center;
     line-height: 1.4;
 }
 
@@ -343,6 +329,7 @@ body::before {
     color: #666;
     line-height: 1.9;
     font-style: italic;
+    text-align: center;
     max-width: 300px;
 }
 
@@ -364,102 +351,82 @@ body::before {
 }
 
 .end-btn:hover { filter: brightness(1.15); }
-
-.end-scores {
-    display: flex;
-    gap: 30px;
-    align-items: center;
-}
-
-.end-score-item { text-align: center; }
-.end-score-num  { font-size: 36px; font-family: "Courier New", monospace; line-height: 1; }
-.end-score-num.red  { color: #8b0000; text-shadow: 0 0 14px rgba(139,0,0,0.5); }
-.end-score-num.gold { color: #e0c060; text-shadow: 0 0 14px rgba(224,192,96,0.4); }
-.end-score-lbl  { font-size: 9px; color: #444; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
-.end-sep        { font-size: 24px; color: #222; }
-
-/* Flash overlay */
-#flashOverlay {
-    position: fixed;
-    inset: 0;
-    z-index: 30;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.1s;
-}
 </style>
 </head>
 <body>
 
-<!-- FLASH OVERLAY -->
+<!-- FLASH -->
 <div id="flashOverlay"></div>
+
+<!-- COUNTDOWN -->
+<div id="countdownOverlay">
+    <div class="cd-num" id="cdNum">3</div>
+    <div class="cd-sub" id="cdSub">GET READY</div>
+</div>
+
+<!-- HUD -->
+<div id="hud">
+    <div class="hud-badge" id="hudRole">—</div>
+    <div id="hudTimer">60</div>
+    <div class="hud-badge" id="hudCase">CASE #114</div>
+</div>
+
+<!-- BEAM METER (fugitive only) -->
+<div id="beamBar">
+    <div class="beam-label" id="beamLabel">EXPOSURE</div>
+    <div class="beam-track">
+        <div class="beam-fill" id="beamFill"></div>
+    </div>
+</div>
 
 <!-- ROLE SELECT -->
 <div class="screen active" id="roleScreen">
-    <div class="role-badge">Chase Sequence — Case #114</div>
-    <div class="role-title">Choose Your Side</div>
-    <div class="role-sub">Enter the same code on both phones.<br>Tilt to move. Don't get caught.</div>
-    <input class="room-input" id="roomInput" type="text" maxlength="4" placeholder="CODE" autocomplete="off" spellcheck="false" />
-    <button class="role-btn btn-hunter"   id="btnHunter">🔴 &nbsp; I AM THE HUNTER</button>
-    <hr class="role-divider">
-    <button class="role-btn btn-fugitive" id="btnFugitive">🟡 &nbsp; I AM THE FUGITIVE</button>
-    <div class="role-note">Hunter: catch her dot.<br>Fugitive: survive 60 seconds.</div>
+    <div class="badge">Chase Sequence — Case #114</div>
+    <div class="screen-title">Choose Your Side</div>
+    <div class="screen-sub">Enter the same 4-letter code.<br>Tilt to move. Stay out of the light.</div>
+    <input class="room-input" id="roomInput" type="text" maxlength="4" placeholder="CODE" autocomplete="off" spellcheck="false"/>
+    <button class="big-btn btn-red"  id="btnHunter">🔦 &nbsp; I HAVE THE FLASHLIGHT</button>
+    <hr class="divider">
+    <button class="big-btn btn-dark" id="btnFugitive">🌑 &nbsp; I AM IN THE DARK</button>
+    <div class="small-note">
+        Hunter: find her with your beam.<br>
+        Fugitive: 60 seconds in the dark.
+    </div>
 </div>
 
-<!-- WAITING -->
+<!-- WAIT -->
 <div class="screen" id="waitScreen">
-    <div class="role-badge" id="waitBadge">Waiting...</div>
-    <div class="wait-label">Room Code</div>
+    <div class="badge" id="waitBadge">Waiting...</div>
+    <div class="screen-sub">Room Code</div>
     <div class="wait-code" id="waitCode">----</div>
     <div class="wait-pulse"></div>
-    <div class="wait-sub" id="waitSub">Share this code.<br>Waiting for connection...</div>
+    <div class="screen-sub" id="waitSub">Share this code.<br>Waiting for the other player...</div>
 </div>
 
-<!-- CALIBRATION -->
+<!-- CALIBRATE -->
 <div class="screen" id="calibScreen">
-    <div class="role-badge">Calibration</div>
-    <div class="calib-title">Hold Your Phone Flat</div>
-    <div class="calib-indicator">
+    <div class="badge">Calibration</div>
+    <div class="screen-title">Hold Your Phone Flat</div>
+    <div class="calib-circle">
         <div class="calib-dot" id="calibDot"></div>
     </div>
-    <div class="calib-sub">Place your phone flat on a table.<br>Press calibrate when ready.</div>
-    <button class="calib-btn" id="calibBtn">CALIBRATE &amp; READY</button>
+    <div class="screen-sub">Place phone on a flat surface.<br>Press calibrate when still.</div>
+    <button class="big-btn btn-red" id="calibBtn">CALIBRATE &amp; READY</button>
 </div>
 
 <!-- ARENA -->
 <div class="screen" id="arenaScreen">
     <canvas id="arenaCanvas"></canvas>
-    <div class="hud">
-        <div class="hud-badge" id="hudBadge">HUNTER</div>
-        <div class="hud-timer" id="hudTimer">60</div>
-        <div class="hud-role"  id="hudRole">CASE #114</div>
-    </div>
-    <div id="countdownOverlay">
-        <div class="cd-num" id="cdNum">3</div>
-        <div class="cd-sub">GET READY</div>
-    </div>
 </div>
 
 <!-- END -->
 <div class="screen" id="endScreen">
-    <div class="role-badge">Chase Complete</div>
+    <div class="badge">Chase Complete</div>
     <div class="end-verdict" id="endVerdict">—</div>
     <div class="end-sub"    id="endSub">—</div>
-    <div class="end-scores">
-        <div class="end-score-item">
-            <div class="end-score-num red"  id="endHunter">0</div>
-            <div class="end-score-lbl">Hunter</div>
-        </div>
-        <div class="end-sep">—</div>
-        <div class="end-score-item">
-            <div class="end-score-num gold" id="endFugitive">0</div>
-            <div class="end-score-lbl">Fugitive</div>
-        </div>
-    </div>
     <a class="end-btn" href="YOUR_NEXT_STAGE_LINK">CONTINUE →</a>
 </div>
 
-<!-- Firebase -->
 <script type="module">
 import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -478,196 +445,124 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getDatabase(app);
 
-// ── AUDIO ENGINE ───────────────────────────────────────────────────────────
-let audioCtx = null;
+// ── AUDIO ──────────────────────────────────────────────────────────────────
+let audioCtx  = null;
+let bgOn      = false;
 
-function getAudio() {
+function audio() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     return audioCtx;
 }
 
-// Background music — tense pulse loop
-let bgNodes = [];
+// Tense heartbeat loop for fugitive, tense sweep for hunter
+function startBG(isHunter) {
+    bgOn = true;
+    const ctx = audio();
+    let step  = 0;
 
-function startBGMusic() {
-    const ctx  = getAudio();
-    const base = [55, 58, 55, 52, 50, 52, 55, 58]; // bass line notes (Hz-ish)
-    let step   = 0;
+    function tick() {
+        if (!bgOn) return;
 
-    function playStep() {
-        if (!bgMusicOn) return;
-        const osc  = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type   = 'sawtooth';
-        osc.frequency.value = base[step % base.length] * 2;
-        gain.gain.setValueAtTime(0, ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 0.02);
-        gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.18);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.2);
+        if (isHunter) {
+            // Low mechanical sweep
+            const osc  = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type   = 'sawtooth';
+            osc.frequency.value = 55 + (step % 8) * 4;
+            gain.gain.setValueAtTime(0.04, ctx.currentTime);
+            gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.3);
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.start(); osc.stop(ctx.currentTime + 0.35);
+        } else {
+            // Heartbeat
+            if (step % 4 === 0 || step % 4 === 1) {
+                const osc  = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type   = 'sine';
+                osc.frequency.value = 60;
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.start(); osc.stop(ctx.currentTime + 0.15);
+            }
+        }
+
         step++;
-
-        // Pulse kick
-        const kick  = ctx.createOscillator();
-        const kGain = ctx.createGain();
-        kick.frequency.setValueAtTime(120, ctx.currentTime);
-        kick.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.1);
-        kGain.gain.setValueAtTime(0.12, ctx.currentTime);
-        kGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
-        kick.connect(kGain);
-        kGain.connect(ctx.destination);
-        kick.start();
-        kick.stop(ctx.currentTime + 0.15);
-
-        if (bgMusicOn) setTimeout(playStep, 220);
+        if (bgOn) setTimeout(tick, isHunter ? 250 : 180);
     }
 
-    bgMusicOn = true;
-    playStep();
+    tick();
 }
 
-let bgMusicOn = false;
+function stopBG() { bgOn = false; }
 
-function stopBGMusic() { bgMusicOn = false; }
-
-// Sound effects
-function sfxBeep(freq = 880, dur = 0.08, vol = 0.2) {
+function sfx(freq, dur, vol = 0.2, type = 'square') {
     try {
-        const ctx  = getAudio();
+        const ctx  = audio();
         const osc  = ctx.createOscillator();
         const gain = ctx.createGain();
+        osc.type = type;
         osc.frequency.value = freq;
-        osc.type = 'square';
         gain.gain.setValueAtTime(vol, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + dur);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(); osc.stop(ctx.currentTime + dur + 0.01);
     } catch(e) {}
 }
 
-function sfxCatch() {
-    // Descending dramatic hit
-    try {
-        const ctx = getAudio();
-        [600,400,200,100].forEach((f,i) => {
-            const osc  = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.frequency.value = f;
-            osc.type = 'sawtooth';
-            gain.gain.setValueAtTime(0.25, ctx.currentTime + i*0.08);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.08 + 0.15);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start(ctx.currentTime + i*0.08);
-            osc.stop(ctx.currentTime + i*0.08 + 0.2);
-        });
-    } catch(e) {}
+function sfxClick()   { sfx(1400, 0.04, 0.12); }
+function sfxTick()    { sfx(1200, 0.04, 0.1); }
+function sfxExposed() { sfx(300,  0.08, 0.15, 'sawtooth'); }
+function sfxAlarm()   { sfx(600, 0.06, 0.2); setTimeout(() => sfx(800, 0.06, 0.2), 80); }
+function sfxCaught()  {
+    [500,380,250,120].forEach((f,i) => setTimeout(() => sfx(f, 0.18, 0.3, 'sawtooth'), i*100));
 }
-
-function sfxEscape() {
-    // Ascending triumphant
-    try {
-        const ctx = getAudio();
-        [300,400,500,700,900].forEach((f,i) => {
-            const osc  = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.frequency.value = f;
-            osc.type = 'sine';
-            gain.gain.setValueAtTime(0.18, ctx.currentTime + i*0.09);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.09 + 0.2);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start(ctx.currentTime + i*0.09);
-            osc.stop(ctx.currentTime + i*0.09 + 0.25);
-        });
-    } catch(e) {}
+function sfxEscaped() {
+    [300,450,600,800].forEach((f,i) => setTimeout(() => sfx(f, 0.22, 0.25, 'sine'), i*90));
 }
-
-function sfxTick() {
-    sfxBeep(1200, 0.04, 0.08);
-}
-
-function sfxNear() {
-    sfxBeep(300, 0.06, 0.12);
-}
-
-function sfxWallCollide() {
-    sfxBeep(150, 0.05, 0.1);
-}
-
-function sfxCountdown() {
-    sfxBeep(660, 0.15, 0.25);
-}
-
-function sfxGo() {
-    sfxBeep(880, 0.3, 0.35);
-    setTimeout(() => sfxBeep(1100, 0.3, 0.3), 150);
-}
+function sfxCountdown() { sfx(660, 0.18, 0.3, 'sine'); }
+function sfxGo()        { sfx(880, 0.35, 0.4, 'sine'); setTimeout(() => sfx(1100,0.3,0.35,'sine'), 160); }
 
 // ── STATE ──────────────────────────────────────────────────────────────────
 let ROOM      = '';
 let IS_HUNTER = false;
 let gameRef   = null;
-let gameUnsubscribe = null;
+let unsubDB   = null;
 
-// Physics
-let myPos     = { x: 0, y: 0 };
-let otherPos  = { x: 0, y: 0 };
-let myVel     = { x: 0, y: 0 };
-let calibBeta = 0, calibGamma = 0;
-let beta  = 0, gamma = 0;
-let gameRunning = false;
-let timeLeft  = 60;
-let timerInterval = null;
-let caught = false;
-let arenaPhase = 0; // 0=full, 1=smaller, 2=smallest
+let myPos     = {x:0.5, y:0.5};
+let otherPos  = {x:0.5, y:0.5};
+let myVel     = {x:0, y:0};
 
-// Arena config
-const ARENA_MARGIN  = 30;
-const PLAYER_RADIUS = 18;
-const CATCH_DIST    = PLAYER_RADIUS * 2 - 4;
-const SPEED         = 3.5;
-const FRICTION      = 0.82;
+let calibB = 0, calibG = 0;
+let rawB   = 0, rawG   = 0;
 
-// Walls (relative 0-1 space, defined as {x,y,w,h})
-const WALL_SETS = [
-    // Phase 0
-    [
-        {x:0.2, y:0.1, w:0.15, h:0.04},
-        {x:0.6, y:0.2, w:0.04, h:0.2},
-        {x:0.1, y:0.5, w:0.2,  h:0.04},
-        {x:0.5, y:0.6, w:0.15, h:0.04},
-        {x:0.7, y:0.4, w:0.04, h:0.25},
-        {x:0.3, y:0.7, w:0.04, h:0.2},
-    ],
-    // Phase 1 — tighter
-    [
-        {x:0.15, y:0.15, w:0.2,  h:0.04},
-        {x:0.65, y:0.15, w:0.04, h:0.22},
-        {x:0.15, y:0.45, w:0.25, h:0.04},
-        {x:0.55, y:0.55, w:0.2,  h:0.04},
-        {x:0.75, y:0.35, w:0.04, h:0.3},
-        {x:0.35, y:0.65, w:0.04, h:0.22},
-        {x:0.25, y:0.3,  w:0.04, h:0.18},
-    ],
-    // Phase 2 — chaos
-    [
-        {x:0.1,  y:0.1,  w:0.25, h:0.04},
-        {x:0.65, y:0.1,  w:0.04, h:0.28},
-        {x:0.1,  y:0.4,  w:0.3,  h:0.04},
-        {x:0.55, y:0.5,  w:0.25, h:0.04},
-        {x:0.8,  y:0.3,  w:0.04, h:0.35},
-        {x:0.3,  y:0.65, w:0.04, h:0.25},
-        {x:0.45, y:0.25, w:0.18, h:0.04},
-        {x:0.15, y:0.72, w:0.22, h:0.04},
-    ]
+let gameRunning   = false;
+let gameOver      = false;
+let timeLeft      = 60;
+let timerIv       = null;
+let exposureLevel = 0;   // 0-100, fugitive's exposure to beam
+let lastSync      = 0;
+
+const SPEED       = 3.2;
+const FRICTION    = 0.80;
+const PLAYER_R    = 14;
+const BEAM_ANGLE  = Math.PI / 5;  // ~36 degrees
+const BEAM_LENGTH = 0.55;         // relative to screen height
+const CATCH_EXPOSURE = 100;       // exposure level to trigger catch
+
+// Walls (relative 0-1)
+const WALLS = [
+    {x:0.1,  y:0.1,  w:0.18, h:0.04},
+    {x:0.72, y:0.15, w:0.04, h:0.22},
+    {x:0.15, y:0.55, w:0.22, h:0.04},
+    {x:0.55, y:0.62, w:0.2,  h:0.04},
+    {x:0.6,  y:0.35, w:0.04, h:0.22},
+    {x:0.3,  y:0.72, w:0.04, h:0.2},
+    {x:0.38, y:0.2,  w:0.18, h:0.04},
+    {x:0.2,  y:0.38, w:0.04, h:0.18},
 ];
 
-// ── ELEMENTS ───────────────────────────────────────────────────────────────
+// ── HELPERS ────────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
 
 function showScreen(id) {
@@ -675,7 +570,19 @@ function showScreen(id) {
     $(id).classList.add('active');
 }
 
-// ── INPUT ──────────────────────────────────────────────────────────────────
+function flash(color, opacity, dur = 600) {
+    const el = $('flashOverlay');
+    el.style.background  = color;
+    el.style.opacity     = String(opacity);
+    el.style.transition  = 'none';
+    setTimeout(() => {
+        el.style.transition = `opacity ${dur}ms`;
+        el.style.opacity    = '0';
+    }, 80);
+    if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
+}
+
+// ── INPUTS ─────────────────────────────────────────────────────────────────
 $('roomInput').addEventListener('input', () => {
     $('roomInput').value = $('roomInput').value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,4);
 });
@@ -683,39 +590,35 @@ $('roomInput').addEventListener('input', () => {
 $('btnHunter').addEventListener('click', () => {
     const code = $('roomInput').value.trim();
     if (code.length < 2) { alert('Enter a room code first'); return; }
-    getAudio(); // unlock audio
-    ROOM = code; IS_HUNTER = true;
-    startAsHunter();
+    audio(); ROOM = code; IS_HUNTER = true;
+    initHunter();
 });
 
 $('btnFugitive').addEventListener('click', () => {
     const code = $('roomInput').value.trim();
-    if (code.length < 2) { alert('Enter the code'); return; }
-    getAudio();
-    ROOM = code; IS_HUNTER = false;
-    startAsFugitive();
+    if (code.length < 2) { alert('Enter the room code'); return; }
+    audio(); ROOM = code; IS_HUNTER = false;
+    initFugitive();
 });
 
-// ── HUNTER SETUP ───────────────────────────────────────────────────────────
-async function startAsHunter() {
-    $('waitCode').textContent = ROOM;
+// ── HUNTER INIT ────────────────────────────────────────────────────────────
+async function initHunter() {
+    $('waitCode').textContent  = ROOM;
     $('waitBadge').textContent = 'Waiting for Fugitive';
-    $('waitSub').textContent  = 'Share this code.\nWaiting for her to join...';
+    $('waitSub').textContent   = 'Share this code.\nWaiting for her to join...';
     showScreen('waitScreen');
 
-    gameRef = ref(db, `gyro/${ROOM}`);
+    gameRef = ref(db, `flash/${ROOM}`);
     await set(gameRef, {
-        phase:       'waiting',
-        hunterX:     0.2,
-        hunterY:     0.2,
-        fugitiveX:   0.8,
-        fugitiveY:   0.8,
-        timeLeft:    60,
-        arenaPhase:  0,
-        caught:      false,
-        escaped:     false,
-        started:     false,
-        hostReady:   true
+        phase:      'waiting',
+        hx: 0.2,   hy: 0.2,
+        fx: 0.8,   fy: 0.8,
+        hAngle:     0,
+        timeLeft:   60,
+        caught:     false,
+        escaped:    false,
+        started:    false,
+        hostReady:  true
     });
 
     onValue(gameRef, snap => {
@@ -727,14 +630,14 @@ async function startAsHunter() {
     });
 }
 
-// ── FUGITIVE SETUP ─────────────────────────────────────────────────────────
-function startAsFugitive() {
+// ── FUGITIVE INIT ──────────────────────────────────────────────────────────
+function initFugitive() {
     $('waitCode').textContent  = ROOM;
     $('waitBadge').textContent = 'Connecting';
-    $('waitSub').textContent   = 'Connecting to Hunter...\nSame code required.';
+    $('waitSub').textContent   = 'Connecting to Hunter...\nMake sure you have the same code.';
     showScreen('waitScreen');
 
-    gameRef = ref(db, `gyro/${ROOM}`);
+    gameRef = ref(db, `flash/${ROOM}`);
     update(gameRef, { playerReady: true });
 
     onValue(gameRef, snap => {
@@ -743,72 +646,67 @@ function startAsFugitive() {
     }, { onlyOnce: true });
 }
 
-// ── CALIBRATION ────────────────────────────────────────────────────────────
+// ── CALIBRATE ──────────────────────────────────────────────────────────────
 function goCalibrate() {
     showScreen('calibScreen');
-
-    // Live preview of tilt
-    window.addEventListener('deviceorientation', previewTilt);
+    window.addEventListener('deviceorientation', previewCalib);
 }
 
-function previewTilt(e) {
-    const b = (e.beta  || 0) - calibBeta;
-    const g = (e.gamma || 0) - calibGamma;
-    const maxTilt = 20;
-    const dx = Math.max(-1, Math.min(1, g / maxTilt));
-    const dy = Math.max(-1, Math.min(1, b / maxTilt));
-    $('calibDot').style.transform = `translate(${dx*18}px, ${dy*18}px)`;
+function previewCalib(e) {
+    rawB = e.beta  || 0;
+    rawG = e.gamma || 0;
+    const dx = Math.max(-1, Math.min(1, (rawG - calibG) / 20));
+    const dy = Math.max(-1, Math.min(1, (rawB - calibB) / 20));
+    $('calibDot').style.transform = `translate(${dx*26}px, ${dy*26}px)`;
 }
+
+window.addEventListener('deviceorientation', e => { rawB = e.beta||0; rawG = e.gamma||0; });
 
 $('calibBtn').addEventListener('click', () => {
-    // Set calibration baseline
-    window.removeEventListener('deviceorientation', previewTilt);
-    calibBeta  = beta;
-    calibGamma = gamma;
+    calibB = rawB; calibG = rawG;
+    window.removeEventListener('deviceorientation', previewCalib);
+    sfxClick();
 
-    // Signal ready
-    const key = IS_HUNTER ? 'hunterCalibrated' : 'fugitiveCalibrated';
+    const key = IS_HUNTER ? 'hunterCalib' : 'fugitiveCalib';
     update(gameRef, { [key]: true });
 
-    // Wait for both calibrated
     onValue(gameRef, snap => {
         const s = snap.val();
-        if (s && s.hunterCalibrated && s.fugitiveCalibrated) {
-            startCountdown();
-        }
-    }, { onlyOnce: false });
-});
-
-// Track orientation always
-window.addEventListener('deviceorientation', e => {
-    beta  = e.beta  || 0;
-    gamma = e.gamma || 0;
+        if (s && s.hunterCalib && s.fugitiveCalib) startCountdown();
+    });
 });
 
 // ── COUNTDOWN ──────────────────────────────────────────────────────────────
 function startCountdown() {
     showScreen('arenaScreen');
-    $('hudBadge').textContent = IS_HUNTER ? 'HUNTER' : 'FUGITIVE';
+    const overlay = $('countdownOverlay');
+    overlay.style.display = 'flex';
 
     let cd = 3;
     $('cdNum').textContent = cd;
-    $('countdownOverlay').style.display = 'flex';
+    $('cdSub').textContent = 'GET READY';
     sfxCountdown();
 
     const iv = setInterval(() => {
         cd--;
         if (cd > 0) {
             $('cdNum').textContent = cd;
-            sfxCountdown();
-            // Animate pop
             $('cdNum').style.animation = 'none';
             void $('cdNum').offsetWidth;
-            $('cdNum').style.animation = 'cdPop 0.4s ease both';
+            $('cdNum').style.animation = 'cdPop 0.35s ease both';
+            sfxCountdown();
         } else {
             clearInterval(iv);
-            $('countdownOverlay').style.display = 'none';
+            $('cdNum').textContent = 'GO';
+            $('cdSub').textContent = '';
+            $('cdNum').style.animation = 'none';
+            void $('cdNum').offsetWidth;
+            $('cdNum').style.animation = 'cdPop 0.35s ease both';
             sfxGo();
-            beginArena();
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                beginArena();
+            }, 700);
         }
     }, 1000);
 }
@@ -817,68 +715,69 @@ function startCountdown() {
 function beginArena() {
     const canvas = $('arenaCanvas');
     const ctx    = canvas.getContext('2d');
-    gameRunning  = true;
-    caught       = false;
-    timeLeft     = 60;
-    arenaPhase   = 0;
 
-    // Set start positions
-    if (IS_HUNTER) {
-        myPos    = { x: 0.2, y: 0.2 };
-        otherPos = { x: 0.8, y: 0.8 };
-    } else {
-        myPos    = { x: 0.8, y: 0.8 };
-        otherPos = { x: 0.2, y: 0.2 };
+    gameRunning   = true;
+    gameOver      = false;
+    exposureLevel = 0;
+    timeLeft      = 60;
+
+    myPos    = IS_HUNTER ? {x:0.15, y:0.15} : {x:0.85, y:0.85};
+    otherPos = IS_HUNTER ? {x:0.85, y:0.85} : {x:0.15, y:0.15};
+    myVel    = {x:0, y:0};
+
+    // Show HUD
+    const hud = $('hud');
+    hud.style.display = 'flex';
+    $('hudRole').textContent = IS_HUNTER ? '🔦 HUNTER' : '🌑 FUGITIVE';
+    $('hudRole').className   = IS_HUNTER ? 'hud-badge red' : 'hud-badge gold';
+
+    // Beam meter (fugitive only)
+    if (!IS_HUNTER) {
+        $('beamBar').style.display = 'flex';
     }
 
-    myVel = { x: 0, y: 0 };
-
     // Start bg music
-    startBGMusic();
+    startBG(IS_HUNTER);
 
     // Timer
-    timerInterval = setInterval(() => {
+    timerIv = setInterval(() => {
+        if (!gameRunning) return;
         timeLeft--;
         $('hudTimer').textContent = timeLeft;
         if (timeLeft <= 10) {
             $('hudTimer').classList.add('danger');
             sfxTick();
         }
-
-        // Shrink arena
-        if (timeLeft === 40) { arenaPhase = 1; sfxBeep(200, 0.3, 0.2); }
-        if (timeLeft === 20) { arenaPhase = 2; sfxBeep(150, 0.4, 0.25); }
-
-        if (timeLeft <= 0) {
-            endGame('escaped');
-        }
+        if (timeLeft <= 0) endGame('escaped');
     }, 1000);
 
-    // Listen for other player position + game events
-    gameUnsubscribe = onValue(gameRef, snap => {
+    // DB listener
+    unsubDB = onValue(gameRef, snap => {
         const s = snap.val();
-        if (!s) return;
+        if (!s || gameOver) return;
 
         if (IS_HUNTER) {
-            otherPos = { x: s.fugitiveX ?? 0.8, y: s.fugitiveY ?? 0.8 };
+            otherPos = {x: s.fx ?? 0.85, y: s.fy ?? 0.85};
         } else {
-            otherPos = { x: s.hunterX ?? 0.2, y: s.hunterY ?? 0.2 };
+            otherPos = {x: s.hx ?? 0.15, y: s.hy ?? 0.15};
         }
 
-        if (s.caught && !caught)  endGame('caught');
-        if (s.escaped && !caught) endGame('escaped');
+        if (s.caught  && !gameOver) endGame('caught');
+        if (s.escaped && !gameOver) endGame('escaped');
     });
+
+    // Hunter beam angle — tracks tilt direction
+    let beamAngle = -Math.PI / 2; // starts pointing up
 
     // Game loop
     function loop() {
         if (!gameRunning) return;
-
         resize(canvas);
-        updatePhysics(canvas);
-        drawFrame(ctx, canvas);
-        checkCatch(canvas);
-        syncPosition();
-
+        updateMove(canvas);
+        if (IS_HUNTER) beamAngle = getBeamAngle();
+        drawScene(ctx, canvas, beamAngle);
+        checkExposure(canvas, beamAngle);
+        syncPos(beamAngle);
         requestAnimationFrame(loop);
     }
 
@@ -892,295 +791,319 @@ function resize(canvas) {
     }
 }
 
-// ── PHYSICS ────────────────────────────────────────────────────────────────
-function updatePhysics(canvas) {
-    if (!gameRunning || caught) return;
+// ── MOVEMENT ───────────────────────────────────────────────────────────────
+function updateMove(canvas) {
+    if (!gameRunning) return;
 
-    const maxTilt = 18;
-    const tiltX   = Math.max(-1, Math.min(1, (gamma - calibGamma) / maxTilt));
-    const tiltY   = Math.max(-1, Math.min(1, (beta  - calibBeta)  / maxTilt));
+    const tiltX = Math.max(-1, Math.min(1, (rawG - calibG) / 18));
+    const tiltY = Math.max(-1, Math.min(1, (rawB - calibB) / 18));
 
     myVel.x = myVel.x * FRICTION + tiltX * SPEED;
     myVel.y = myVel.y * FRICTION + tiltY * SPEED;
 
-    const W = canvas.width;
-    const H = canvas.height;
-    const M = ARENA_MARGIN + PLAYER_RADIUS;
-
-    // Arena bounds (shrinks over time)
-    const shrink = arenaPhase === 0 ? 0 : arenaPhase === 1 ? 0.08 : 0.16;
-    const minX = (M + shrink * W) / W;
-    const maxX = 1 - (M + shrink * W) / W;
-    const minY = (M + 60 + shrink * H) / H; // 60 for HUD
-    const maxY = 1 - (M + shrink * H) / H;
-
-    let nx = myPos.x + myVel.x / W;
-    let ny = myPos.y + myVel.y / H;
+    const W  = canvas.width, H = canvas.height;
+    const m  = (PLAYER_R + 8) / Math.min(W, H);
+    let nx   = myPos.x + myVel.x / W;
+    let ny   = myPos.y + myVel.y / H;
 
     // Wall collision
-    let hitWall = false;
-    const walls = WALL_SETS[arenaPhase];
-    for (const w of walls) {
-        // Convert wall to pixel space for AABB check
-        const wx1 = w.x * W;
-        const wy1 = w.y * H;
-        const wx2 = (w.x + w.w) * W;
-        const wy2 = (w.y + w.h) * H;
-        const px  = nx * W;
-        const py  = ny * H;
-        const r   = PLAYER_RADIUS;
+    for (const w of WALLS) {
+        const wx1 = w.x, wy1 = w.y, wx2 = w.x + w.w, wy2 = w.y + w.h;
+        const pr  = PLAYER_R / Math.min(W, H);
 
-        if (px + r > wx1 && px - r < wx2 && py + r > wy1 && py - r < wy2) {
-            // Push out
-            const overlapX = Math.min(px + r - wx1, wx2 - (px - r));
-            const overlapY = Math.min(py + r - wy1, wy2 - (py - r));
-            if (overlapX < overlapY) {
-                nx = px + r > wx1 + (wx2-wx1)/2
-                    ? (wx2 + r) / W
-                    : (wx1 - r) / W;
-                myVel.x *= -0.3;
-            } else {
-                ny = py + r > wy1 + (wy2-wy1)/2
-                    ? (wy2 + r) / H
-                    : (wy1 - r) / H;
-                myVel.y *= -0.3;
-            }
-            hitWall = true;
+        if (nx+pr > wx1 && nx-pr < wx2 && ny+pr > wy1 && ny-pr < wy2) {
+            const ox1 = (nx+pr) - wx1;
+            const ox2 = wx2 - (nx-pr);
+            const oy1 = (ny+pr) - wy1;
+            const oy2 = wy2 - (ny-pr);
+            const minO = Math.min(ox1, ox2, oy1, oy2);
+
+            if (minO === ox1)      { nx = wx1 - pr; myVel.x *= -0.2; }
+            else if (minO === ox2) { nx = wx2 + pr; myVel.x *= -0.2; }
+            else if (minO === oy1) { ny = wy1 - pr; myVel.y *= -0.2; }
+            else                   { ny = wy2 + pr; myVel.y *= -0.2; }
         }
     }
 
-    if (hitWall) sfxWallCollide();
-
-    myPos.x = Math.max(minX, Math.min(maxX, nx));
-    myPos.y = Math.max(minY, Math.min(maxY, ny));
+    myPos.x = Math.max(m, Math.min(1-m, nx));
+    myPos.y = Math.max(m + 60/canvas.height, Math.min(1-m, ny));
 }
 
-// ── DRAW ───────────────────────────────────────────────────────────────────
-function drawFrame(ctx, canvas) {
-    const W = canvas.width;
-    const H = canvas.height;
+// ── BEAM ANGLE (hunter tilts phone to aim beam) ────────────────────────────
+function getBeamAngle() {
+    // Horizontal tilt = beam direction
+    const tx = (rawG - calibG) / 25;
+    const ty = (rawB - calibB) / 25;
+    return Math.atan2(ty, tx);
+}
 
-    ctx.clearRect(0, 0, W, H);
+// ── DRAW SCENE ─────────────────────────────────────────────────────────────
+function drawScene(ctx, canvas, beamAngle) {
+    const W = canvas.width, H = canvas.height;
 
-    // Background
-    ctx.fillStyle = '#050505';
+    // Pure black
+    ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, W, H);
 
-    // Arena boundary
-    const shrink = arenaPhase === 0 ? 0 : arenaPhase === 1 ? 0.08 : 0.16;
-    const aX = ARENA_MARGIN + shrink * W;
-    const aY = ARENA_MARGIN + 60 + shrink * H;
-    const aW = W - 2 * (ARENA_MARGIN + shrink * W);
-    const aH = H - 2 * ARENA_MARGIN - 60 - 2 * shrink * H;
+    const hpx = IS_HUNTER ? myPos.x * W : otherPos.x * W;
+    const hpy = IS_HUNTER ? myPos.y * H : otherPos.y * H;
+    const fpx = IS_HUNTER ? otherPos.x * W : myPos.x * W;
+    const fpy = IS_HUNTER ? otherPos.y * H : myPos.y * H;
 
-    // Arena fill
-    ctx.fillStyle = '#0a0a0a';
-    ctx.strokeStyle = arenaPhase === 0 ? '#1e1e1e' : arenaPhase === 1 ? '#3a1a1a' : '#8b0000';
-    ctx.lineWidth   = arenaPhase === 2 ? 2 : 1;
-    roundRect(ctx, aX, aY, aW, aH, 8);
-    ctx.fill();
-    ctx.stroke();
+    const bLen = BEAM_LENGTH * H;
 
-    // Grid dots
-    ctx.fillStyle = '#111';
-    for (let gx = aX + 30; gx < aX + aW; gx += 30) {
-        for (let gy = aY + 30; gy < aY + aH; gy += 30) {
-            ctx.beginPath();
-            ctx.arc(gx, gy, 1, 0, Math.PI*2);
-            ctx.fill();
-        }
-    }
+    // ── FLASHLIGHT CONE ──
+    // Soft outer glow
+    const coneGrad = ctx.createConicalGradient
+        ? null // not standard
+        : null;
 
-    // Walls
-    const walls = WALL_SETS[arenaPhase];
-    for (const w of walls) {
-        ctx.fillStyle   = '#161616';
-        ctx.strokeStyle = '#222';
-        ctx.lineWidth   = 1;
-        roundRect(ctx, w.x*W, w.y*H, w.w*W, w.h*H, 3);
+    // Use clipping cone instead
+    ctx.save();
+
+    // Build cone path
+    const halfAngle = BEAM_ANGLE;
+    const a1 = beamAngle - halfAngle;
+    const a2 = beamAngle + halfAngle;
+
+    ctx.beginPath();
+    ctx.moveTo(hpx, hpy);
+    ctx.arc(hpx, hpy, bLen, a1, a2);
+    ctx.closePath();
+    ctx.clip();
+
+    // Flashlight gradient inside cone
+    const grad = ctx.createRadialGradient(hpx, hpy, 0, hpx, hpy, bLen);
+    grad.addColorStop(0,   'rgba(255,240,200,0.95)');
+    grad.addColorStop(0.15,'rgba(255,220,150,0.7)');
+    grad.addColorStop(0.45,'rgba(200,180,120,0.35)');
+    grad.addColorStop(0.75,'rgba(160,140,100,0.12)');
+    grad.addColorStop(1,   'rgba(0,0,0,0)');
+
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Draw walls inside beam (lit)
+    ctx.strokeStyle = 'rgba(200,180,140,0.5)';
+    ctx.lineWidth   = 2;
+    ctx.fillStyle   = 'rgba(40,35,25,0.8)';
+    for (const w of WALLS) {
+        ctx.beginPath();
+        ctx.rect(w.x*W, w.y*H, w.w*W, w.h*H);
         ctx.fill();
         ctx.stroke();
     }
 
-    // Hunter dot (red)
-    const hx = IS_HUNTER ? myPos.x * W : otherPos.x * W;
-    const hy = IS_HUNTER ? myPos.y * H : otherPos.y * H;
+    ctx.restore();
 
-    // Glow
-    const hGrad = ctx.createRadialGradient(hx, hy, 0, hx, hy, PLAYER_RADIUS * 2);
-    hGrad.addColorStop(0, 'rgba(139,0,0,0.4)');
-    hGrad.addColorStop(1, 'rgba(139,0,0,0)');
-    ctx.fillStyle = hGrad;
-    ctx.beginPath();
-    ctx.arc(hx, hy, PLAYER_RADIUS * 2, 0, Math.PI*2);
-    ctx.fill();
-
-    ctx.fillStyle   = '#cc0000';
-    ctx.strokeStyle = '#ff4444';
-    ctx.lineWidth   = 2;
-    ctx.shadowBlur  = 14;
-    ctx.shadowColor = '#cc0000';
-    ctx.beginPath();
-    ctx.arc(hx, hy, PLAYER_RADIUS, 0, Math.PI*2);
-    ctx.fill();
-    ctx.stroke();
-    ctx.shadowBlur  = 0;
-
-    // Label
-    ctx.fillStyle   = '#ffcccc';
-    ctx.font        = '9px Courier New';
-    ctx.textAlign   = 'center';
-    ctx.fillText('HUNTER', hx, hy + PLAYER_RADIUS + 14);
-
-    // Fugitive dot (gold)
-    const fx = IS_HUNTER ? otherPos.x * W : myPos.x * W;
-    const fy = IS_HUNTER ? otherPos.y * H : myPos.y * H;
-
-    const fGrad = ctx.createRadialGradient(fx, fy, 0, fx, fy, PLAYER_RADIUS * 2);
-    fGrad.addColorStop(0, 'rgba(224,192,96,0.35)');
-    fGrad.addColorStop(1, 'rgba(224,192,96,0)');
-    ctx.fillStyle = fGrad;
-    ctx.beginPath();
-    ctx.arc(fx, fy, PLAYER_RADIUS * 2, 0, Math.PI*2);
-    ctx.fill();
-
-    ctx.fillStyle   = '#c9a84c';
-    ctx.strokeStyle = '#e0c060';
-    ctx.lineWidth   = 2;
-    ctx.shadowBlur  = 14;
-    ctx.shadowColor = '#c9a84c';
-    ctx.beginPath();
-    ctx.arc(fx, fy, PLAYER_RADIUS, 0, Math.PI*2);
-    ctx.fill();
-    ctx.stroke();
-    ctx.shadowBlur  = 0;
-
-    ctx.fillStyle = '#fff8dc';
-    ctx.fillText('FUGITIVE', fx, fy + PLAYER_RADIUS + 14);
-
-    // Distance line (faint)
-    const dist = getDist();
-    if (dist < 120) {
-        ctx.strokeStyle = `rgba(255,68,68,${0.4 * (1 - dist/120)})`;
-        ctx.lineWidth   = 1;
-        ctx.setLineDash([4,6]);
+    // ── WALLS in ambient darkness (barely visible) ──
+    ctx.strokeStyle = 'rgba(30,30,30,0.8)';
+    ctx.fillStyle   = 'rgba(15,15,15,0.9)';
+    ctx.lineWidth   = 1;
+    for (const w of WALLS) {
         ctx.beginPath();
-        ctx.moveTo(hx, hy);
-        ctx.lineTo(fx, fy);
+        ctx.rect(w.x*W, w.y*H, w.w*W, w.h*H);
+        ctx.fill();
         ctx.stroke();
-        ctx.setLineDash([]);
-
-        // Proximity warning sound
-        if (Math.random() < 0.05) sfxNear();
     }
 
-    // Shrink warning overlay
-    if (arenaPhase > 0) {
-        ctx.fillStyle = `rgba(139,0,0,${arenaPhase === 1 ? 0.04 : 0.08})`;
-        ctx.fillRect(0, 0, W, H);
-    }
-}
-
-function roundRect(ctx, x, y, w, h, r) {
+    // ── HUNTER DOT ──
+    // Small dim glow around hunter body
+    const hAura = ctx.createRadialGradient(hpx, hpy, 0, hpx, hpy, PLAYER_R*2.5);
+    hAura.addColorStop(0,   'rgba(255,200,80,0.25)');
+    hAura.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle = hAura;
     ctx.beginPath();
-    ctx.moveTo(x+r, y);
-    ctx.lineTo(x+w-r, y);
-    ctx.quadraticCurveTo(x+w, y, x+w, y+r);
-    ctx.lineTo(x+w, y+h-r);
-    ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
-    ctx.lineTo(x+r, y+h);
-    ctx.quadraticCurveTo(x, y+h, x, y+h-r);
-    ctx.lineTo(x, y+r);
-    ctx.quadraticCurveTo(x, y, x+r, y);
-    ctx.closePath();
+    ctx.arc(hpx, hpy, PLAYER_R*2.5, 0, Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle   = '#e0a020';
+    ctx.strokeStyle = '#ffcc44';
+    ctx.lineWidth   = 2;
+    ctx.shadowBlur  = 12;
+    ctx.shadowColor = '#e0a020';
+    ctx.beginPath();
+    ctx.arc(hpx, hpy, PLAYER_R, 0, Math.PI*2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Beam direction indicator (small line)
+    ctx.strokeStyle = 'rgba(255,200,80,0.5)';
+    ctx.lineWidth   = 2;
+    ctx.beginPath();
+    ctx.moveTo(hpx, hpy);
+    ctx.lineTo(hpx + Math.cos(beamAngle) * (PLAYER_R + 12), hpy + Math.sin(beamAngle) * (PLAYER_R + 12));
+    ctx.stroke();
+
+    // ── FUGITIVE DOT ──
+    // Only visible if inside beam OR fugitive's own screen
+    const inBeam = isFugitiveInBeam(hpx, hpy, fpx, fpy, beamAngle, bLen);
+
+    if (!IS_HUNTER) {
+        // Always show yourself if you're the fugitive
+        const fAura = ctx.createRadialGradient(fpx, fpy, 0, fpx, fpy, PLAYER_R*2);
+        fAura.addColorStop(0, 'rgba(200,160,255,0.2)');
+        fAura.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = fAura;
+        ctx.beginPath();
+        ctx.arc(fpx, fpy, PLAYER_R*2, 0, Math.PI*2);
+        ctx.fill();
+
+        ctx.fillStyle   = inBeam ? '#ff6666' : '#9966cc';
+        ctx.strokeStyle = inBeam ? '#ff9999' : '#cc88ff';
+        ctx.lineWidth   = 2;
+        ctx.shadowBlur  = inBeam ? 18 : 10;
+        ctx.shadowColor = inBeam ? '#ff4444' : '#9966cc';
+        ctx.beginPath();
+        ctx.arc(fpx, fpy, PLAYER_R, 0, Math.PI*2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+    } else if (inBeam) {
+        // Hunter only sees fugitive if in beam
+        ctx.fillStyle   = '#cc3333';
+        ctx.strokeStyle = '#ff5555';
+        ctx.lineWidth   = 2;
+        ctx.shadowBlur  = 16;
+        ctx.shadowColor = '#ff3333';
+        ctx.beginPath();
+        ctx.arc(fpx, fpy, PLAYER_R, 0, Math.PI*2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Exclamation
+        ctx.fillStyle = '#ffffff';
+        ctx.font      = 'bold 14px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('!', fpx, fpy + 5);
+    }
+
+    // ── DARKNESS VIGNETTE ──
+    const vig = ctx.createRadialGradient(W/2, H/2, H*0.2, W/2, H/2, H*0.8);
+    vig.addColorStop(0,   'rgba(0,0,0,0)');
+    vig.addColorStop(0.6, 'rgba(0,0,0,0.3)');
+    vig.addColorStop(1,   'rgba(0,0,0,0.85)');
+    ctx.fillStyle = vig;
+    ctx.fillRect(0, 0, W, H);
 }
 
-// ── CATCH CHECK ────────────────────────────────────────────────────────────
-function getDist() {
-    const canvas = $('arenaCanvas');
+// ── BEAM MATH ──────────────────────────────────────────────────────────────
+function isFugitiveInBeam(hx, hy, fx, fy, angle, bLen) {
+    const dx   = fx - hx;
+    const dy   = fy - hy;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist > bLen) return false;
+    const angleToF  = Math.atan2(dy, dx);
+    let   angleDiff = angleToF - angle;
+    // Normalize
+    while (angleDiff >  Math.PI) angleDiff -= Math.PI*2;
+    while (angleDiff < -Math.PI) angleDiff += Math.PI*2;
+    return Math.abs(angleDiff) < BEAM_ANGLE;
+}
+
+// ── EXPOSURE CHECK ─────────────────────────────────────────────────────────
+function checkExposure(canvas, beamAngle) {
+    if (gameOver) return;
+
     const W = canvas.width, H = canvas.height;
-    const dx = (myPos.x - otherPos.x) * W;
-    const dy = (myPos.y - otherPos.y) * H;
-    return Math.sqrt(dx*dx + dy*dy);
-}
+    const hpx = IS_HUNTER ? myPos.x*W : otherPos.x*W;
+    const hpy = IS_HUNTER ? myPos.y*H : otherPos.y*H;
+    const fpx = IS_HUNTER ? otherPos.x*W : myPos.x*W;
+    const fpy = IS_HUNTER ? otherPos.y*H : myPos.y*H;
+    const bLen = BEAM_LENGTH * H;
 
-function checkCatch(canvas) {
-    if (!IS_HUNTER || caught || !gameRunning) return;
-    const dist = getDist();
-    if (dist < CATCH_DIST) {
-        caught = true;
-        update(gameRef, { caught: true });
-        endGame('caught');
+    const inBeam = isFugitiveInBeam(hpx, hpy, fpx, fpy, beamAngle, bLen);
+
+    if (inBeam) {
+        // Calculate proximity for exposure rate
+        const dx   = fpx - hpx;
+        const dy   = fpy - hpy;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        const rate = Math.max(1.5, 8 * (1 - dist / bLen));
+        exposureLevel = Math.min(100, exposureLevel + rate);
+
+        if (Math.random() < 0.15) sfxExposed();
+        if (exposureLevel > 60 && Math.random() < 0.1) sfxAlarm();
+
+        // Update beam bar (fugitive)
+        if (!IS_HUNTER) {
+            const fill = $('beamFill');
+            fill.style.width = exposureLevel + '%';
+            fill.className   = exposureLevel > 60 ? 'beam-fill danger' : 'beam-fill';
+
+            // Flash red tint
+            if (exposureLevel > 70) {
+                $('flashOverlay').style.background  = '#cc0000';
+                $('flashOverlay').style.opacity     = String(0.08 * (exposureLevel/100));
+            }
+        }
+
+        if (exposureLevel >= CATCH_EXPOSURE) {
+            update(gameRef, { caught: true });
+            endGame('caught');
+        }
+    } else {
+        // Decay exposure
+        exposureLevel = Math.max(0, exposureLevel - 1.5);
+        if (!IS_HUNTER) {
+            $('beamFill').style.width = exposureLevel + '%';
+            $('flashOverlay').style.opacity = '0';
+        }
     }
 }
 
 // ── SYNC ───────────────────────────────────────────────────────────────────
-let lastSync = 0;
-function syncPosition() {
+function syncPos(beamAngle) {
     const now = Date.now();
-    if (now - lastSync < 50) return; // 20fps sync cap
+    if (now - lastSync < 50) return;
     lastSync = now;
 
     if (IS_HUNTER) {
-        update(gameRef, { hunterX: myPos.x, hunterY: myPos.y });
+        update(gameRef, { hx: myPos.x, hy: myPos.y, hAngle: beamAngle });
     } else {
-        update(gameRef, { fugitiveX: myPos.x, fugitiveY: myPos.y });
+        update(gameRef, { fx: myPos.x, fy: myPos.y });
     }
 }
 
 // ── END GAME ───────────────────────────────────────────────────────────────
 function endGame(reason) {
-    if (!gameRunning && reason !== 'escaped' && reason !== 'caught') return;
+    if (gameOver) return;
+    gameOver    = true;
     gameRunning = false;
-    caught      = true;
 
-    stopBGMusic();
-    clearInterval(timerInterval);
-    if (gameUnsubscribe) gameUnsubscribe();
+    stopBG();
+    clearInterval(timerIv);
+    if (unsubDB) unsubDB();
+
+    $('hud').style.display     = 'none';
+    $('beamBar').style.display = 'none';
 
     if (reason === 'caught') {
-        sfxCatch();
-        flash('#cc0000', 0.6);
+        sfxCaught();
+        flash('#cc0000', 0.85, 800);
     } else {
-        sfxEscape();
-        flash('#c9a84c', 0.4);
+        sfxEscaped();
+        flash('#c9a84c', 0.6, 800);
     }
 
     if (reason === 'escaped') update(gameRef, { escaped: true });
 
     setTimeout(() => {
         showScreen('endScreen');
-
         if (reason === 'caught') {
             $('endVerdict').textContent = IS_HUNTER ? 'SHE\'S CAUGHT.' : 'YOU\'VE BEEN CAUGHT.';
             $('endSub').textContent     = IS_HUNTER
-                ? 'She could not escape. The case is closed. The criminal is in your hands.'
-                : 'He found you. You ran but the truth always catches up.';
-            $('endHunter').textContent   = '1';
-            $('endFugitive').textContent = '0';
+                ? 'The light found her. The case is closed. The criminal is yours.'
+                : 'The beam found you. You hid well — but not well enough.';
         } else {
             $('endVerdict').textContent = IS_HUNTER ? 'SHE ESCAPED.' : 'YOU ESCAPED.';
             $('endSub').textContent     = IS_HUNTER
-                ? 'She outran you. The investigation continues.'
-                : 'You made it. But the case still has one more secret waiting for you.';
-            $('endHunter').textContent   = '0';
-            $('endFugitive').textContent = '1';
+                ? 'Sixty seconds. She survived. The darkness protected her this time.'
+                : 'You stayed in the shadows. You survived. The truth still waits for you.';
         }
-    }, 1200);
-}
-
-// ── FLASH ──────────────────────────────────────────────────────────────────
-function flash(color, opacity) {
-    const el = $('flashOverlay');
-    el.style.background = color;
-    el.style.opacity    = opacity;
-    setTimeout(() => {
-        el.style.transition = 'opacity 0.6s';
-        el.style.opacity    = '0';
-        setTimeout(() => { el.style.transition = ''; }, 700);
-    }, 100);
-
-    if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 300]);
+    }, 1400);
 }
 
 </script>
