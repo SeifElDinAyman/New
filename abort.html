@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Incoming Call — Case #114</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+    background: #050505;
+    font-family: "Courier New", monospace;
+    color: #ddd;
+    min-height: 100vh;
+    padding: 15px;
+    overflow-x: hidden;
+    position: relative;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle at top, rgba(139,0,0,0.18), transparent 35%),
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.025) 0px,
+            rgba(255,255,255,0.025) 1px,
+            transparent 2px,
+            transparent 4px
+        );
+    pointer-events: none;
+    z-index: 0;
+}
+
+.wrap {
+    max-width: 420px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    animation: fadeIn 1.2s ease both;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── READING PAGE ── */
+.topbar {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    padding: 11px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.badge {
+    background: #8b0000;
+    color: #ffcccc;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    box-shadow: 0 0 14px rgba(139,0,0,0.4);
+    text-transform: uppercase;
+}
+
+.topmeta { color: #666; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+
+.panel {
+    background: #0d0d0d;
+    border: 1px solid #2a2a2a;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    padding: 24px 20px 28px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.9);
+    position: relative;
+    overflow: hidden;
+}
+
+.panel::before {
+    content: "SECTION 06";
+    position: absolute;
+    top: 22px; right: -32px;
+    transform: rotate(28deg);
+    border: 1px solid rgba(139,0,0,0.25);
+    color: rgba(139,0,0,0.18);
+    font-size: 8px;
+    letter-spacing: 3px;
+    padding: 4px 14px;
+    pointer-events: none;
+}
+
+.section-tag { color: #666; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
+h1 { font-size: 17px; color: #f0f0f0; letter-spacing: 2px; text-transform: uppercase; font-weight: normal; margin-bottom: 4px; }
+.subtitle { color: #555; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 18px; }
+.divider { border: none; border-top: 1px solid #1e1e1e; margin: 18px 0; }
+
+p { font-size: 12px; color: #b8b8b8; line-height: 1.95; margin-bottom: 12px; }
+p strong { color: #f0f0f0; font-weight: normal; }
+p em { color: #e0c060; font-style: italic; }
+
+.quote {
+    margin: 16px 0;
+    padding: 12px 14px;
+    border-left: 2px solid #8b0000;
+    background: rgba(139,0,0,0.07);
+    color: #d8d8d8;
+    font-style: italic;
+    line-height: 1.95;
+    font-size: 12px;
+}
+
+.reading-note {
+    background: #080808;
+    border: 1px solid #1e1e1e;
+    border-left: 2px solid rgba(201,168,76,0.4);
+    padding: 14px;
+    margin: 16px 0;
+    font-size: 11px;
+    color: #999;
+    line-height: 1.9;
+}
+
+.reading-note strong { color: #e0c060; font-weight: normal; }
+
+/* Cursor blink at end of reading */
+.cursor {
+    display: inline-block;
+    width: 8px; height: 14px;
+    background: #e0c060;
+    margin-left: 4px;
+    vertical-align: middle;
+    animation: cursorBlink 0.9s step-end infinite;
+}
+@keyframes cursorBlink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+.system { margin-top: 14px; font-size: 10px; color: #333; line-height: 1.6; text-align: center; }
+
+/* ── VIBRATE ANIMATION ── */
+@keyframes vibrate {
+    0%   { transform: translateX(0); }
+    10%  { transform: translateX(-4px) rotate(-1deg); }
+    20%  { transform: translateX(4px) rotate(1deg); }
+    30%  { transform: translateX(-4px) rotate(0deg); }
+    40%  { transform: translateX(4px) rotate(1deg); }
+    50%  { transform: translateX(-3px) rotate(-1deg); }
+    60%  { transform: translateX(3px) rotate(0deg); }
+    70%  { transform: translateX(-2px); }
+    80%  { transform: translateX(2px); }
+    90%  { transform: translateX(-1px); }
+    100% { transform: translateX(0); }
+}
+
+.vibrating { animation: vibrate 0.6s ease infinite; }
+
+/* ── INCOMING CALL OVERLAY ── */
+#callOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(0,0,0,0.0);
+    transition: background 0.5s;
+}
+
+#callOverlay.show { background: rgba(0,0,0,0.92); }
+
+.call-screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 60px 30px 50px;
+    opacity: 0;
+    transition: opacity 0.5s ease 0.3s;
+}
+
+#callOverlay.show .call-screen { opacity: 1; }
+
+/* Caller info */
+.caller-section { text-align: center; }
+
+.caller-avatar {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: #0a0a0a;
+    border: 2px solid #222;
+    margin: 0 auto 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    box-shadow: 0 0 0 8px rgba(139,0,0,0.1), 0 0 0 16px rgba(139,0,0,0.05);
+    animation: callerPulse 1.5s ease infinite;
+}
+
+@keyframes callerPulse {
+    0%,100% { box-shadow: 0 0 0 8px rgba(139,0,0,0.1), 0 0 0 16px rgba(139,0,0,0.05); }
+    50%      { box-shadow: 0 0 0 12px rgba(139,0,0,0.15), 0 0 0 24px rgba(139,0,0,0.04); }
+}
+
+.caller-name {
+    font-size: 22px;
+    color: #f0f0f0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.caller-sub {
+    font-size: 11px;
+    color: #666;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.call-ring {
+    font-size: 11px;
+    color: rgba(0,255,156,0.6);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    animation: ringBlink 1s ease infinite;
+}
+
+@keyframes ringBlink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* Message transcript */
+.call-message {
+    background: rgba(5,5,5,0.9);
+    border: 1px solid #1e1e1e;
+    border-left: 2px solid #8b0000;
+    border-radius: 6px;
+    padding: 16px;
+    width: 100%;
+    max-width: 360px;
+    font-size: 13px;
+    color: #c0c0c0;
+    line-height: 2;
+    text-align: left;
+    min-height: 120px;
+    font-style: italic;
+    display: none;
+}
+
+.call-message .urgent {
+    color: #ff5555;
+    font-style: normal;
+    font-size: 14px;
+    font-weight: normal;
+    text-shadow: 0 0 8px rgba(255,85,85,0.4);
+}
+
+/* Call buttons */
+.call-buttons {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-call {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    border: none;
+    font-size: 26px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+    transition: filter 0.15s, transform 0.15s;
+    user-select: none;
+}
+
+.btn-call:active { filter: brightness(1.3); transform: scale(0.95); }
+
+.btn-answer {
+    background: #006600;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.6), 0 0 20px rgba(0,150,0,0.3);
+    animation: answerPulse 1s ease infinite;
+}
+
+@keyframes answerPulse {
+    0%,100% { box-shadow: 0 4px 16px rgba(0,0,0,0.6), 0 0 20px rgba(0,150,0,0.3); }
+    50%      { box-shadow: 0 4px 16px rgba(0,0,0,0.6), 0 0 35px rgba(0,180,0,0.5); }
+}
+
+.btn-decline {
+    background: #8b0000;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.6), 0 0 16px rgba(139,0,0,0.3);
+}
+
+/* Post-call proceed */
+.call-proceed {
+    display: none;
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+}
+
+.proceed-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: #8b0000;
+    border: none;
+    color: #fff;
+    border-radius: 6px;
+    letter-spacing: 3px;
+    font-size: 11px;
+    font-family: "Courier New", monospace;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(139,0,0,0.4);
+    transition: filter 0.2s;
+    animation: fadeIn 0.8s ease both;
+}
+
+.proceed-btn:hover { filter: brightness(1.15); }
+
+.proceed-note {
+    margin-top: 10px;
+    font-size: 9px;
+    color: #444;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap" id="mainWrap">
+
+    <div class="topbar">
+        <span class="badge">Section 06 — Suspect Profile</span>
+        <span class="topmeta">Case #114 | Active</span>
+    </div>
+
+    <div class="panel" id="readingPanel">
+
+        <div class="section-tag">Classified Intelligence — Eyes Only</div>
+        <h1>Profile Update</h1>
+        <div class="subtitle">New data recovered — analyst submission</div>
+
+        <hr class="divider">
+
+        <p>
+            The division received new intelligence this morning regarding
+            the suspect's movements prior to the incident.
+            A source inside the Maadi district has come forward voluntarily.
+        </p>
+
+        <p>
+            According to this source, the suspect was observed
+            in the vicinity of the primary incident zone
+            on at least <strong>three separate occasions</strong>
+            before the crime was reported.
+        </p>
+
+        <div class="quote">
+            "She always came alone.<br>
+            She never made eye contact with anyone.<br>
+            But she always knew exactly where she was going."<br><br>
+            — Anonymous source, Maadi district
+        </div>
+
+        <p>
+            This contradicts the suspect's initial profile —
+            which described her as having no prior connection
+            to the incident zone.
+        </p>
+
+        <p>
+            Our analysts believe she had been <em>mapping the location
+            in advance.</em> The precision of her movements suggests
+            this was not impulsive. It was planned.
+        </p>
+
+        <div class="reading-note">
+            <strong>Cross-reference note:</strong><br>
+            The codename "bate5a" — recovered from the intercepted device —
+            was first used exactly <strong>72 hours</strong> before the incident.
+            This timeline aligns precisely with the source's observations.
+        </div>
+
+        <p>
+            The division is now operating under a revised hypothesis:
+            the suspect did not stumble into this case.
+            She was <em>already inside it</em> before it began.<span class="cursor"></span>
+        </p>
+
+    </div>
+
+    <div class="system">
+        IP Logged: Cairo, Egypt<br>
+        Intelligence Update — Internal Affairs Division
+    </div>
+
+</div>
+
+<!-- ── INCOMING CALL OVERLAY ── -->
+<div id="callOverlay">
+    <div class="call-screen">
+
+        <div class="caller-section">
+            <div class="caller-avatar" id="callerAvatar">📞</div>
+            <div class="caller-name">UNKNOWN</div>
+            <div class="caller-sub">Encrypted Line — Cairo Node</div>
+            <div class="call-ring" id="callRing">● INCOMING CALL ●</div>
+        </div>
+
+        <div class="call-message" id="callMessage"></div>
+
+        <div id="callButtons" class="call-buttons">
+            <button class="btn-call btn-decline" id="btnDecline">✕</button>
+            <button class="btn-call btn-answer"  id="btnAnswer">✓</button>
+        </div>
+
+        <div class="call-proceed" id="callProceed">
+            <a class="proceed-btn" href="https://seifeldinayman.github.io/New/chase.html">
+                INITIATE CHASE SEQUENCE →
+            </a>
+            <div class="proceed-note">Both players open the same link</div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// ── TRIGGER CALL AFTER READING DELAY ──────────────────────────────────────
+// Vibrate phone and show call after 6 seconds of reading
+setTimeout(triggerCall, 6000);
+
+function triggerCall() {
+    // Vibrate the whole page
+    document.getElementById('mainWrap').classList.add('vibrating');
+
+    // Try device vibration API
+    if (navigator.vibrate) navigator.vibrate([400, 200, 400, 200, 800]);
+
+    // Show overlay after 1 second of vibrating
+    setTimeout(() => {
+        document.getElementById('mainWrap').classList.remove('vibrating');
+        const overlay = document.getElementById('callOverlay');
+        overlay.style.display = 'block';
+        setTimeout(() => overlay.classList.add('show'), 50);
+    }, 1000);
+}
+
+// ── ANSWER / DECLINE ──────────────────────────────────────────────────────
+document.getElementById('btnAnswer').addEventListener('click', answerCall);
+document.getElementById('btnDecline').addEventListener('click', () => {
+    // She tries to decline — force answer anyway after 1s
+    document.getElementById('btnDecline').style.opacity = '0.3';
+    document.getElementById('btnDecline').disabled = true;
+    setTimeout(answerCall, 800);
+});
+
+function answerCall() {
+    document.getElementById('callButtons').style.display = 'none';
+    document.getElementById('callRing').textContent = '● CONNECTED ●';
+    document.getElementById('callerAvatar').textContent = '🔴';
+
+    const msg = document.getElementById('callMessage');
+    msg.style.display = 'block';
+
+    // Type the message dramatically
+    const lines = [
+        { text: "ABORT MISSION.", urgent: true, delay: 300 },
+        { text: "ABORT IMMEDIATELY.", urgent: true, delay: 1000 },
+        { text: "That is NOT an inside job.", urgent: false, delay: 2000 },
+        { text: "You are sitting with THE CRIMINAL —", urgent: false, delay: 3200 },
+        { text: "not the victim.", urgent: false, delay: 4200 },
+        { text: "ABORT. ABORT. ABORT.", urgent: true, delay: 5200 },
+        { text: "He knows it was you.", urgent: false, delay: 6600 },
+        { text: "All of this was designed to get to YOU.", urgent: false, delay: 7800 },
+        { text: "EVACUATE IMMEDIATELY.", urgent: true, delay: 9200 },
+    ];
+
+    lines.forEach(({ text, urgent, delay }) => {
+        setTimeout(() => {
+            const span = document.createElement('span');
+            span.className = urgent ? 'urgent' : '';
+            span.textContent = text + ' ';
+            msg.appendChild(span);
+            msg.scrollTop = msg.scrollHeight;
+
+            // Vibrate on urgent lines
+            if (urgent && navigator.vibrate) navigator.vibrate(200);
+        }, delay);
+    });
+
+    // Show proceed button after all lines
+    setTimeout(() => {
+        document.getElementById('callProceed').style.display = 'block';
+    }, 11000);
+}
+</script>
+
+</body>
+</html>
