@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Flashback 09 — Physical Feature | Case #114</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+    background: #050505;
+    font-family: "Courier New", monospace;
+    color: #ddd;
+    min-height: 100vh;
+    padding: 15px;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle at top, rgba(139,0,0,0.18), transparent 35%),
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.025) 0px,
+            rgba(255,255,255,0.025) 1px,
+            transparent 2px,
+            transparent 4px
+        );
+    pointer-events: none;
+    z-index: 0;
+}
+
+.wrap {
+    max-width: 420px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    animation: fadeIn 1.2s ease both;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── TOPBAR ── */
+.topbar {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    padding: 11px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.badge {
+    background: #8b0000;
+    color: #ffcccc;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    box-shadow: 0 0 14px rgba(139,0,0,0.4);
+    text-transform: uppercase;
+}
+
+.topmeta { color: #666; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+
+/* ── PANEL ── */
+.panel {
+    background: #0d0d0d;
+    border: 1px solid #2a2a2a;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    padding: 24px 20px 28px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.9);
+    position: relative;
+    overflow: hidden;
+}
+
+.panel::before {
+    content: "FLASHBACK 09";
+    position: absolute;
+    top: 22px; right: -34px;
+    transform: rotate(28deg);
+    border: 1px solid rgba(139,0,0,0.25);
+    color: rgba(139,0,0,0.18);
+    font-size: 8px;
+    letter-spacing: 3px;
+    padding: 4px 14px;
+    pointer-events: none;
+}
+
+.section-tag { color: #555; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
+h1 { font-size: 17px; color: #f0f0f0; letter-spacing: 2px; text-transform: uppercase; font-weight: normal; margin-bottom: 4px; }
+.subtitle { color: #555; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 18px; }
+.divider { border: none; border-top: 1px solid #1e1e1e; margin: 18px 0; }
+
+p { font-size: 12px; color: #b8b8b8; line-height: 1.9; margin-bottom: 12px; }
+p strong { color: #f0f0f0; font-weight: normal; }
+p em { color: #e0c060; font-style: italic; }
+
+.list-item {
+    position: relative;
+    padding-left: 16px;
+    font-size: 12px;
+    color: #aaa;
+    line-height: 1.85;
+    margin-bottom: 5px;
+}
+.list-item::before { content: "▸"; position: absolute; left: 0; color: #8b0000; }
+
+/* ── SUPPRESSED BADGE ── */
+.suppressed {
+    display: inline-block;
+    background: rgba(139,0,0,0.12);
+    border: 1px solid rgba(139,0,0,0.3);
+    color: rgba(255,100,100,0.6);
+    font-size: 9px;
+    letter-spacing: 2px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+}
+
+/* ── EVIDENCE CARDS ── */
+.evidence-card {
+    background: #080808;
+    border: 1px solid #1e1e1e;
+    border-left: 2px solid #8b0000;
+    padding: 14px;
+    margin: 14px 0;
+    position: relative;
+}
+
+.evidence-card::after {
+    content: "EVIDENCE";
+    position: absolute;
+    top: 10px; right: 12px;
+    font-size: 8px;
+    color: #2a2a2a;
+    letter-spacing: 2px;
+}
+
+.ev-title { font-size: 10px; color: #e0c060; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; padding-right: 60px; }
+.ev-text  { font-size: 11px; color: #999; line-height: 1.9; }
+.ev-text strong { color: #f0f0f0; font-weight: normal; }
+.ev-text em { color: #e0c060; font-style: italic; }
+
+/* ── DECODED MESSAGE ── */
+.decoded-box {
+    background: #000;
+    border: 1px solid #1e1e1e;
+    border-left: 2px solid rgba(0,255,156,0.4);
+    padding: 14px;
+    margin: 14px 0;
+    position: relative;
+}
+
+.decoded-label {
+    font-size: 9px;
+    color: rgba(0,255,156,0.5);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.decoded-msg {
+    font-size: 13px;
+    color: #00ff9c;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px rgba(0,255,156,0.3);
+    line-height: 1.7;
+    word-break: break-word;
+}
+
+.decoded-sub {
+    margin-top: 8px;
+    font-size: 10px;
+    color: #333;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    line-height: 1.6;
+}
+
+/* ── TIKTOK FILTER CARD ── */
+.filter-card {
+    background: #080808;
+    border: 1px solid #1e1e1e;
+    border-left: 2px solid #555;
+    padding: 16px 14px;
+    margin: 14px 0;
+    position: relative;
+}
+
+.filter-card::after {
+    content: "ALGORITHM";
+    position: absolute;
+    top: 10px; right: 12px;
+    font-size: 8px;
+    color: #2a2a2a;
+    letter-spacing: 2px;
+}
+
+.filter-title {
+    font-size: 10px;
+    color: #e0c060;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    padding-right: 70px;
+}
+
+/* Instructions graphic */
+.instructions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.instr-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.instr-num {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border: 1px solid #2a2a2a;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: #e0c060;
+    margin-top: 1px;
+}
+
+.instr-icon {
+    flex-shrink: 0;
+    font-size: 18px;
+    margin-top: 0px;
+    line-height: 1;
+}
+
+.instr-text {
+    font-size: 11px;
+    color: #777;
+    line-height: 1.7;
+}
+
+.instr-text strong {
+    color: #bbb;
+    font-weight: normal;
+}
+
+.filter-divider {
+    border: none;
+    border-top: 1px solid #151515;
+    margin: 14px 0;
+}
+
+.filter-btn {
+    display: block;
+    width: 100%;
+    padding: 11px;
+    background: transparent;
+    border: 1px solid #2a2a2a;
+    color: #888;
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-decoration: none;
+    text-align: center;
+    border-radius: 6px;
+    transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.filter-btn:hover { border-color: #555; color: #c0c0c0; box-shadow: 0 0 12px rgba(255,255,255,0.04); }
+
+/* ── MAPS EVIDENCE ── */
+.maps-card {
+    background: #080808;
+    border: 1px solid #1e1e1e;
+    border-left: 2px solid #8b0000;
+    padding: 14px;
+    margin: 14px 0;
+    position: relative;
+}
+
+.maps-card::after {
+    content: "MAP DATA";
+    position: absolute;
+    top: 10px; right: 12px;
+    font-size: 8px;
+    color: #2a2a2a;
+    letter-spacing: 2px;
+}
+
+.maps-placeholder {
+    width: 100%;
+    height: 160px;
+    background: #050505;
+    border: 1px dashed #1e1e1e;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.maps-placeholder-icon { font-size: 28px; opacity: 0.3; }
+.maps-placeholder-text {
+    font-size: 9px;
+    color: #333;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.8;
+}
+
+/* ── GATE ── */
+.gate {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid #1e1e1e;
+}
+
+.gate-label { font-size: 9px; letter-spacing: 3px; color: #555; text-transform: uppercase; margin-bottom: 6px; }
+.gate-hint  { font-size: 11px; color: #555; font-style: italic; line-height: 1.8; margin-bottom: 14px; }
+
+.gate-input {
+    width: 100%;
+    padding: 16px;
+    background: #000;
+    border: 1px solid #2a2a2a;
+    color: #f0f0f0;
+    text-align: center;
+    border-radius: 6px;
+    outline: none;
+    font-family: "Courier New", monospace;
+    font-size: 20px;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gate-input::placeholder {
+    color: #222;
+    letter-spacing: 6px;
+    font-size: 14px;
+}
+
+.gate-input:focus   { border-color: #444; box-shadow: 0 0 12px rgba(201,168,76,0.1); }
+.gate-input.correct { border-color: #e0c060; box-shadow: 0 0 16px rgba(224,192,96,0.25); color: #e0c060; }
+.gate-input.wrong   { border-color: #8b0000; box-shadow: 0 0 12px rgba(139,0,0,0.3); color: #ff6666; }
+
+.gate-btn {
+    margin-top: 10px;
+    width: 100%;
+    padding: 13px;
+    background: #8b0000;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 6px;
+    letter-spacing: 2px;
+    font-size: 11px;
+    font-family: "Courier New", monospace;
+    text-transform: uppercase;
+    transition: filter 0.2s, box-shadow 0.2s;
+}
+
+.gate-btn:hover { filter: brightness(1.15); box-shadow: 0 0 20px rgba(139,0,0,0.5); }
+.gate-btn:disabled { opacity: 0.5; cursor: default; filter: none; box-shadow: none; }
+
+.gate-error { margin-top: 10px; font-size: 10px; color: rgba(255,100,100,0.7); letter-spacing: 1px; text-transform: uppercase; text-align: center; min-height: 14px; }
+
+/* ── UNLOCK RESULT ── */
+.unlock-result {
+    display: none;
+    margin-top: 20px;
+    animation: fadeIn 0.8s ease both;
+}
+
+.unlock-result.show { display: block; }
+
+.unlock-box {
+    background: #080808;
+    border: 1px solid #1e1e1e;
+    border-left: 2px solid #00ff9c;
+    padding: 16px 14px;
+    margin-bottom: 14px;
+}
+
+.unlock-box-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(0,255,156,0.5);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.unlock-terminal {
+    font-size: 11px;
+    color: #00ff9c;
+    line-height: 1.85;
+    text-shadow: 0 0 6px rgba(0,255,156,0.3);
+    white-space: pre-line;
+    min-height: 60px;
+}
+
+.feature-reveal {
+    background: #000;
+    border: 1px solid #1e1e1e;
+    padding: 20px 16px;
+    margin: 14px 0;
+    text-align: center;
+    display: none;
+    animation: fadeIn 0.8s ease both;
+}
+
+.feature-reveal.show { display: block; }
+
+.feat-label { font-size: 9px; color: #555; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; }
+
+.feat-value {
+    font-size: 28px;
+    color: #e0c060;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(224,192,96,0.4);
+    margin-bottom: 6px;
+}
+
+.feat-sub { font-size: 10px; color: #444; letter-spacing: 1px; text-transform: uppercase; line-height: 1.7; }
+
+.proceed-wrap { display: none; margin-top: 14px; }
+
+.proceed-btn {
+    display: block; width: 100%; padding: 13px;
+    background: #0d0d0d; border: 1px solid #e0c060;
+    color: #e0c060; border-radius: 6px; letter-spacing: 2px;
+    font-size: 11px; font-family: "Courier New", monospace;
+    text-transform: uppercase; text-decoration: none;
+    text-align: center; transition: background 0.2s, box-shadow 0.2s;
+    animation: fadeIn 0.8s ease both;
+}
+
+.proceed-btn:hover { background: rgba(224,192,96,0.07); box-shadow: 0 0 18px rgba(224,192,96,0.2); }
+
+.system { margin-top: 14px; font-size: 10px; color: #333; line-height: 1.6; text-align: center; }
+
+.shake { animation: shake 0.28s linear; }
+@keyframes shake {
+    0%  { transform: translateX(0); }   25% { transform: translateX(-6px); }
+    50% { transform: translateX(6px); } 75% { transform: translateX(-4px); }
+    100%{ transform: translateX(0); }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+    <div class="topbar">
+        <span class="badge">Flashback 09 — Physical Feature</span>
+        <span class="topmeta">Case #114 | Suspect Profile</span>
+    </div>
+
+    <div class="panel">
+
+        <div class="section-tag">Evidence — Suppressed Recall</div>
+        <h1>Identify The Feature</h1>
+        <div class="subtitle">Victim perception — sedation-impaired — partial</div>
+
+        <hr class="divider">
+
+        <span class="suppressed">⬛ Status: suppressed — not yet recovered</span>
+
+        <p>
+            The victim is certain the suspect possesses a
+            <strong>distinctive physical characteristic.</strong>
+            It registered even through sedation-impaired perception.
+            He cannot yet name it.
+        </p>
+
+        <div class="list-item">Feature suppressed — may surface through triggered recall.</div>
+        <div class="list-item">Morse code transmission intercepted during interrogation.</div>
+        <div class="list-item">Message decoded. <strong>Technology identified.</strong></div>
+        <div class="list-item">Maps sent for analysis. Algorithm confirmed.</div>
+
+        <hr class="divider">
+
+        <!-- DECODED MESSAGE -->
+        <div class="decoded-box">
+            <div class="decoded-label">Decoded — Morse Intercept</div>
+            <div class="decoded-msg">"SHE IS USING A HIGH TECH<br>FOR ON MAPS"</div>
+            <div class="decoded-sub">Source: interrogation video — victim transmission<br>High-tech element: now identified</div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- EVIDENCE CARDS -->
+        <div class="evidence-card">
+            <div class="ev-title">Evidence #1 — Victim Testimony</div>
+            <div class="ev-text">
+                "There was something about her.<br>
+                Even through the haze — I registered it.<br>
+                A feature. Impossible to miss.<br>
+                I just can't name it yet."
+            </div>
+        </div>
+
+        <div class="evidence-card">
+            <div class="ev-title">Evidence #2 — Computer Files</div>
+            <div class="ev-text">
+                High-tech algorithm recovered from suspect's device.<br>
+                Cross-referenced with maps sent to your location.<br>
+                <strong>Tool identified: TikTok AR filter.</strong><br>
+                Use it on the maps. The feature will surface.
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <hr class="divider">
+
+        <!-- TIKTOK FILTER CARD -->
+        <div class="filter-card">
+            <div class="filter-title">High-Tech Algorithm — TikTok AR Filter</div>
+
+            <div class="instructions">
+
+                <div class="instr-step">
+                    <div class="instr-num">01</div>
+                    <div class="instr-icon">📲</div>
+                    <div class="instr-text">
+                        Open the filter link below in <strong>TikTok.</strong> It will launch the AR camera.
+                    </div>
+                </div>
+
+                <div class="instr-step">
+                    <div class="instr-num">02</div>
+                    <div class="instr-icon">🗺</div>
+                    <div class="instr-text">
+                        Point your camera at <strong>the map evidence</strong> sent to your location.
+                    </div>
+                </div>
+
+                <div class="instr-step">
+                    <div class="instr-num">03</div>
+                    <div class="instr-icon">👁</div>
+                    <div class="instr-text">
+                        The algorithm will overlay the hidden layer.<br>
+                        <strong>Observe. The feature will surface.</strong>
+                    </div>
+                </div>
+
+                <div class="instr-step">
+                    <div class="instr-num">04</div>
+                    <div class="instr-icon">🔑</div>
+                    <div class="instr-text">
+                        What you see <strong>is the password.</strong><br>
+                        Enter it below to unlock the next file.
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="filter-divider"></div>
+
+            <!-- ↓↓↓ REPLACE href WITH ACTUAL TIKTOK FILTER LINK ↓↓↓ -->
+            <a class="filter-btn" href="https://www.tiktok.com/?schema_type=33&object_id=preview_Ka6e8NMcdxm9iVxuwMw6Yh" target="_blank">
+                ↗ OPEN TIKTOK FILTER
+            </a>
+
+        </div>
+
+        <hr class="divider">
+
+        <!-- GATE -->
+        <div class="gate">
+            <div class="gate-label">Decrypt The Feature</div>
+            <p class="gate-hint">
+                What did the algorithm reveal on the maps?<br>
+                Enter the four-letter code below.
+            </p>
+            <input
+                class="gate-input"
+                id="gateInput"
+                type="text"
+                placeholder="_ _ _ _"
+                maxlength="10"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="characters"
+                spellcheck="false"
+            />
+            <button class="gate-btn" id="gateBtn">UNLOCK FEATURE FILE</button>
+            <div class="gate-error" id="gateError"></div>
+        </div>
+
+        <!-- UNLOCK RESULT -->
+        <div class="unlock-result" id="unlockResult">
+            <div class="unlock-box">
+                <div class="unlock-box-label">Feature File — Decrypted</div>
+                <div class="unlock-terminal" id="unlockTerminal"></div>
+            </div>
+            <div class="feature-reveal" id="featureReveal">
+                <div class="feat-label">Distinctive Physical Feature — Confirmed</div>
+                <div class="feat-value">TALL</div>
+                <div class="feat-sub">
+                    Victim perception confirmed<br>
+                    Suspect profile updated<br>
+                    Feature logged — Case #114
+                </div>
+            </div>
+            <div class="proceed-wrap" id="proceedWrap">
+                <!-- ↓↓↓ REPLACE href WITH ACTUAL NEXT PAGE LINK ↓↓↓ -->
+                <a class="proceed-btn" href="YOUR_NEXT_STAGE_LINK_HERE">FEATURE CONFIRMED — PROCEED →</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="system">
+        IP Logged: Cairo, Egypt<br>
+        Suspect Profile — Internal Affairs Division
+    </div>
+
+</div>
+
+<script>
+const CORRECT = ['tall', 'loli'];
+
+const gateInput = document.getElementById('gateInput');
+const gateBtn   = document.getElementById('gateBtn');
+const gateError = document.getElementById('gateError');
+const panel     = document.querySelector('.panel');
+
+let running = false;
+
+gateBtn.addEventListener('click', attempt);
+gateInput.addEventListener('keydown', e => { if (e.key === 'Enter') attempt(); });
+
+function attempt() {
+    if (running) return;
+    const val = gateInput.value.trim().toLowerCase();
+    gateError.textContent = '';
+
+    if (!val) { gateError.textContent = 'ENTER THE CODE'; return; }
+
+    if (CORRECT.includes(val)) {
+        running = true;
+        gateInput.classList.add('correct');
+        gateInput.disabled  = true;
+        gateBtn.disabled    = true;
+
+        document.getElementById('unlockResult').classList.add('show');
+        document.getElementById('unlockResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        startUnlock();
+
+    } else {
+        gateInput.classList.add('wrong');
+        panel.classList.add('shake');
+        gateError.textContent = 'INCORRECT — FEATURE NOT RECOGNISED';
+        setTimeout(() => {
+            panel.classList.remove('shake');
+            gateInput.classList.remove('wrong');
+            gateInput.value = '';
+        }, 500);
+    }
+}
+
+function startUnlock() {
+    const term = document.getElementById('unlockTerminal');
+    const lines = [
+        '> Verifying code...',
+        '> Cross-referencing suspect profile...',
+        '> Feature match: confirmed.',
+        '> Suppressed memory — unlocked.',
+        '> Distinctive physical feature recovered.',
+        '> Suspect profile updated.',
+    ];
+
+    let li = 0;
+    function next() {
+        if (li >= lines.length) {
+            setTimeout(() => {
+                document.getElementById('featureReveal').classList.add('show');
+                setTimeout(() => {
+                    document.getElementById('proceedWrap').style.display = 'block';
+                    document.getElementById('featureReveal').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 800);
+            }, 400);
+            return;
+        }
+        typeLine(term, lines[li], () => { li++; setTimeout(next, 180); });
+    }
+    next();
+}
+
+function typeLine(el, text, cb) {
+    let i = 0;
+    function t() {
+        if (i < text.length) { el.innerHTML += text[i++]; setTimeout(t, 20); }
+        else { el.innerHTML += '\n'; if (cb) setTimeout(cb, 60); }
+    }
+    t();
+}
+</script>
+
+</body>
+</html>
