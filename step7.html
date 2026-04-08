@@ -890,9 +890,12 @@ function streamLogs(i = 0) {
     if (i < logs.length) {
         typeLine(logs[i], () => streamLogs(i + 1));
     } else {
-        // Unlock computer graphic
-        unlockComputer();
-        startProgress();
+        // Scroll back to computer then unlock it
+        document.querySelector('.computer-wrap').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => {
+            unlockComputer();
+            startProgress();
+        }, 800);
     }
 }
 
