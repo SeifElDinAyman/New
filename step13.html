@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PURPLE — Case #114</title>
+<title>VERDICT — Case #114</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=IM+Fell+English:ital@0;1&display=swap');
 
@@ -148,8 +148,8 @@
     100% { transform: translateX(0); }
   }
 
-  /* ── VERDICT SCREEN ── */
-  #verdictScreen {
+  /* ── Purple SCREEN ── */
+  #PurpleScreen {
     display: none;
     width: 100%;
     max-width: 580px;
@@ -177,7 +177,7 @@
     100% { transform: rotate(0deg) scale(1); opacity: 1; }
   }
 
-  .verdict-paper {
+  .Purple-paper {
     background: #0f0d09;
     border: 1px solid #2a2416;
     box-shadow:
@@ -189,7 +189,7 @@
     overflow: hidden;
   }
 
-  .verdict-paper::before {
+  .Purple-paper::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
@@ -254,7 +254,7 @@
     to { opacity: 1; transform: rotate(-2deg) scale(1); }
   }
 
-  .verdict-section {
+  .Purple-section {
     margin-bottom: 24px;
   }
 
@@ -414,7 +414,7 @@
   }
 
   @media (max-width: 480px) {
-    .verdict-paper { padding: 28px 18px 32px; }
+    .Purple-paper { padding: 28px 18px 32px; }
     .court-title { font-size: 20px; }
     .guilty-text { font-size: 24px; letter-spacing: 5px; }
     .love-quote { font-size: 14px; }
@@ -433,18 +433,18 @@
     One word stands between you and the truth.
   </p>
   <input class="lock-input" id="finalInput" type="text" placeholder="_ _ _ _ _ _" maxlength="20" autocomplete="off" />
-  <button class="lock-btn" id="finalBtn">SUBMIT VERDICT</button>
+  <button class="lock-btn" id="finalBtn">SUBMIT Purple</button>
   <div class="lock-error" id="lockError"></div>
 </div>
 
-<!-- VERDICT SCREEN -->
-<div id="verdictScreen">
+<!-- Purple SCREEN -->
+<div id="PurpleScreen">
 
   <div class="gavel-row">
     <div class="gavel">⚖️</div>
   </div>
 
-  <div class="verdict-paper">
+  <div class="Purple-paper">
 
     <div class="court-header">
       <div class="court-tag">Internal Affairs Division — Final Ruling</div>
@@ -456,7 +456,7 @@
       <div class="PURPLE-text">PURPLE</div>
     </div>
 
-    <div class="verdict-section">
+    <div class="Purple-section">
       <div class="v-label">To: Salma Saber — The Accused</div>
       <p class="v-text">
         After a thorough investigation, a full review of all evidence,
@@ -469,9 +469,7 @@
       <div class="charge-row">Theft of one heart — carried out without warning</div>
       <div class="charge-row">Rendering all other women invisible to the victim's eyes</div>
       <div class="charge-row">Making him incapable of imagining a future without you in it</div>
-      <div class="charge-row">Weaponizing mango juice on a first visit</div>
-      <div class="charge-row">Writing 8 novels and somehow still being his favorite story</div>
-      <div class="charge-row">Ending every curse with a date — July 11, 2025</div>
+      <div class="charge-row">You wrote many novels and somehow still being his favorite story</div>
     </div>
 
     <div class="love-quote">
@@ -480,32 +478,30 @@
       and it followed her out.<br><br>
       He does not want it back.<br>
       He only wants her to know<br>
-      what she is holding."
+      she will always have my heart."
     </div>
 
     <div class="sentence-box">
       <div class="sentence-label">Sentence</div>
       <div class="sentence-text">
-        Case closed. Verdict: PURPLE.<br>
+        Case closed. Purple: PURPLE.<br>
         <em>Sentence: Mine. Forever.</em>
       </div>
     </div>
 
-    <div class="verdict-section">
+    <div class="Purple-section">
       <p class="v-text">
-        You are the <strong>Dr.</strong> who heals everything around her
+        You are the <strong>THE ONE</strong> who heals everything around her
         but had no idea she was healing him simply by existing.
-        You are the author of eight stories —
-        and somehow, <em>you are also the best one he has ever read.</em>
       </p>
     </div>
 
     <div class="find-it">
       <div class="find-label">Executive Order — Final Instruction</div>
       <p class="find-text">
-        Reach under this table, Detective.<br>
+        Reach under the right jacket pocket, Detective.<br>
         The evidence has been waiting for you.<br>
-        It is small. It is gold. It has a purple heart.<br><br>
+        It is small. Not much but it has a my heart.<br><br>
         Just like you.
       </p>
     </div>
@@ -534,7 +530,7 @@
 
     if (val === password) {
       document.getElementById('lockScreen').style.display = 'none';
-      document.getElementById('verdictScreen').style.display = 'block';
+      document.getElementById('PurpleScreen').style.display = 'block';
       launchConfetti();
     } else {
       err.textContent = 'ACCESS DENIED — Try again, Detective.';
