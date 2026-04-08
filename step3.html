@@ -21,9 +21,11 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    justify-content: flex-start;
+    overflow-x: hidden;
+    overflow-y: auto;
     position: relative;
+    padding: 60px 16px 60px;
 }
 
 /* Scanlines */
@@ -71,9 +73,9 @@ body::before {
     position: relative;
     z-index: 20;
     max-width: 480px;
-    width: 90%;
-    margin-bottom: 36px;
-    padding: 22px 26px;
+    width: 100%;
+    margin-bottom: 32px;
+    padding: 18px 20px;
     border: 1px solid #1e1e1e;
     border-left: 2px solid rgba(139,0,0,0.5);
     background: rgba(5,5,5,0.7);
@@ -133,12 +135,28 @@ body::before {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    max-width: 560px;
 }
 
+/* The animating container — door + keypad stacked */
 #doorScene {
     position: relative; z-index: 20;
-    display: flex; align-items: center; gap: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
     transform-style: preserve-3d;
+    width: 100%;
+}
+
+/* Row that holds keypad below/beside the door */
+#keypadRow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 28px;
 }
 
 /* ──────────────────────────────────────
@@ -269,16 +287,11 @@ body::before {
    KEYPAD MACHINE
 ────────────────────────────────────── */
 .keypad-machine {
-    position: relative; width: 148px;
+    position: relative; width: 200px;
     background: #0e0e0e; border: 1px solid #222; border-radius: 8px;
     padding: 16px 14px 18px;
     box-shadow: 0 0 50px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.03), 0 0 0 1px #0a0a0a;
     z-index: 20;
-}
-.keypad-machine::after {
-    content: "";
-    position: absolute; top:50%; right:-30px;
-    width:28px; height:2px; background:#1a1a1a; box-shadow:0 1px 0 #0a0a0a;
 }
 .machine-label {
     font-size:7px; letter-spacing:3px; color:#383838;
@@ -463,14 +476,15 @@ body::before {
 }
 
 @keyframes walkThrough {
-    0%   { transform:scale(1)   translateZ(0);    opacity:1; filter:brightness(1); }
-    30%  { transform:scale(1.6) translateZ(80px); opacity:1; filter:brightness(1.1); }
-    65%  { transform:scale(3.5) translateZ(260px);opacity:1; filter:brightness(1.2); }
-    85%  { transform:scale(6)   translateZ(450px);opacity:0.5; filter:brightness(1.4); }
-    100% { transform:scale(9)   translateZ(650px);opacity:0; filter:brightness(2); }
+    0%   { transform: scale(1)    translateY(0);   opacity: 1; filter: brightness(1); }
+    25%  { transform: scale(1.8)  translateY(-4%); opacity: 1; filter: brightness(1.1); }
+    55%  { transform: scale(4)    translateY(-9%); opacity: 1; filter: brightness(1.25); }
+    80%  { transform: scale(7)    translateY(-14%);opacity: 0.6; filter: brightness(1.5); }
+    100% { transform: scale(11)   translateY(-18%);opacity: 0; filter: brightness(2.5); }
 }
 #doorScene.walking {
-    animation: walkThrough 3.2s cubic-bezier(0.3,0,0.7,1) forwards;
+    transform-origin: 50% 30%;
+    animation: walkThrough 3.2s cubic-bezier(0.3,0,0.65,1) forwards;
     animation-delay: 0.9s;
 }
 
@@ -481,8 +495,55 @@ body::before {
 .vp-lines.walking { animation:vpZoom 4.1s cubic-bezier(0.3,0,1,1) forwards; }
 
 /* ──────────────────────────────────────
-   SUCCESS OVERLAY
+   RESPONSIVE
 ────────────────────────────────────── */
+
+/* Desktop: door and keypad side by side */
+@media (min-width: 521px) {
+    #doorScene {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 32px;
+    }
+    #keypadRow {
+        margin-top: 0;
+    }
+    .keypad-machine {
+        width: 160px;
+    }
+    /* animation zooms into door which is on the left-ish center */
+    #doorScene.walking {
+        transform-origin: 60% 50%;
+    }
+}
+
+/* Mobile: door on top, keypad below */
+@media (max-width: 520px) {
+    #doorScene {
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+    }
+    #keypadRow {
+        margin-top: 24px;
+    }
+    .door-frame {
+        width: 160px;
+        height: 255px;
+    }
+    .keypad-machine {
+        width: 220px;
+    }
+    .display-digits { font-size: 24px; letter-spacing: 9px; }
+    .num-btn { font-size: 18px; padding: 11px 0; }
+    #investigatorNote { margin-bottom: 24px; }
+    .note-body { font-size: 12px; }
+    /* animation zooms into door which is upper-center */
+    #doorScene.walking {
+        transform-origin: 50% 28%;
+    }
+}
 #successOverlay {
     position:fixed; inset:0; z-index:9500;
     background:#000; opacity:0; pointer-events:none;
@@ -548,37 +609,7 @@ body::before {
 
     <div id="doorScene">
 
-        <!-- KEYPAD -->
-        <div class="keypad-machine">
-            <div class="machine-label">Access Control Unit</div>
-            <div class="display">
-                <div class="display-digits" id="displayDigits">_ _ _</div>
-                <div class="display-status" id="displayStatus">Awaiting Input</div>
-            </div>
-            <div class="numpad">
-                <button class="num-btn" onclick="pressNum('1')">1</button>
-                <button class="num-btn" onclick="pressNum('2')">2</button>
-                <button class="num-btn" onclick="pressNum('3')">3</button>
-                <button class="num-btn" onclick="pressNum('4')">4</button>
-                <button class="num-btn" onclick="pressNum('5')">5</button>
-                <button class="num-btn" onclick="pressNum('6')">6</button>
-                <button class="num-btn" onclick="pressNum('7')">7</button>
-                <button class="num-btn" onclick="pressNum('8')">8</button>
-                <button class="num-btn" onclick="pressNum('9')">9</button>
-                <button class="num-btn" onclick="pressNum('0')" style="grid-column:2">0</button>
-            </div>
-            <div class="action-row">
-                <button class="clear-btn" onclick="clearCode()">CLR</button>
-                <button class="enter-btn" onclick="submitCode()">Enter ▶</button>
-            </div>
-            <div class="machine-leds">
-                <div class="led red on" id="ledRed"></div>
-                <div class="led" style="width:4px;height:4px;background:#111"></div>
-                <div class="led green" id="ledGreen"></div>
-            </div>
-        </div>
-
-        <!-- GLASS DOOR -->
+        <!-- GLASS DOOR — always first (top on mobile, left on desktop) -->
         <div class="door-frame" id="doorFrame">
             <div class="door-light door-light-top"    id="doorLightTop"></div>
             <div class="door-light door-light-bottom" id="doorLightBottom"></div>
@@ -592,6 +623,38 @@ body::before {
                 <div class="door-panel-right" id="doorRight">
                     <div class="glass-inner"></div>
                     <div class="door-handle-right"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KEYPAD — below door on mobile, beside on desktop -->
+        <div id="keypadRow">
+            <div class="keypad-machine">
+                <div class="machine-label">Access Control Unit</div>
+                <div class="display">
+                    <div class="display-digits" id="displayDigits">_ _ _</div>
+                    <div class="display-status" id="displayStatus">Awaiting Input</div>
+                </div>
+                <div class="numpad">
+                    <button class="num-btn" onclick="pressNum('1')">1</button>
+                    <button class="num-btn" onclick="pressNum('2')">2</button>
+                    <button class="num-btn" onclick="pressNum('3')">3</button>
+                    <button class="num-btn" onclick="pressNum('4')">4</button>
+                    <button class="num-btn" onclick="pressNum('5')">5</button>
+                    <button class="num-btn" onclick="pressNum('6')">6</button>
+                    <button class="num-btn" onclick="pressNum('7')">7</button>
+                    <button class="num-btn" onclick="pressNum('8')">8</button>
+                    <button class="num-btn" onclick="pressNum('9')">9</button>
+                    <button class="num-btn" onclick="pressNum('0')" style="grid-column:2">0</button>
+                </div>
+                <div class="action-row">
+                    <button class="clear-btn" onclick="clearCode()">CLR</button>
+                    <button class="enter-btn" onclick="submitCode()">Enter ▶</button>
+                </div>
+                <div class="machine-leds">
+                    <div class="led red on" id="ledRed"></div>
+                    <div class="led" style="width:4px;height:4px;background:#111"></div>
+                    <div class="led green" id="ledGreen"></div>
                 </div>
             </div>
         </div>
@@ -620,7 +683,7 @@ body::before {
 
 <script>
 const CORRECT      = "312";
-const REDIRECT_URL = "https://seifeldinayman.github.io/New/step4.html";
+const REDIRECT_URL = "YOUR_NEXT_PAGE_URL_HERE";
 
 const ERROR_SENTENCES = [
     { text: "where it all started",      arabic: false },
