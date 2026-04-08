@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Flashback 07 — Food Order | Case #114</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+    background: #050505;
+    font-family: "Courier New", monospace;
+    color: #ddd;
+    min-height: 100vh;
+    padding: 15px;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle at top, rgba(139,0,0,0.18), transparent 35%),
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.025) 0px,
+            rgba(255,255,255,0.025) 1px,
+            transparent 2px,
+            transparent 4px
+        );
+    pointer-events: none;
+    z-index: 0;
+}
+
+.wrap {
+    max-width: 420px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    animation: fadeIn 1.2s ease both;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── TOPBAR ── */
+.topbar {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    padding: 11px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.badge {
+    background: #8b0000;
+    color: #ffcccc;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    box-shadow: 0 0 14px rgba(139,0,0,0.4);
+    text-transform: uppercase;
+}
+
+.topmeta { color: #666; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+
+/* ── PANEL ── */
+.panel {
+    background: #0d0d0d;
+    border: 1px solid #2a2a2a;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    padding: 24px 20px 28px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.9);
+    position: relative;
+    overflow: hidden;
+}
+
+.panel::before {
+    content: "FLASHBACK 07";
+    position: absolute;
+    top: 22px; right: -34px;
+    transform: rotate(28deg);
+    border: 1px solid rgba(139,0,0,0.25);
+    color: rgba(139,0,0,0.18);
+    font-size: 8px;
+    letter-spacing: 3px;
+    padding: 4px 14px;
+    pointer-events: none;
+}
+
+.section-tag { color: #555; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
+h1 { font-size: 17px; color: #f0f0f0; letter-spacing: 2px; text-transform: uppercase; font-weight: normal; margin-bottom: 4px; }
+.subtitle { color: #555; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 18px; }
+.divider { border: none; border-top: 1px solid #1e1e1e; margin: 18px 0; }
+
+p { font-size: 12px; color: #b8b8b8; line-height: 1.9; margin-bottom: 12px; }
+p strong { color: #f0f0f0; font-weight: normal; }
+p em { color: #e0c060; font-style: italic; }
+
+.list-item {
+    position: relative;
+    padding-left: 16px;
+    font-size: 12px;
+    color: #aaa;
+    line-height: 1.85;
+    margin-bottom: 5px;
+}
+.list-item::before { content: "▸"; position: absolute; left: 0; color: #8b0000; }
+
+/* ── EVIDENCE CARDS ── */
+.evidence-card {
+    background: #080808;
+    border: 1px solid #1e1e1e;
+    border-left: 2px solid #8b0000;
+    padding: 14px;
+    margin: 14px 0;
+    position: relative;
+}
+
+.evidence-card::after {
+    content: "EVIDENCE";
+    position: absolute;
+    top: 10px; right: 12px;
+    font-size: 8px;
+    color: #2a2a2a;
+    letter-spacing: 2px;
+}
+
+.ev-title { font-size: 10px; color: #e0c060; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; padding-right: 60px; }
+.ev-text  { font-size: 11px; color: #999; line-height: 1.9; }
+.ev-text strong { color: #f0f0f0; font-weight: normal; }
+.ev-text em { color: #e0c060; font-style: italic; }
+
+/* ── CODYCROSS BUTTON ── */
+.cody-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid #2a2a2a;
+    color: #888;
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-decoration: none;
+    text-align: center;
+    border-radius: 6px;
+    margin: 18px 0 0;
+    transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.cody-btn:hover { border-color: #555; color: #c0c0c0; box-shadow: 0 0 12px rgba(255,255,255,0.04); }
+
+/* ── ENTRY SECTION ── */
+.entry-section {
+    margin: 20px 0 0;
+}
+
+.entry-label {
+    font-size: 9px;
+    color: #555;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.entry-hint {
+    font-size: 11px;
+    color: #555;
+    font-style: italic;
+    line-height: 1.8;
+    margin-bottom: 18px;
+}
+
+.entry-hint em { color: #e0c060; font-style: normal; }
+
+.entry-input {
+    width: 100%;
+    padding: 16px;
+    background: #000;
+    border: 1px solid #2a2a2a;
+    color: #f0f0f0;
+    text-align: center;
+    border-radius: 6px;
+    outline: none;
+    font-family: "Courier New", monospace;
+    font-size: 18px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.entry-input::placeholder {
+    color: #2a2a2a;
+    letter-spacing: 4px;
+    font-size: 14px;
+}
+
+.entry-input:focus   { border-color: #444; box-shadow: 0 0 12px rgba(201,168,76,0.1); }
+.entry-input.correct { border-color: #e0c060; box-shadow: 0 0 16px rgba(224,192,96,0.25); color: #e0c060; }
+.entry-input.wrong   { border-color: #8b0000; box-shadow: 0 0 12px rgba(139,0,0,0.3); color: #ff6666; }
+
+.entry-btn {
+    margin-top: 10px;
+    width: 100%;
+    padding: 13px;
+    background: #8b0000;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 6px;
+    letter-spacing: 2px;
+    font-size: 11px;
+    font-family: "Courier New", monospace;
+    text-transform: uppercase;
+    transition: filter 0.2s, box-shadow 0.2s;
+}
+
+.entry-btn:hover { filter: brightness(1.15); box-shadow: 0 0 20px rgba(139,0,0,0.5); }
+
+.entry-error { margin-top: 10px; font-size: 10px; color: rgba(255,100,100,0.7); letter-spacing: 1px; text-transform: uppercase; text-align: center; min-height: 14px; }
+
+/* ── CROSS-REFERENCE RESULT ── */
+.crossref {
+    display: none;
+    margin-top: 20px;
+    animation: fadeIn 0.8s ease both;
+}
+
+.crossref.show { display: block; }
+
+.crossref-box {
+    background: #080808;
+    border: 1px solid #1e1e1e;
+    border-left: 2px solid #00ff9c;
+    padding: 16px 14px;
+    margin-bottom: 14px;
+}
+
+.crossref-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(0,255,156,0.5);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.crossref-terminal {
+    font-size: 11px;
+    color: #00ff9c;
+    line-height: 1.85;
+    text-shadow: 0 0 6px rgba(0,255,156,0.3);
+    white-space: pre-line;
+    min-height: 80px;
+}
+
+.restaurant-result {
+    background: #000;
+    border: 1px solid #1e1e1e;
+    padding: 16px;
+    margin: 14px 0;
+    text-align: center;
+    display: none;
+    animation: fadeIn 0.8s ease both;
+}
+
+.restaurant-result.show { display: block; }
+
+.rest-label { font-size: 9px; color: #555; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; }
+
+.rest-name {
+    font-size: 22px;
+    color: #e0c060;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    text-shadow: 0 0 16px rgba(224,192,96,0.4);
+    margin-bottom: 6px;
+}
+
+.rest-sub { font-size: 10px; color: #555; letter-spacing: 1px; text-transform: uppercase; line-height: 1.6; }
+
+.proceed-wrap { display: none; margin-top: 14px; }
+
+.proceed-btn {
+    display: block; width: 100%; padding: 13px;
+    background: #0d0d0d; border: 1px solid #e0c060;
+    color: #e0c060; border-radius: 6px; letter-spacing: 2px;
+    font-size: 11px; font-family: "Courier New", monospace;
+    text-transform: uppercase; text-decoration: none;
+    text-align: center; transition: background 0.2s, box-shadow 0.2s;
+    animation: fadeIn 0.8s ease both;
+}
+
+.proceed-btn:hover { background: rgba(224,192,96,0.07); box-shadow: 0 0 18px rgba(224,192,96,0.2); }
+
+.system { margin-top: 14px; font-size: 10px; color: #333; line-height: 1.6; text-align: center; }
+
+.shake { animation: shake 0.28s linear; }
+@keyframes shake {
+    0%  { transform: translateX(0); }   25% { transform: translateX(-6px); }
+    50% { transform: translateX(6px); } 75% { transform: translateX(-4px); }
+    100%{ transform: translateX(0); }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+    <div class="topbar">
+        <span class="badge">Flashback 07 — Food Order</span>
+        <span class="topmeta">Case #114 | Delivery Records</span>
+    </div>
+
+    <div class="panel">
+
+        <div class="section-tag">Evidence — Recovered Device Data</div>
+        <h1>Reconstruct The Order</h1>
+        <div class="subtitle">Delivery cross-reference — timestamp recovery</div>
+
+        <hr class="divider">
+
+        <p>
+            The suspect ordered food during the detention period.
+            The victim retains a partial sensory impression
+            but cannot confirm the order or its source.
+        </p>
+
+        <div class="list-item">No food delivery apps found on the suspect's device.</div>
+        <div class="list-item">Last active application: <strong>CodyCross: Crossword Puzzles.</strong></div>
+        <div class="list-item">Hypothesis: order was placed through an in-game channel.</div>
+        <div class="list-item">Last completed round was recovered from device cache.</div>
+
+        <hr class="divider">
+
+        <!-- EVIDENCE CARDS -->
+        <div class="evidence-card">
+            <div class="ev-title">Evidence #1 — Victim Testimony</div>
+            <div class="ev-text">
+                "I heard music. A specific kind of music.<br>
+                The kind that plays when someone finishes a round.<br>
+                Then — shortly after — food arrived.<br>
+                I smelled it. I never saw the order."
+            </div>
+        </div>
+
+        <div class="evidence-card">
+            <div class="ev-title">Evidence #2 — Device Cache</div>
+            <div class="ev-text">
+                Last game session recovered from CodyCross cache.<br>
+                Round completed. <strong>Answers still in memory.</strong><br>
+                Delivery records from Maadi restaurants can be cross-referenced
+                if the order is reconstructed from the puzzle answers.
+            </div>
+        </div>
+
+        <!-- CODYCROSS BUTTON -->
+        <a class="cody-btn" href="https://codycross.onelink.me/yjjH/hedyy8x0" target="_blank">↗ OPEN CODYCROSS</a>
+
+        <hr class="divider">
+
+        <!-- ENTRY -->
+        <div class="entry-section">
+            <div class="entry-label">Submit The Order</div>
+            <p class="entry-hint">
+                You know what she ordered.<br>
+                Enter it below to cross-reference the delivery records.
+            </p>
+            <input
+                class="entry-input"
+                id="entryInput"
+                type="text"
+                placeholder="_ _ _ _ _ _ _ _ _"
+                maxlength="30"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="characters"
+                spellcheck="false"
+            />
+            <button class="entry-btn" id="entryBtn">CROSS-REFERENCE ORDER</button>
+            <div class="entry-error" id="entryError"></div>
+        </div>
+
+        <!-- CROSS-REFERENCE -->
+        <div class="crossref" id="crossref">
+            <div class="crossref-box">
+                <div class="crossref-label">Delivery Database — Cross-Reference</div>
+                <div class="crossref-terminal" id="crossrefTerminal"></div>
+            </div>
+            <div class="restaurant-result" id="restaurantResult">
+                <div class="rest-label">Restaurant Identified</div>
+                <div class="rest-name">Pasta2Go</div>
+                <div class="rest-sub">
+                    Maadi District — Delivery confirmed<br>
+                    Timestamp matches incident window<br>
+                    Location data recovered
+                </div>
+            </div>
+            <div class="proceed-wrap" id="proceedWrap">
+                <a class="proceed-btn" href="YOUR_NEXT_STAGE_LINK">LOCATION CONFIRMED — PROCEED →</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="system">
+        IP Logged: Cairo, Egypt<br>
+        Device Cache — Internal Affairs Division
+    </div>
+
+</div>
+
+<script>
+const CORRECT = ['pesto pasta', 'pesto-pasta', 'pestopasta'];
+
+const entryInput = document.getElementById('entryInput');
+const entryBtn   = document.getElementById('entryBtn');
+const entryError = document.getElementById('entryError');
+const panel      = document.querySelector('.panel');
+
+let running = false;
+
+entryBtn.addEventListener('click', attempt);
+entryInput.addEventListener('keydown', e => { if (e.key === 'Enter') attempt(); });
+
+function attempt() {
+    if (running) return;
+    const val = entryInput.value.trim().toLowerCase();
+    entryError.textContent = '';
+
+    if (!val) { entryError.textContent = 'ENTER THE ORDER'; return; }
+
+    if (CORRECT.includes(val)) {
+        running = true;
+        entryInput.classList.add('correct');
+        entryInput.disabled = true;
+        entryBtn.disabled   = true;
+        entryBtn.style.opacity = '0.5';
+
+        document.getElementById('crossref').classList.add('show');
+        document.getElementById('crossref').scrollIntoView({ behavior:'smooth', block:'start' });
+        startCrossRef();
+
+    } else {
+        entryInput.classList.add('wrong');
+        panel.classList.add('shake');
+        entryError.textContent = 'ORDER NOT FOUND IN RECORDS';
+        setTimeout(() => {
+            panel.classList.remove('shake');
+            entryInput.classList.remove('wrong');
+            entryInput.value = '';
+        }, 500);
+    }
+}
+
+function startCrossRef() {
+    const term = document.getElementById('crossrefTerminal');
+    const lines = [
+        '> Querying delivery database...',
+        '> Search: "Pesto Pasta" — Maadi radius...',
+        '> Filtering by incident time window...',
+        '> 1 match found.',
+        '> Restaurant: PASTA2GO',
+        '> Address: Maadi District, Cairo',
+        '> Order confirmed. Timestamp matches.',
+        '> Location data recovered.',
+    ];
+
+    let li = 0;
+    function next() {
+        if (li >= lines.length) {
+            setTimeout(() => {
+                document.getElementById('restaurantResult').classList.add('show');
+                setTimeout(() => {
+                    document.getElementById('proceedWrap').style.display = 'block';
+                    document.getElementById('restaurantResult').scrollIntoView({ behavior:'smooth', block:'center' });
+                }, 800);
+            }, 400);
+            return;
+        }
+        typeLine(term, lines[li], () => { li++; setTimeout(next, 180); });
+    }
+    next();
+}
+
+function typeLine(el, text, cb) {
+    let i = 0;
+    function t() {
+        if (i < text.length) { el.innerHTML += text[i++]; setTimeout(t, 20); }
+        else { el.innerHTML += '\n'; if (cb) setTimeout(cb, 60); }
+    }
+    t();
+}
+</script>
+
+</body>
+</html>
