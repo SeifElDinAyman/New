@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Evidence #7 — Recovered Book | Case #114</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background: #050505;
+    font-family: "Courier New", monospace;
+    color: #ddd;
+    min-height: 100vh;
+    padding: 15px;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle at top, rgba(139,0,0,0.18), transparent 35%),
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.025) 0px,
+            rgba(255,255,255,0.025) 1px,
+            transparent 2px,
+            transparent 4px
+        );
+    pointer-events: none;
+    z-index: 0;
+}
+
+.wrap {
+    max-width: 420px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    animation: fadeIn 1.2s ease both;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── TOPBAR ── */
+.topbar {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    padding: 11px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.badge {
+    background: #8b0000;
+    color: #ffcccc;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    box-shadow: 0 0 14px rgba(139,0,0,0.4);
+    text-transform: uppercase;
+}
+
+.topmeta {
+    color: #666;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* ── PANEL ── */
+.panel {
+    background: #0d0d0d;
+    border: 1px solid #2a2a2a;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    padding: 24px 20px 28px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.9);
+    position: relative;
+    overflow: hidden;
+}
+
+.panel::before {
+    content: "EVIDENCE #7";
+    position: absolute;
+    top: 22px; right: -32px;
+    transform: rotate(28deg);
+    border: 1px solid rgba(139,0,0,0.25);
+    color: rgba(139,0,0,0.18);
+    font-size: 8px;
+    letter-spacing: 3px;
+    padding: 4px 14px;
+    pointer-events: none;
+}
+
+.section-tag {
+    color: #555;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+h1 {
+    font-size: 17px;
+    color: #f0f0f0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: normal;
+    margin-bottom: 4px;
+}
+
+.subtitle {
+    color: #555;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+}
+
+.divider { border: none; border-top: 1px solid #1e1e1e; margin: 18px 0; }
+
+p {
+    font-size: 12px;
+    color: #b8b8b8;
+    line-height: 1.9;
+    margin-bottom: 12px;
+}
+
+p strong { color: #f0f0f0; font-weight: normal; }
+p em { color: #e0c060; font-style: italic; }
+
+.list-item {
+    position: relative;
+    padding-left: 16px;
+    font-size: 12px;
+    color: #aaa;
+    line-height: 1.85;
+    margin-bottom: 5px;
+}
+.list-item::before { content: "▸"; position: absolute; left: 0; color: #8b0000; }
+
+/* ── COMPUTER BLOCK ── */
+.computer-wrap {
+    margin: 20px 0;
+    position: relative;
+}
+
+.computer-body {
+    background: linear-gradient(160deg, #1a1a1a, #0e0e0e);
+    border: 1px solid #222;
+    border-radius: 10px 10px 0 0;
+    padding: 10px 10px 6px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+    position: relative;
+}
+
+/* Screen bezel */
+.computer-screen {
+    background: #000;
+    border-radius: 6px;
+    border: 2px solid #111;
+    aspect-ratio: 16/10;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Scanlines */
+.computer-screen::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px,
+        rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px
+    );
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Locked state */
+.screen-locked {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #000;
+    z-index: 5;
+    transition: opacity 0.8s;
+}
+
+.lock-icon {
+    font-size: 28px;
+    opacity: 0.5;
+    animation: lockPulse 2s ease infinite;
+}
+
+@keyframes lockPulse {
+    0%,100% { opacity: 0.4; transform: scale(1); }
+    50%      { opacity: 0.7; transform: scale(1.05); }
+}
+
+.lock-text {
+    font-size: 9px;
+    color: #333;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.lock-user {
+    font-size: 11px;
+    color: #555;
+    letter-spacing: 1px;
+}
+
+/* Unlocked state — shows terminal */
+.screen-terminal {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    padding: 12px;
+    display: none;
+    flex-direction: column;
+    z-index: 5;
+}
+
+.terminal-bar {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 8px;
+}
+
+.t-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+}
+.t-dot.red   { background: #ff5f57; }
+.t-dot.yel   { background: #febc2e; }
+.t-dot.grn   { background: #28c840; }
+
+.terminal-text {
+    font-size: 10px;
+    color: #00ff9c;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    text-shadow: 0 0 6px rgba(0,255,156,0.4);
+    overflow: hidden;
+    flex: 1;
+}
+
+/* Computer bottom */
+.computer-base {
+    background: linear-gradient(to bottom, #181818, #141414);
+    border: 1px solid #1e1e1e;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.base-notch {
+    width: 50px; height: 5px;
+    background: #0a0a0a;
+    border-radius: 3px;
+    border: 1px solid #111;
+}
+
+.computer-stand {
+    width: 60px;
+    height: 10px;
+    background: linear-gradient(to bottom, #141414, #111);
+    border: 1px solid #1e1e1e;
+    border-top: none;
+    margin: 0 auto;
+    border-radius: 0 0 4px 4px;
+}
+
+/* ── BOOK FOUND SECTION ── */
+.book-card {
+    background: #080808;
+    border: 1px solid #1e1e1e;
+    border-left: 2px solid #8b0000;
+    padding: 14px;
+    margin: 18px 0;
+}
+
+.book-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #555;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.book-title {
+    font-size: 14px;
+    color: #e0c060;
+    font-style: italic;
+    margin-bottom: 6px;
+    line-height: 1.5;
+}
+
+.book-detail {
+    font-size: 11px;
+    color: #777;
+    line-height: 1.8;
+}
+
+.book-detail strong { color: #c0c0c0; font-weight: normal; }
+
+/* QR badge */
+.qr-found {
+    background: #0a0a0a;
+    border: 1px solid #1e1e1e;
+    padding: 14px;
+    margin: 14px 0;
+    text-align: center;
+    position: relative;
+}
+
+.qr-found::before {
+    content: "QR CODE DETECTED";
+    position: absolute;
+    top: -1px; left: 50%; transform: translateX(-50%);
+    background: #0a0a0a;
+    font-size: 8px;
+    color: #444;
+    letter-spacing: 2px;
+    padding: 0 8px;
+    text-transform: uppercase;
+}
+
+.qr-icon {
+    font-size: 36px;
+    margin-bottom: 8px;
+    opacity: 0.6;
+}
+
+.qr-sub {
+    font-size: 10px;
+    color: #555;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    line-height: 1.7;
+}
+
+/* ── VIDEO PLAYER ── */
+.video-section {
+    margin: 18px 0;
+    background: #000;
+    border: 1px solid #1a1a1a;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Vertical 1920x1080 displayed as portrait */
+.video-wrap {
+    position: relative;
+    /* 1080 wide × 1920 tall → ratio 9:16 */
+    aspect-ratio: 9/16;
+    background: #000;
+    max-height: 480px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.video-wrap video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.video-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.6);
+    cursor: pointer;
+    transition: background 0.2s;
+    z-index: 5;
+}
+
+.video-overlay:hover { background: rgba(0,0,0,0.4); }
+
+.play-btn {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: rgba(139,0,0,0.8);
+    border: 2px solid rgba(255,100,100,0.5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 10px;
+    box-shadow: 0 0 20px rgba(139,0,0,0.5);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.video-overlay:hover .play-btn {
+    transform: scale(1.08);
+    box-shadow: 0 0 30px rgba(139,0,0,0.7);
+}
+
+.play-label {
+    font-size: 9px;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.video-tag {
+    position: absolute;
+    top: 8px; left: 8px;
+    background: rgba(139,0,0,0.8);
+    color: #ffcccc;
+    font-size: 8px;
+    letter-spacing: 2px;
+    padding: 3px 7px;
+    text-transform: uppercase;
+    z-index: 6;
+}
+
+/* ── ANALYST NOTE ── */
+.analyst-note {
+    background: #080808;
+    border: 1px solid #1e1e1e;
+    border-left: 2px solid rgba(201,168,76,0.4);
+    padding: 14px;
+    margin: 16px 0;
+}
+
+.analyst-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #555;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.analyst-note p {
+    font-size: 11px;
+    color: #999;
+    line-height: 1.9;
+    margin-bottom: 8px;
+}
+
+.analyst-note p:last-child { margin-bottom: 0; }
+.analyst-note strong { color: #e0c060; font-weight: normal; }
+.analyst-note em { color: #c0c0c0; font-style: italic; }
+
+/* ── QUOTE DISPLAY ── */
+.quote-block {
+    margin: 16px 0;
+    padding: 14px 16px;
+    border-left: 2px solid #8b0000;
+    background: rgba(139,0,0,0.06);
+    font-style: italic;
+    font-size: 14px;
+    color: #d8d8d8;
+    line-height: 1.9;
+    position: relative;
+}
+
+.quote-block .highlight {
+    color: #e0c060;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(224,192,96,0.4);
+}
+
+/* ── GATE ── */
+.gate {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid #1e1e1e;
+}
+
+.gate-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #555;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.gate-hint {
+    font-size: 11px;
+    color: #555;
+    font-style: italic;
+    line-height: 1.8;
+    margin-bottom: 14px;
+}
+
+.gate-input {
+    width: 100%;
+    padding: 13px;
+    background: #000;
+    border: 1px solid #2a2a2a;
+    color: #f0f0f0;
+    text-align: center;
+    border-radius: 6px;
+    outline: none;
+    font-family: "Courier New", monospace;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: lowercase;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gate-input:focus   { border-color: #444; box-shadow: 0 0 12px rgba(201,168,76,0.1); }
+.gate-input.correct { border-color: #e0c060; box-shadow: 0 0 16px rgba(224,192,96,0.25); color: #e0c060; }
+.gate-input.wrong   { border-color: #8b0000; box-shadow: 0 0 12px rgba(139,0,0,0.3); color: #ff6666; }
+
+.gate-btn {
+    margin-top: 10px;
+    width: 100%;
+    padding: 12px;
+    background: #8b0000;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 6px;
+    letter-spacing: 2px;
+    font-size: 11px;
+    font-family: "Courier New", monospace;
+    text-transform: uppercase;
+    transition: filter 0.2s, box-shadow 0.2s;
+}
+
+.gate-btn:hover { filter: brightness(1.15); box-shadow: 0 0 20px rgba(139,0,0,0.5); }
+
+.gate-error {
+    margin-top: 10px;
+    font-size: 10px;
+    color: rgba(255,100,100,0.7);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+    min-height: 14px;
+}
+
+/* ── TERMINAL ── */
+#terminal {
+    display: none;
+    margin-top: 14px;
+    font-size: 10px;
+    color: #00ff9c;
+    height: 52px;
+    overflow: hidden;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    text-shadow: 0 0 6px rgba(0,255,156,0.4);
+}
+
+.progress {
+    width: 100%; height: 4px;
+    background: #111; margin-top: 10px;
+    display: none; border-radius: 10px; overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%; width: 0%;
+    background: #00ff9c; border-radius: 10px;
+    box-shadow: 0 0 8px rgba(0,255,156,0.5);
+    transition: width 0.2s;
+}
+
+.proceed-wrap { display: none; margin-top: 14px; }
+
+.proceed-btn {
+    display: block; width: 100%; padding: 13px;
+    background: #0d0d0d; border: 1px solid #e0c060;
+    color: #e0c060; border-radius: 6px; letter-spacing: 2px;
+    font-size: 11px; font-family: "Courier New", monospace;
+    text-transform: uppercase; text-decoration: none;
+    text-align: center; transition: background 0.2s, box-shadow 0.2s;
+    animation: fadeIn 0.8s ease both;
+}
+
+.proceed-btn:hover { background: rgba(224,192,96,0.07); box-shadow: 0 0 18px rgba(224,192,96,0.2); }
+
+.system { margin-top: 14px; font-size: 10px; color: #333; line-height: 1.6; text-align: center; }
+
+.shake { animation: shake 0.28s linear; }
+
+@keyframes shake {
+    0%  { transform: translateX(0); }   25% { transform: translateX(-6px); }
+    50% { transform: translateX(6px); } 75% { transform: translateX(-4px); }
+    100%{ transform: translateX(0); }
+}
+
+@keyframes termFlicker {
+    0%,19%,21%,23%,25%,54%,56%,100% { text-shadow: 0 0 4px #00ff9c; }
+    20%,22%,24%,55% { text-shadow: 0 0 14px #00ff9c; }
+}
+.term-flicker { animation: termFlicker 0.15s infinite; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+    <div class="topbar">
+        <span class="badge">Evidence #7 — Recovered Book</span>
+        <span class="topmeta">Case #114 | Access Attempt</span>
+    </div>
+
+    <div class="panel">
+
+        <div class="section-tag">Digital Evidence — Suspect's Device</div>
+        <h1>Computer Access Required</h1>
+        <div class="subtitle">Password protected — decryption in progress</div>
+
+        <hr class="divider">
+
+        <!-- COMPUTER GRAPHIC -->
+        <div class="computer-wrap">
+            <div class="computer-body">
+                <div class="computer-screen">
+                    <!-- Locked -->
+                    <div class="screen-locked" id="screenLocked">
+                        <div class="lock-icon">🔒</div>
+                        <div class="lock-user">S.S. — Private Device</div>
+                        <div class="lock-text">Enter password to unlock</div>
+                    </div>
+                    <!-- Unlocked terminal -->
+                    <div class="screen-terminal" id="screenTerminal">
+                        <div class="terminal-bar">
+                            <div class="t-dot red"></div>
+                            <div class="t-dot yel"></div>
+                            <div class="t-dot grn"></div>
+                        </div>
+                        <div class="terminal-text" id="terminalText"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="computer-base"><div class="base-notch"></div></div>
+            <div class="computer-stand"></div>
+        </div>
+
+        <p>
+            The suspect's personal device was recovered at the scene.
+            It is <strong>password protected.</strong>
+            Standard decryption has failed.
+        </p>
+
+        <p>
+            However — during a search of the suspect's belongings,
+            investigators discovered something unexpected.
+        </p>
+
+        <hr class="divider">
+
+        <!-- BOOK FOUND -->
+        <div class="book-card">
+            <div class="book-label">Item Recovered — Suspect's Bag</div>
+            <div class="book-title">The Curse of Eden</div>
+            <div class="book-detail">
+                <strong>Published novel.</strong> Belongs to the suspect.<br>
+                A QR code was found tucked inside — on page 114.<br>
+                The code leads to an <strong>audio recording of a specific passage.</strong>
+            </div>
+        </div>
+
+        <p>
+            Our analysts believe the password to the device
+            may be hidden inside the book itself.
+            The suspect is known to use <em>personal references
+            as encryption keys.</em>
+        </p>
+
+        <div class="qr-found">
+            <div class="qr-icon">⬛</div>
+            <div class="qr-sub">
+                QR code scanned — recording retrieved<br>
+                Play the recording below. Listen carefully.
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- VIDEO PLAYER -->
+        <div class="video-section">
+            <div class="video-tag">PAGE 114 — RECORDING</div>
+            <div class="video-wrap" id="videoWrap">
+
+                <!-- Replace with your actual GitHub video URL -->
+                <video
+                    id="bookVideo"
+                    src="https://seifeldinayman.github.io/New/page114.mp4"
+                    playsinline
+                    preload="metadata"
+                    style="display:none;"
+                ></video>
+
+                <!-- Play overlay -->
+                <div class="video-overlay" id="videoOverlay">
+                    <div class="play-btn">▶</div>
+                    <div class="play-label">Play Recording — Page 114</div>
+                </div>
+
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- ANALYST NOTE -->
+        <div class="analyst-note">
+            <div class="analyst-label">Analyst Note</div>
+            <p>
+                The passage recovered from page 114 contains a line
+                that our language analysts believe is significant.
+            </p>
+            <p>
+                It appears repeatedly in the suspect's personal notes
+                and was found underlined in her copy of the book.
+            </p>
+            <p>
+                We believe the password is <strong>a fragment of this line.</strong>
+                Study the recording carefully.
+            </p>
+        </div>
+
+        <!-- QUOTE -->
+        <div class="quote-block">
+            "E, Adam. E is the one who saved us.
+He's the one who killed my father."<br><br>
+            <span style="font-size:11px;color:#666;font-style:normal;letter-spacing:1px;">
+                — The Curse of Eden, Page 114
+            </span>
+        </div>
+
+        <p style="font-size:11px;color:#666;font-style:italic;">
+            The password is not the full quote.<br>
+            It is the part that matters most.
+        </p>
+
+        <hr class="divider">
+
+        <!-- GATE -->
+        <div class="gate" id="gate">
+            <div class="gate-label">Enter Device Password</div>
+            <p class="gate-hint">
+                Listen to the recording.<br>
+                The answer is inside the quote.<br>
+                Type exactly what unlocks it.
+            </p>
+            <input
+                class="gate-input"
+                id="gateInput"
+                type="text"
+                placeholder="enter the key phrase"
+                maxlength="40"
+                autocomplete="off"
+                autocorrect="off"
+                spellcheck="false"
+            />
+            <button class="gate-btn" id="gateBtn">ATTEMPT ACCESS</button>
+            <div class="gate-error" id="gateError"></div>
+        </div>
+
+        <div id="terminal"></div>
+        <div class="progress" id="progress"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="proceed-wrap" id="proceedWrap">
+            <a class="proceed-btn" href="YOUR_NEXT_STAGE_LINK">ACCESS GRANTED — PROCEED →</a>
+        </div>
+
+    </div>
+
+    <div class="system">
+        IP Logged: Cairo, Egypt<br>
+        Device Recovery — Internal Affairs Division
+    </div>
+
+</div>
+
+<script>
+// ── VIDEO PLAYER ───────────────────────────────────────────────────────────
+const video   = document.getElementById('bookVideo');
+const overlay = document.getElementById('videoOverlay');
+
+overlay.addEventListener('click', () => {
+    video.style.display = 'block';
+    overlay.style.display = 'none';
+    video.play();
+});
+
+// ── GATE ───────────────────────────────────────────────────────────────────
+// Accept multiple casings
+const CORRECT_ANSWERS = [
+    "who saved us",
+    "Who saved us",
+    "WHO SAVED US",
+    "e is the one who saved us",
+    "E is the one who saved us",
+];
+
+const gateInput = document.getElementById('gateInput');
+const gateBtn   = document.getElementById('gateBtn');
+const gateError = document.getElementById('gateError');
+const termEl    = document.getElementById('terminal');
+const progressEl= document.getElementById('progress');
+const barEl     = document.getElementById('progressBar');
+const proceedEl = document.getElementById('proceedWrap');
+const panel     = document.querySelector('.panel');
+
+let isRunning = false;
+
+gateBtn.addEventListener('click', attempt);
+gateInput.addEventListener('keydown', e => { if (e.key === 'Enter') attempt(); });
+
+function attempt() {
+    if (isRunning) return;
+    const val = gateInput.value.trim().toLowerCase();
+    gateError.textContent = '';
+
+    if (!val) { gateError.textContent = 'ENTER THE KEY PHRASE'; return; }
+
+    const correct = CORRECT_ANSWERS.map(a => a.toLowerCase()).includes(val);
+
+    if (correct) {
+        isRunning = true;
+        gateInput.classList.add('correct');
+        gateInput.disabled  = true;
+        gateBtn.disabled    = true;
+        gateBtn.style.opacity = '0.5';
+
+        termEl.style.display = 'block';
+        termEl.classList.add('term-flicker');
+        setTimeout(() => {
+            termEl.classList.remove('term-flicker');
+            streamLogs();
+        }, 300);
+
+    } else {
+        gateInput.classList.add('wrong');
+        panel.classList.add('shake');
+        gateError.textContent = 'ACCESS DENIED — INCORRECT PHRASE';
+        setTimeout(() => {
+            panel.classList.remove('shake');
+            gateInput.classList.remove('wrong');
+            gateInput.value = '';
+        }, 500);
+    }
+}
+
+// ── TERMINAL SEQUENCE ──────────────────────────────────────────────────────
+const logs = [
+    "Attempting access...",
+    "Matching phrase against encryption key...",
+    "Key accepted — decryption initiated...",
+    "Bypassing security layer...",
+    "Device unlocked. Files accessible.",
+];
+
+function typeLine(text, cb) {
+    let i = 0;
+    function t() {
+        if (i < text.length) { termEl.innerHTML += text[i++]; setTimeout(t, 22); }
+        else { termEl.innerHTML += '\n'; if (cb) setTimeout(cb, 70); }
+    }
+    t();
+}
+
+function streamLogs(i = 0) {
+    if (i < logs.length) {
+        typeLine(logs[i], () => streamLogs(i + 1));
+    } else {
+        // Unlock computer graphic
+        unlockComputer();
+        startProgress();
+    }
+}
+
+function startProgress() {
+    progressEl.style.display = 'block';
+    let w = 0;
+    const iv = setInterval(() => {
+        w += Math.random() * 10; w = Math.min(w, 100);
+        barEl.style.width = w + '%';
+        if (w >= 100) { clearInterval(iv); proceedEl.style.display = 'block'; }
+    }, 150);
+}
+
+// ── UNLOCK COMPUTER GRAPHIC ────────────────────────────────────────────────
+function unlockComputer() {
+    const locked   = document.getElementById('screenLocked');
+    const terminal = document.getElementById('screenTerminal');
+    const termText = document.getElementById('terminalText');
+
+    locked.style.opacity = '0';
+    setTimeout(() => {
+        locked.style.display    = 'none';
+        terminal.style.display  = 'flex';
+
+        const lines = [
+            '> ACCESS GRANTED',
+            '> Decrypting files...',
+            '> Loading suspect profile...',
+            '> ████████████████ 100%',
+            '> Files unlocked.',
+            '> Welcome, Detective.',
+        ];
+
+        let li = 0;
+        function nextLine() {
+            if (li >= lines.length) return;
+            termText.innerHTML += lines[li] + '\n';
+            li++;
+            setTimeout(nextLine, 350);
+        }
+        nextLine();
+    }, 600);
+}
+</script>
+
+</body>
+</html>
