@@ -662,7 +662,7 @@ setInterval(() => {
     const h  = String(Math.floor(ts/3600)).padStart(2,'0');
     const m  = String(Math.floor((ts%3600)/60)).padStart(2,'0');
     const s  = String(ts%60).padStart(2,'0');
-    const fr = String(Math.floor(Math.random()*30)).padStart(2,'0');
+    const fr = String(Math.floor(Math.random()*60)).padStart(2,'0');
     document.getElementById('photoTimestamp').textContent = `${h}:${m}:${s}:${fr}`;
 }, 1000);
 
