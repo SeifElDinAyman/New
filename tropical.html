@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Flashback 03 — Sensory | Case #114</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+    background: #050505;
+    font-family: "Courier New", monospace;
+    color: #ddd;
+    min-height: 100vh;
+    padding: 15px;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle at top, rgba(139,0,0,0.18), transparent 35%),
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.025) 0px,
+            rgba(255,255,255,0.025) 1px,
+            transparent 2px,
+            transparent 4px
+        );
+    pointer-events: none;
+    z-index: 0;
+}
+
+body.glitch-flash { animation: bodyFlash 0.4s ease; }
+@keyframes bodyFlash {
+    0%   { filter: brightness(1); }
+    20%  { filter: brightness(2.5) saturate(0) contrast(3); }
+    40%  { filter: brightness(0.3); }
+    60%  { filter: brightness(2) hue-rotate(180deg); }
+    80%  { filter: brightness(0.6); }
+    100% { filter: brightness(1); }
+}
+
+.wrap {
+    max-width: 420px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    animation: fadeIn 1.2s ease both;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── TOPBAR ── */
+.topbar {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    padding: 11px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.badge {
+    background: #8b0000;
+    color: #ffcccc;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    box-shadow: 0 0 14px rgba(139,0,0,0.4);
+    text-transform: uppercase;
+}
+
+.topmeta { color: #666; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+
+/* ── PANEL ── */
+.panel {
+    background: #0d0d0d;
+    border: 1px solid #2a2a2a;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    padding: 24px 20px 28px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.9);
+    position: relative;
+    overflow: hidden;
+}
+
+.panel::before {
+    content: "FLASHBACK 03";
+    position: absolute;
+    top: 22px; right: -34px;
+    transform: rotate(28deg);
+    border: 1px solid rgba(139,0,0,0.25);
+    color: rgba(139,0,0,0.18);
+    font-size: 8px;
+    letter-spacing: 3px;
+    padding: 4px 14px;
+    pointer-events: none;
+}
+
+.section-tag { color: #555; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
+h1 { font-size: 17px; color: #f0f0f0; letter-spacing: 2px; text-transform: uppercase; font-weight: normal; margin-bottom: 4px; }
+.subtitle { color: #555; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 18px; }
+.divider { border: none; border-top: 1px solid #1e1e1e; margin: 18px 0; }
+
+p { font-size: 12px; color: #b8b8b8; line-height: 1.9; margin-bottom: 12px; }
+p strong { color: #f0f0f0; font-weight: normal; }
+p em { color: #e0c060; font-style: italic; }
+
+.list-item {
+    position: relative;
+    padding-left: 16px;
+    font-size: 12px;
+    color: #aaa;
+    line-height: 1.85;
+    margin-bottom: 5px;
+}
+.list-item::before { content: "▸"; position: absolute; left: 0; color: #8b0000; }
+
+/* ── WARNING CARD ── */
+.warning-card {
+    background: rgba(139,0,0,0.07);
+    border: 1px solid rgba(139,0,0,0.35);
+    padding: 16px 14px;
+    margin: 16px 0;
+    position: relative;
+    animation: warnPulse 3s ease infinite;
+}
+
+@keyframes warnPulse {
+    0%, 100% { border-color: rgba(139,0,0,0.35); box-shadow: none; }
+    50%       { border-color: rgba(139,0,0,0.7); box-shadow: 0 0 20px rgba(139,0,0,0.15); }
+}
+
+.warning-card::after {
+    content: "⚠ URGENT";
+    position: absolute;
+    top: 10px; right: 12px;
+    font-size: 8px;
+    color: rgba(139,0,0,0.6);
+    letter-spacing: 2px;
+}
+
+.warn-title {
+    font-size: 10px;
+    color: rgba(255,100,100,0.8);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-right: 70px;
+}
+
+.warn-text {
+    font-size: 11px;
+    color: #888;
+    line-height: 1.9;
+}
+
+.warn-text strong { color: rgba(255,160,160,0.9); font-weight: normal; }
+
+/* ── EVIDENCE CARDS ── */
+.evidence-card {
+    background: #080808;
+    border: 1px solid #1e1e1e;
+    border-left: 2px solid #8b0000;
+    padding: 14px;
+    margin: 14px 0;
+    position: relative;
+}
+.evidence-card::after {
+    content: "EVIDENCE";
+    position: absolute;
+    top: 10px; right: 12px;
+    font-size: 8px; color: #2a2a2a; letter-spacing: 2px;
+}
+.ev-title { font-size: 10px; color: #e0c060; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; padding-right: 60px; }
+.ev-text  { font-size: 11px; color: #999; line-height: 1.9; }
+.ev-text strong { color: #f0f0f0; font-weight: normal; }
+
+/* ── GATE ── */
+.gate-question {
+    font-size: 13px;
+    color: #c0c0c0;
+    letter-spacing: 1px;
+    line-height: 1.7;
+    margin-bottom: 16px;
+    padding: 14px;
+    background: #000;
+    border: 1px solid #1a1a1a;
+    border-left: 2px solid #555;
+    border-radius: 4px;
+}
+
+.gate-label { font-size: 9px; letter-spacing: 3px; color: #555; text-transform: uppercase; margin-bottom: 6px; }
+
+.gate-input {
+    width: 100%;
+    padding: 14px;
+    background: #000;
+    border: 1px solid #2a2a2a;
+    color: #f0f0f0;
+    text-align: center;
+    border-radius: 6px;
+    outline: none;
+    font-family: "Courier New", monospace;
+    font-size: 16px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+}
+.gate-input::placeholder { color: #222; letter-spacing: 3px; font-size: 12px; }
+.gate-input:focus   { border-color: #444; box-shadow: 0 0 12px rgba(201,168,76,0.1); }
+.gate-input.correct { border-color: #e0c060; box-shadow: 0 0 16px rgba(224,192,96,0.25); color: #e0c060; }
+.gate-input.wrong   { border-color: #8b0000; box-shadow: 0 0 12px rgba(139,0,0,0.3); color: #ff6666; }
+
+.gate-btn {
+    margin-top: 10px;
+    width: 100%;
+    padding: 13px;
+    background: #8b0000;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 6px;
+    letter-spacing: 2px;
+    font-size: 11px;
+    font-family: "Courier New", monospace;
+    text-transform: uppercase;
+    transition: filter 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+}
+.gate-btn:hover  { filter: brightness(1.2); box-shadow: 0 0 20px rgba(139,0,0,0.5); }
+.gate-btn:disabled { opacity: 0.4; cursor: default; }
+
+/* ── HINTS ── */
+.hints-wrap { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+
+.hint-card {
+    display: none;
+    background: #080808;
+    border: 1px solid #1e1e1e;
+    border-left: 2px solid #444;
+    padding: 12px 14px;
+    animation: fadeIn 0.6s ease both;
+    position: relative;
+}
+.hint-card.show { display: block; }
+.hint-card.hint-1 { border-left-color: #555; }
+.hint-card.hint-2 { border-left-color: #777; }
+.hint-card.hint-3 { border-left-color: #e0c060; }
+
+.hint-label {
+    font-size: 8px;
+    color: #444;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+.hint-card.hint-3 .hint-label { color: rgba(224,192,96,0.5); }
+
+.hint-text {
+    font-size: 11px;
+    color: #777;
+    line-height: 1.8;
+    font-style: italic;
+}
+.hint-card.hint-3 .hint-text { color: #aaa; font-style: normal; }
+
+.hint-btn {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 11px;
+    background: transparent;
+    border: 1px solid rgba(224,192,96,0.3);
+    color: #e0c060;
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-decoration: none;
+    text-align: center;
+    border-radius: 6px;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+}
+.hint-btn:hover { border-color: #e0c060; background: rgba(224,192,96,0.05); box-shadow: 0 0 14px rgba(224,192,96,0.15); }
+
+/* ── ERROR ── */
+.gate-error {
+    margin-top: 10px;
+    font-size: 10px;
+    color: rgba(255,100,100,0.7);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+    min-height: 14px;
+    line-height: 1.6;
+}
+
+/* ── SUCCESS ── */
+.success-box {
+    display: none;
+    margin-top: 18px;
+    background: #080808;
+    border: 1px solid #1e1e1e;
+    border-left: 2px solid #00ff9c;
+    padding: 16px 14px;
+    animation: fadeIn 0.8s ease both;
+}
+.success-box.show { display: block; }
+.success-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(0,255,156,0.5);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+.success-terminal {
+    font-size: 11px;
+    color: #00ff9c;
+    line-height: 1.85;
+    text-shadow: 0 0 6px rgba(0,255,156,0.3);
+    white-space: pre-line;
+}
+
+.proceed-wrap { display: none; margin-top: 14px; }
+.proceed-btn {
+    display: block; width: 100%; padding: 13px;
+    background: #0d0d0d; border: 1px solid #e0c060;
+    color: #e0c060; border-radius: 6px; letter-spacing: 2px;
+    font-size: 11px; font-family: "Courier New", monospace;
+    text-transform: uppercase; text-decoration: none;
+    text-align: center; transition: background 0.2s, box-shadow 0.2s;
+    animation: fadeIn 0.8s ease both;
+}
+.proceed-btn:hover { background: rgba(224,192,96,0.07); box-shadow: 0 0 18px rgba(224,192,96,0.2); }
+
+.system { margin-top: 14px; font-size: 10px; color: #333; line-height: 1.6; text-align: center; }
+
+/* ── NOISE OVERLAY ── */
+.noise-overlay {
+    position: fixed; inset: 0; pointer-events: none; z-index: 999;
+    opacity: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
+    background-size: cover;
+    mix-blend-mode: overlay;
+}
+.noise-overlay.flash { animation: noiseFlash 0.5s ease forwards; }
+@keyframes noiseFlash {
+    0%   { opacity: 0; } 15% { opacity: 0.7; } 35% { opacity: 0.3; }
+    55%  { opacity: 0.6; } 75% { opacity: 0.2; } 100% { opacity: 0; }
+}
+
+.shake { animation: shake 0.3s linear; }
+@keyframes shake {
+    0%  { transform: translateX(0); }   20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); } 60% { transform: translateX(-5px); }
+    80% { transform: translateX(4px); } 100%{ transform: translateX(0); }
+}
+
+.panel.glitch::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+        to bottom, transparent 0px, transparent 3px,
+        rgba(139,0,0,0.06) 3px, rgba(139,0,0,0.06) 4px
+    );
+    animation: scanPulse 0.4s ease forwards;
+    pointer-events: none; z-index: 10;
+}
+@keyframes scanPulse { 0% { opacity: 1; } 100% { opacity: 0; } }
+</style>
+</head>
+<body>
+
+<div class="noise-overlay" id="noiseOverlay"></div>
+
+<div class="wrap">
+
+    <div class="topbar">
+        <span class="badge">Flashback 03 — Sensory</span>
+        <span class="topmeta">Case #114 | Scent Evidence</span>
+    </div>
+
+    <div class="panel" id="mainPanel">
+
+        <div class="section-tag">Evidence — Environmental Trigger</div>
+        <h1>Identify The Scent</h1>
+        <div class="subtitle">Tropical — persistent — involuntary recall</div>
+
+        <hr class="divider">
+
+        <p>
+            The air carried a <strong>persistent tropical scent</strong> —
+            sweet, unfamiliar. Corroborates Evidence #2.
+            The victim has reported this smell involuntarily since.
+        </p>
+
+        <div class="list-item">Air freshener, perfume, or product in use at the site.</div>
+        <div class="list-item">Possible brand identification pending.</div>
+        <div class="list-item">Scent memory is the most persistent form of recall.</div>
+        <div class="list-item"><strong>He is already remembering.</strong></div>
+
+        <hr class="divider">
+
+        <!-- WARNING -->
+        <div class="warning-card">
+            <div class="warn-title">⚠ Internal Advisory — Eyes Only</div>
+            <div class="warn-text">
+                <strong>Caution. We think you did it.</strong><br><br>
+                We don't know why — but we have been monitoring
+                the victim's communications.<br><br>
+                <strong>He is checking your social media accounts. Now.</strong><br><br>
+                For your own safety — at this time —
+                avoid any sensory triggers that may awaken his memory.
+                If he connects the scent, <strong>he will know it is you.</strong>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="evidence-card">
+            <div class="ev-title">Evidence #1 — Victim Report</div>
+            <div class="ev-text">
+                "I keep smelling it. I can't place it.<br>
+                Something tropical. Something sweet.<br>
+                It wasn't mine. I don't use anything like that.<br>
+                <strong>It was hers.</strong>"
+            </div>
+        </div>
+
+        <div class="evidence-card">
+            <div class="ev-title">Advisory — Containment Action Required</div>
+            <div class="ev-text">
+                We believe we have identified the source.<br>
+                There is an image on your Instagram account
+                that we think is <strong>exactly what he smelled.</strong><br><br>
+                If he finds it before you act —
+                the memory completes itself.<br>
+                <strong>You need to delete it first.</strong>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- GATE -->
+        <div class="gate-question">
+            🔍 &nbsp;What was the tropical smell ?
+        </div>
+
+        <div class="gate-label">Enter Answer To Confirm</div>
+
+        <input
+            class="gate-input"
+            id="gateInput"
+            type="text"
+            placeholder="_ _ _ _ _ _ _ _ _"
+            maxlength="20"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+        />
+        <button class="gate-btn" id="gateBtn">CONFIRM SCENT</button>
+        <div class="gate-error" id="gateError"></div>
+
+        <!-- HINTS — revealed progressively -->
+        <div class="hints-wrap" id="hintsWrap">
+
+            <div class="hint-card hint-1" id="hint1">
+                <div class="hint-label">Hint 01 — Memory Fragment</div>
+                <div class="hint-text">"It is in your Instagram account. The year was 2016."</div>
+            </div>
+
+            <div class="hint-card hint-2" id="hint2">
+                <div class="hint-label">Hint 02 — Scene Detail</div>
+                <div class="hint-text">"You were not alone in this picture."</div>
+            </div>
+
+            <div class="hint-card hint-3" id="hint3">
+                <div class="hint-label">Hint 03 — Evidence Located</div>
+                <div class="hint-text">
+                    We found it. The image has been located in the archive.<br>
+                    Open it before he does.
+                </div>
+                <a class="hint-btn"
+                   href="https://www.instagram.com/p/BH_WKIGjJpYOcVCwRX8s_nbbv1RMIshKVTr4Hc0/?igsh=NGtvMml5OWI0OTVi"
+                   target="_blank">
+                    ↗ OPEN INSTAGRAM ARCHIVE
+                </a>
+            </div>
+
+        </div>
+
+        <!-- SUCCESS -->
+        <div class="success-box" id="successBox">
+            <div class="success-label">Scent Identified — File Updated</div>
+            <div class="success-terminal" id="successTerminal"></div>
+        </div>
+
+        <div class="proceed-wrap" id="proceedWrap">
+            <!-- ↓↓↓ REPLACE WITH ACTUAL NEXT PAGE LINK ↓↓↓ -->
+            <a class="proceed-btn" href="https://seifeldinayman.github.io/New/abort">SCENT CONFIRMED — PROCEED →</a>
+        </div>
+
+    </div>
+
+    <div class="system">
+        IP Logged: Cairo, Egypt<br>
+        Sensory Evidence — Internal Affairs Division
+    </div>
+
+</div>
+
+<script>
+const CORRECT     = ['pineapple'];
+const gateInput   = document.getElementById('gateInput');
+const gateBtn     = document.getElementById('gateBtn');
+const gateError   = document.getElementById('gateError');
+const panel       = document.getElementById('mainPanel');
+const noise       = document.getElementById('noiseOverlay');
+
+let wrongCount  = 0;
+let running     = false;
+let cooldown    = false;
+
+const wrongMsgs = [
+    'SCENT NOT MATCHED.',
+    'INCORRECT. CHECK YOUR MEMORY.',
+    'WRONG. HE IS GETTING CLOSER.',
+    'THE SCENT RESISTS IDENTIFICATION.',
+    'YOU KNOW THIS. THINK.',
+];
+
+gateBtn.addEventListener('click', attempt);
+gateInput.addEventListener('keydown', e => { if (e.key === 'Enter') attempt(); });
+
+function attempt() {
+    if (running || cooldown) return;
+    const val = gateInput.value.trim().toLowerCase();
+    gateError.textContent = '';
+
+    if (!val) { gateError.textContent = 'ENTER THE SCENT'; return; }
+
+    if (CORRECT.includes(val)) {
+        triggerCorrect();
+    } else {
+        triggerWrong();
+    }
+}
+
+function triggerWrong() {
+    if (cooldown || running) return;
+    cooldown = true;
+    wrongCount++;
+
+    // Glitch effects
+    panel.classList.remove('glitch'); void panel.offsetWidth; panel.classList.add('glitch');
+    document.body.classList.remove('glitch-flash'); void document.body.offsetWidth; document.body.classList.add('glitch-flash');
+    noise.classList.remove('flash'); void noise.offsetWidth; noise.classList.add('flash');
+
+    gateError.textContent = wrongMsgs[Math.min(wrongCount - 1, wrongMsgs.length - 1)];
+    gateInput.classList.add('wrong');
+    panel.classList.add('shake');
+
+    // Reveal hints progressively
+    if (wrongCount === 1) document.getElementById('hint1').classList.add('show');
+    if (wrongCount === 2) document.getElementById('hint2').classList.add('show');
+    if (wrongCount === 3) document.getElementById('hint3').classList.add('show');
+
+    setTimeout(() => {
+        panel.classList.remove('shake', 'glitch');
+        document.body.classList.remove('glitch-flash');
+        noise.classList.remove('flash');
+        gateInput.classList.remove('wrong');
+        gateInput.value = '';
+        cooldown = false;
+    }, 500);
+}
+
+function triggerCorrect() {
+    running = true;
+    gateInput.classList.add('correct');
+    gateInput.disabled = true;
+    gateBtn.disabled   = true;
+    gateError.textContent = '';
+
+    const box = document.getElementById('successBox');
+    box.classList.add('show');
+    box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    const term = document.getElementById('successTerminal');
+    const lines = [
+        '> Scent identified: PINEAPPLE',
+        '> Cross-referencing product database...',
+        '> Match found in victim memory log.',
+        '> Corroborates Evidence #2.',
+        '> Source: cosmetic or ambient product.',
+        '> Image advisory: recommended for deletion.',
+        '> Scent evidence — Case #114 — confirmed.',
+    ];
+
+    let li = 0;
+    function next() {
+        if (li >= lines.length) {
+            setTimeout(() => {
+                document.getElementById('proceedWrap').style.display = 'block';
+                document.getElementById('proceedWrap').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 400);
+            return;
+        }
+        typeLine(term, lines[li], () => { li++; setTimeout(next, 160); });
+    }
+    next();
+}
+
+function typeLine(el, text, cb) {
+    let i = 0;
+    function t() {
+        if (i < text.length) { el.innerHTML += text[i++]; setTimeout(t, 22); }
+        else { el.innerHTML += '\n'; if (cb) setTimeout(cb, 60); }
+    }
+    t();
+}
+</script>
+
+</body>
+</html>
