@@ -200,8 +200,8 @@ body::after{
 <div class="wrap" id="mainWrap">
 
   <div class="caught-title">
-    <h1>You Got Caught !</h1>
-    <p>◆ Case #114 — Evidence Vault ◆</p>
+    <h1>U GET CAUGHT !</h1>
+    <p>◆ Case #173 — Evidence Vault ◆</p>
   </div>
 
   <!-- HANDCUFF SVG -->
@@ -296,7 +296,7 @@ body::after{
 
     <div class="verdict-row">
       <button class="btn-escape" onclick="tryEscape()">🏃 Escape</button>
-      <a class="btn-stay" href="https://seifeldinayman.github.io/New/finalverdict">⛓ Stay</a>
+      <a class="btn-stay" href="YOUR_NEXT_PAGE_LINK_HERE">⛓ Stay</a>
     </div>
     <div id="noEscapeMsg"></div>
   </div>
@@ -345,20 +345,10 @@ function tryUnlock() {
       document.getElementById('lockSection').style.display = 'none';
       document.getElementById('unlockedSection').style.display = 'block';
       try {
-        var ctx = new (window.AudioContext || window.webkitAudioContext)();
-        var freqs = [261.63,277.18,311.13,329.63,349.23,415.30,440];
-        var pat = [0,2,4,3,2,1,0,2,4,5,4,3,2,0,1,2,3,4,2,0];
-        var t = ctx.currentTime + 0.3;
-        pat.forEach(function(x, n) {
-          var o = ctx.createOscillator(), g = ctx.createGain();
-          o.type = 'sine'; o.frequency.value = freqs[x % freqs.length];
-          g.gain.setValueAtTime(0, t);
-          g.gain.linearRampToValueAtTime(0.08, t+0.07);
-          g.gain.linearRampToValueAtTime(0, t+0.5);
-          o.connect(g); g.connect(ctx.destination);
-          o.start(t); o.stop(t+0.55);
-          t += 0.44;
-        });
+        var audio = new Audio('https://seifeldinayman.github.io/New/YouAreMy%20Sunshine.mp3');
+        audio.loop = true;
+        audio.volume = 0.7;
+        audio.play();
       } catch(e) {}
       if (navigator.vibrate) navigator.vibrate([50,30,50,30,200]);
     }, 400);
