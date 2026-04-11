@@ -1,1 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>101 — Case #114</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background: #080508;
+    font-family: "Courier New", monospace;
+    color: #ddd;
+    min-height: 100vh;
+    padding: 15px 15px 60px;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle at top, rgba(107,63,160,0.22), transparent 40%),
+        radial-gradient(circle at bottom, rgba(107,63,160,0.1), transparent 40%),
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.018) 0px,
+            rgba(255,255,255,0.018) 1px,
+            transparent 2px,
+            transparent 4px
+        );
+    pointer-events: none;
+    z-index: 0;
+}
+
+.wrap {
+    max-width: 420px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    animation: fadeIn 1.4s ease both;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── HEADER ── */
+.header {
+    text-align: center;
+    padding: 32px 0 24px;
+    position: relative;
+}
+
+.header-glow {
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(107,63,160,0.25), transparent 70%);
+    pointer-events: none;
+}
+
+.header-badge {
+    display: inline-block;
+    background: rgba(107,63,160,0.25);
+    border: 1px solid rgba(107,63,160,0.5);
+    color: #d4b8ff;
+    font-size: 9px;
+    letter-spacing: 3px;
+    padding: 5px 12px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    box-shadow: 0 0 14px rgba(107,63,160,0.2);
+}
+
+.header-num {
+    font-size: 72px;
+    color: #d4b8ff;
+    text-shadow: 0 0 40px rgba(107,63,160,0.7), 0 0 80px rgba(107,63,160,0.3);
+    line-height: 1;
+    margin-bottom: 8px;
+    animation: numPulse 3s ease infinite;
+}
+
+@keyframes numPulse {
+    0%,100% { text-shadow: 0 0 40px rgba(107,63,160,0.7), 0 0 80px rgba(107,63,160,0.3); }
+    50%      { text-shadow: 0 0 60px rgba(107,63,160,0.9), 0 0 120px rgba(107,63,160,0.5); }
+}
+
+.header-title {
+    font-size: 13px;
+    color: rgba(212,184,255,0.7);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.header-sub {
+    font-size: 11px;
+    color: rgba(107,63,160,0.6);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-style: italic;
+}
+
+.header-divider {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(107,63,160,0.5), transparent);
+    margin: 18px auto 0;
+}
+
+/* ── INTRO NOTE ── */
+.intro {
+    background: rgba(107,63,160,0.06);
+    border: 1px solid rgba(107,63,160,0.2);
+    border-left: 2px solid rgba(107,63,160,0.6);
+    padding: 16px 14px;
+    margin-bottom: 24px;
+    font-size: 12px;
+    color: #c0b0d8;
+    line-height: 1.95;
+    font-style: italic;
+}
+
+.intro strong { color: #d4b8ff; font-weight: normal; font-style: normal; }
+
+/* ── REASONS LIST ── */
+.reasons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.reason {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px 14px;
+    background: #0d0a10;
+    border: 1px solid #1a1520;
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, background 0.2s;
+    animation: slideIn 0.4s ease both;
+}
+
+.reason:hover {
+    border-color: rgba(107,63,160,0.3);
+    background: #110d16;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-10px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+.reason-num {
+    font-size: 11px;
+    color: rgba(107,63,160,0.6);
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    min-width: 28px;
+    padding-top: 1px;
+    font-style: normal;
+}
+
+.reason-text {
+    font-size: 12px;
+    color: #c8b8e0;
+    line-height: 1.85;
+    font-style: normal;
+}
+
+.reason-text em {
+    color: #e0c060;
+    font-style: italic;
+}
+
+.reason-text strong {
+    color: #d4b8ff;
+    font-weight: normal;
+}
+
+/* Special milestone reasons */
+.reason.milestone {
+    background: rgba(107,63,160,0.08);
+    border-color: rgba(107,63,160,0.35);
+}
+
+.reason.milestone .reason-num {
+    color: #d4b8ff;
+}
+
+.reason.milestone .reason-text {
+    color: #d4b8ff;
+}
+
+.reason.golden {
+    background: rgba(201,168,76,0.05);
+    border-color: rgba(201,168,76,0.25);
+}
+
+.reason.golden .reason-num { color: #e0c060; }
+.reason.golden .reason-text { color: #e8d890; }
+
+/* ── FOOTER ── */
+.footer-note {
+    margin-top: 32px;
+    padding: 20px 16px;
+    background: rgba(107,63,160,0.08);
+    border: 1px solid rgba(107,63,160,0.25);
+    text-align: center;
+}
+
+.footer-heart {
+    font-size: 32px;
+    margin-bottom: 12px;
+    animation: heartbeat 1.4s ease infinite;
+}
+
+@keyframes heartbeat {
+    0%,100% { transform: scale(1); }
+    14%      { transform: scale(1.15); }
+    28%      { transform: scale(1); }
+    42%      { transform: scale(1.1); }
+    56%      { transform: scale(1); }
+}
+
+.footer-text {
+    font-size: 13px;
+    color: #d4b8ff;
+    line-height: 2;
+    font-style: italic;
+    margin-bottom: 8px;
+}
+
+.footer-sig {
+    font-size: 16px;
+    color: #e0c060;
+    font-style: italic;
+    margin-top: 12px;
+}
+
+.footer-case {
+    font-size: 9px;
+    color: rgba(107,63,160,0.4);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 8px;
+}
+
+.back-btn {
+    display: block;
+    margin: 20px auto 0;
+    padding: 12px 24px;
+    background: transparent;
+    border: 1px solid rgba(107,63,160,0.4);
+    color: rgba(107,63,160,0.7);
+    font-family: "Courier New", monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 4px;
+    text-decoration: none;
+    text-align: center;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.back-btn:hover {
+    border-color: rgba(107,63,160,0.7);
+    color: #d4b8ff;
+}
+
+.system { margin-top: 16px; font-size: 10px; color: #2a2030; line-height: 1.6; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+    <div class="header">
+        <div class="header-glow"></div>
+        <div class="header-badge">Classified — Eyes Only</div>
+        <div class="header-num">101</div>
+        <div class="header-title">Reasons I Love You</div>
+        <div class="header-sub">S.E.D — For S.S. — Always</div>
+        <div class="header-divider"></div>
+    </div>
+
+    <div class="intro">
+        You found this by accident.<br>
+        Or maybe you were always going to find it.<br><br>
+        Either way — <strong>you were meant to read this.</strong><br>
+        Every single one.
+    </div>
+
+    <div class="reasons" id="reasonsList"></div>
+
+    <div class="footer-note">
+        <div class="footer-heart">💜</div>
+        <div class="footer-text">
+            There are more than 101.<br>
+            But 101 is where the case begins.<br>
+            And this case has no end.
+        </div>
+        <div class="footer-sig">Seif El-Din</div>
+        <div class="footer-case">Case #114 — Always & Completely Yours</div>
+    </div>
+
+    <a class="back-btn" href="javascript:history.back()">← Return to Investigation</a>
+
+    <div class="system">Case #114 | Secret Archive | For Salma</div>
+
+</div>
+
+<script>
+const reasons = [
+    // ── Her personality & character ──
+    { text: "How smart you are." },
+    { text: "How self-aware you are." },
+    { text: "How pure-hearted you are.", milestone: true },
+    { text: "How you never complicate things." },
+    { text: "How you face problems head on." },
+    { text: "How you face your trauma." },
+    { text: "Your strength.", milestone: true },
+    { text: "Your weakness." },
+    { text: "Your self-respect." },
+    { text: "Your self-confidence." },
+    { text: "Your willingness to forgive." },
+    { text: "How you accept me for who I am.", milestone: true },
+    { text: "How religious you are." },
+    { text: "How you survived professional pressure." },
+    { text: "How you still keep your human side.", milestone: true },
+    // ── Her appearance ──
+    { text: "Your smile.", golden: true },
+    { text: "Your eyes — the way they sparkle." },
+    { text: "How beautiful you are." },
+    { text: "How you style your clothing." },
+    { text: "Your white pearly teeth." },
+    { text: "How you wear your makeup." },
+    { text: "Your everything shower routine." },
+    { text: "How clean you are." },
+    { text: "How you care about your skincare." },
+    { text: "Your excitement for new outfits.", milestone: true },
+    // ── Her expressions & sounds ──
+    { text: "Your \"this coffee is ugly\" face." },
+    { text: "Your \"sanata7\" face." },
+    { text: "Your \"ehhehehehe\"." },
+    { text: "Your \"lalalalalalala\"." },
+    { text: "Your \"tak tak tak\"." , milestone: true},
+    { text: "Your \"ew3aaak\"." },
+    { text: "Your \"shOBak\"." },
+    { text: "Your \"la ah ah ah\"." },
+    { text: "Your \"ALLAH AKBAAAAR\".", golden: true },
+    { text: "Your \"Yaa Allaah\"." },
+    { text: "Your \"Qasmn b Allah\"." },
+    { text: "Your \"ana 2oltelk la?\"." },
+    { text: "Your \"ahhhh fhmt\" moments.", milestone: true },
+    { text: "Your genuine laugh." },
+    { text: "When you sing.", golden: true },
+    // ── Her habits & quirks ──
+    { text: "How you scramble letters in words." },
+    { text: "How you forget things." },
+    { text: "How you remember them anyway." , milestone: true},
+    { text: "How clumsy you are." },
+    { text: "How you get nervous." },
+    { text: "How quiet you are." },
+    { text: "Your poker face.", milestone: true, golden: true },
+    { text: "Your hyperactive moments." },
+    { text: "Your \"tafasa\" mood on." },
+    { text: "How you switch off your mind when you are with me.", golden: true },
+    { text: "Exactly halfway — and I have barely started.", milestone: true },
+    { text: "Your love for sleep." },
+    { text: "Your morning run routine." },
+    { text: "How you eat your food." },
+    { text: "Your pineapple eating habits." },
+    { text: "How you diet." },
+    { text: "Your shyness.", milestone: true },
+    { text: "How you get scared easily." },
+    // ── Her love for food & drinks ──
+    { text: "Your love for fried chicken and pasta.", golden: true },
+    { text: "Your love for coffee." },
+    { text: "Your sweet tooth.", milestone: true },
+    // ── Her intellect & creativity ──
+    { text: "How artistic you are." },
+    { text: "The way you write." },
+    { text: "How creative you are." },
+    { text: "Your love for reading.", milestone: true },
+    { text: "Your attention to detail." },
+    { text: "Your planning skills." },
+    { text: "Your love for Excel." },
+    { text: "How CodyCross is your thing." },
+    { text: "How bad you are at math — and how it makes no difference.", golden: true },
+    // ── Her love & care for others ──
+    { text: "How you trust me.", milestone: true },
+    { text: "How you believe in us." },
+    { text: "How you look at me.", golden: true },
+    { text: "How you listen to me." },
+    { text: "How you support my dreams.", milestone: true },
+    { text: "How you love kids." },
+    { text: "Your care for the underdogs." },
+    { text: "How you treat your family." },
+    { text: "How you treat mine.", golden: true },
+    { text: "How you go the extra mile.", milestone: true },
+    { text: "Your generosity." },
+    // ── Her achievements ──
+    { text: "That you are in the medical field." },
+    { text: "That you have over 4 million readers.", golden: true },
+    { text: "Your sense of humor.", milestone: true },
+    { text: "Your love for movies and series." },
+    { text: "Your love for flowers." },
+    { text: "How you dream." },
+    { text: "Your curiosity." },
+    { text: "How you smell.", golden: true },
+    { text: "How you heal wounds — literally and otherwise." },
+    { text: "Your bad taste in music — and how you own it completely." },
+    // ── The special ones ──
+    { text: "Your inside jokes.", milestone: true },
+    { text: "How you cry." },
+    { text: "Your islands.", golden: true },
+    { text: "Your logicalizing." },
+    { text: "Your disappointments." },
+    { text: "Your dreams you told only me.", milestone: true },
+    { text: "How you make me feel at home.", golden: true },
+    { text: "How you make the ordinary feel significant." },
+    { text: "The fact that none of these individually explain it." },
+    { text: "All of them together still don't fully explain it.", milestone: true },
+    { text: "To be honest — for none of these.<br>I love you for <strong>just being you.</strong>", golden: true, milestone: true },
+];
+
+const list = document.getElementById('reasonsList');
+
+reasons.forEach((r, i) => {
+    const div = document.createElement('div');
+    div.className = 'reason' + (r.milestone ? ' milestone' : '') + (r.golden ? ' golden' : '');
+    div.style.animationDelay = Math.min(i * 0.04, 2) + 's';
+
+    const num  = document.createElement('div');
+    num.className   = 'reason-num';
+    num.textContent = String(i + 1).padStart(3, '0');
+
+    const text = document.createElement('div');
+    text.className = 'reason-text';
+    text.innerHTML = r.text;
+
+    div.appendChild(num);
+    div.appendChild(text);
+    list.appendChild(div);
+});
+</script>
+
+</body>
+</html>
 
