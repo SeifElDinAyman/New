@@ -729,7 +729,7 @@ p em { color: #e0c060; font-style: italic; }
             <p>You have access to the full broadcast. Open <em>Netflix</em> now.</p>
             <p>
                 <strong>Season 2. Episode 11.</strong><br>
-                Jump to exactly <strong>26 minutes and 31 seconds.</strong><br>
+                Jump to exactly <strong>26 minutes and 28 seconds.</strong><br>
                 Look at the establishment sign — it is <strong>in front of him.</strong><br>
                 Read the name clearly.<br>
                 That is your next key.
@@ -977,6 +977,40 @@ function check() {
             gateInput.value = '';
         }, 500);
     }
+}
+
+// ── VOLUME EASTER EGG ─────────────────────────────────
+// Press VOL+ and VOL- within 400ms of each other → secret page
+let volUpPressed   = false;
+let volDownPressed = false;
+let volTimer       = null;
+
+document.querySelectorAll('.btn-vol').forEach((btn, idx) => {
+    btn.addEventListener('click', () => {
+        if (idx === 0) {
+            // VOL −
+            volDownPressed = true;
+            if (volUpPressed) triggerEasterEgg();
+            else { clearTimeout(volTimer); volTimer = setTimeout(() => { volDownPressed = false; }, 400); }
+        } else {
+            // VOL +
+            volUpPressed = true;
+            if (volDownPressed) triggerEasterEgg();
+            else { clearTimeout(volTimer); volTimer = setTimeout(() => { volUpPressed = false; }, 400); }
+        }
+    });
+});
+
+function triggerEasterEgg() {
+    volUpPressed   = false;
+    volDownPressed = false;
+    clearTimeout(volTimer);
+    // Brief flash then redirect
+    document.body.style.transition = 'opacity 0.4s';
+    document.body.style.opacity    = '0';
+    setTimeout(() => {
+        window.location.href = 'https://seifeldinayman.github.io/New/hundredone';
+    }, 400);
 }
 
 // ── TERMINAL ──────────────────────────────────────────
