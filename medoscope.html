@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedoScope</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#04080f;--s1:#080e1a;--s2:#0c1422;--s3:#101c2e;
+  --border:#162035;--border2:#1e2f48;
+  --cyan:#00e5c8;--cyan-soft:rgba(0,229,200,0.1);--cyan-glow:rgba(0,229,200,0.18);--cyan-border:rgba(0,229,200,0.25);
+  --gold:#e8b84b;--gold-soft:rgba(232,184,75,0.1);
+  --rose:#ff4d6d;--rose-soft:rgba(255,77,109,0.1);
+  --blue:#4d9fff;--blue-soft:rgba(77,159,255,0.1);
+  --text:#dce8f5;--text2:#8ea8c8;--text3:#4a6080;
+  --sidebar:260px;--radius:14px;
+}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);display:flex;}
+
+/* OVERLAY */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99;backdrop-filter:blur(2px);}
+.overlay.show{display:block;}
+
+/* SIDEBAR */
+.sidebar{
+  width:var(--sidebar);flex-shrink:0;
+  background:linear-gradient(180deg,var(--s1),var(--s2));
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:relative;z-index:100;overflow:hidden;
+  transition:transform 0.3s cubic-bezier(.16,1,.3,1),width 0.3s cubic-bezier(.16,1,.3,1);
+}
+.sidebar::before{content:'';position:absolute;top:-80px;left:-80px;width:260px;height:260px;background:radial-gradient(circle,rgba(0,229,200,0.06),transparent 70%);pointer-events:none;}
+
+/* COLLAPSED STATE (desktop) */
+.sidebar.collapsed{width:68px;}
+.sidebar.collapsed .logo-name,.sidebar.collapsed .logo-tag,
+.sidebar.collapsed .nav-label-text,.sidebar.collapsed .nav-section-label,
+.sidebar.collapsed .nav-badge,.sidebar.collapsed .doc-info,.sidebar.collapsed .status-dot{display:none;}
+.sidebar.collapsed .logo-area{padding:20px 16px;justify-content:center;}
+.sidebar.collapsed .logo-icon{margin:0;}
+.sidebar.collapsed .nav-item{padding:10px;justify-content:center;}
+.sidebar.collapsed .nav-icon{margin:0;}
+.sidebar.collapsed .doc-card{padding:10px;justify-content:center;}
+.sidebar.collapsed .doc-avatar{margin:0;}
+.sidebar.collapsed .nav-section{padding:12px 8px 4px;}
+
+/* MOBILE sidebar */
+@media(max-width:768px){
+  .sidebar{position:fixed;top:0;left:0;height:100%;transform:translateX(-100%);width:var(--sidebar)!important;}
+  .sidebar.mobile-open{transform:translateX(0);}
+  .sidebar.collapsed .logo-name,.sidebar.collapsed .logo-tag,
+  .sidebar.collapsed .nav-label-text,.sidebar.collapsed .nav-section-label,
+  .sidebar.collapsed .nav-badge,.sidebar.collapsed .doc-info,.sidebar.collapsed .status-dot{display:block;}
+  .sidebar.collapsed .logo-area{padding:28px 24px 22px;justify-content:flex-start;}
+  .sidebar.collapsed .logo-icon{margin:0;}
+  .sidebar.collapsed .nav-item{padding:10px 14px;justify-content:flex-start;}
+  .sidebar.collapsed .nav-section{padding:20px 14px 6px;}
+  .sidebar.collapsed .doc-card{padding:10px 12px;justify-content:flex-start;}
+}
+
+.logo-area{padding:24px 20px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;overflow:hidden;}
+.logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--cyan),#008fa0);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;box-shadow:0 4px 16px rgba(0,229,200,0.25);}
+.logo-name{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);line-height:1;white-space:nowrap;}
+.logo-name em{color:var(--cyan);font-style:normal;}
+.logo-tag{font-size:9px;color:var(--text3);letter-spacing:2.5px;text-transform:uppercase;margin-top:3px;white-space:nowrap;}
+.nav-section{padding:16px 10px 4px;overflow:hidden;}
+.nav-section-label{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);padding:0 8px 8px;white-space:nowrap;}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:all 0.18s;font-size:13.5px;font-weight:500;color:var(--text2);border:1px solid transparent;margin-bottom:2px;position:relative;user-select:none;overflow:hidden;}
+.nav-item:hover{background:var(--s3);color:var(--text);}
+.nav-item.active{background:var(--cyan-soft);color:var(--cyan);border-color:var(--cyan-border);}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--cyan);border-radius:0 3px 3px 0;}
+.nav-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:rgba(255,255,255,0.04);transition:background 0.18s;}
+.nav-item.active .nav-icon{background:var(--cyan-glow);}
+.nav-label-text{flex:1;white-space:nowrap;}
+.nav-badge{background:var(--rose);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap;}
+.nav-badge.amber{background:var(--gold);color:#000;}
+.sidebar-bottom{margin-top:auto;padding:14px 10px;border-top:1px solid var(--border);}
+.doc-card{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:10px;cursor:pointer;transition:background 0.18s;overflow:hidden;}
+.doc-card:hover{background:var(--s3);}
+.doc-avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--cyan),var(--blue));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--bg);}
+.doc-info{}
+.doc-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;}
+.doc-role{font-size:11px;color:var(--text3);white-space:nowrap;}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);flex-shrink:0;box-shadow:0 0 6px var(--cyan);margin-left:auto;}
+
+/* TOGGLE BUTTON */
+.toggle-btn{
+  position:absolute;top:50%;right:-14px;transform:translateY(-50%);
+  width:28px;height:28px;border-radius:50%;
+  background:var(--s2);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:11px;color:var(--text2);
+  transition:all 0.2s;z-index:10;
+}
+.toggle-btn:hover{background:var(--cyan);color:var(--bg);border-color:var(--cyan);}
+@media(max-width:768px){.toggle-btn{display:none;}}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 24px;background:var(--s1);border-bottom:1px solid var(--border);flex-shrink:0;}
+.hamburger{
+  display:none;width:38px;height:38px;border-radius:10px;
+  background:var(--s2);border:1px solid var(--border2);
+  align-items:center;justify-content:center;
+  cursor:pointer;font-size:16px;flex-shrink:0;
+  transition:border-color 0.2s;
+}
+.hamburger:hover{border-color:var(--cyan-border);}
+@media(max-width:768px){.hamburger{display:flex;}}
+.topbar-left{flex:1;min-width:0;}
+.page-eyebrow{font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;}
+.page-heading{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-actions{display:flex;align-items:center;gap:8px;}
+.search{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--border2);border-radius:10px;padding:9px 14px;font-size:13px;color:var(--text3);width:220px;cursor:text;transition:border-color 0.2s;}
+.search:hover{border-color:var(--cyan-border);}
+@media(max-width:900px){.search{display:none;}}
+.btn{padding:9px 16px;border-radius:10px;font-size:13px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;border:none;transition:all 0.18s;white-space:nowrap;}
+.btn-primary{background:var(--cyan);color:var(--bg);box-shadow:0 4px 20px rgba(0,229,200,0.2);}
+.btn-primary:hover{box-shadow:0 6px 28px rgba(0,229,200,0.35);transform:translateY(-1px);}
+.btn-outline{background:transparent;color:var(--text2);border:1px solid var(--border2);}
+.btn-outline:hover{border-color:var(--cyan-border);color:var(--cyan);}
+@media(max-width:600px){.btn-outline{display:none;}}
+.notif-btn{width:38px;height:38px;border-radius:10px;background:var(--s2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;position:relative;transition:border-color 0.2s;flex-shrink:0;}
+.notif-btn:hover{border-color:var(--cyan-border);}
+.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--rose);border:1.5px solid var(--s1);}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:24px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
+@media(max-width:600px){.content{padding:16px;}}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+.page{display:none;}
+.page.active{display:block;animation:rise 0.3s cubic-bezier(.16,1,.3,1);}
+@keyframes rise{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+@media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:480px){.kpi-grid{grid-template-columns:repeat(2,1fr);gap:8px;}}
+.kpi{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:border-color 0.2s,transform 0.2s;cursor:default;}
+.kpi:hover{transform:translateY(-2px);}
+.kpi.c{border-color:var(--cyan-border);}
+.kpi.b{border-color:rgba(77,159,255,0.2);}
+.kpi.g{border-color:rgba(232,184,75,0.2);}
+.kpi.r{border-color:rgba(255,77,109,0.2);}
+.kpi-glow{position:absolute;top:-40px;right:-40px;width:120px;height:120px;border-radius:50%;opacity:0.07;}
+.kpi.c .kpi-glow{background:var(--cyan);}
+.kpi.b .kpi-glow{background:var(--blue);}
+.kpi.g .kpi-glow{background:var(--gold);}
+.kpi.r .kpi-glow{background:var(--rose);}
+.kpi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.kpi-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.kpi.c .kpi-icon{background:var(--cyan-soft);}
+.kpi.b .kpi-icon{background:var(--blue-soft);}
+.kpi.g .kpi-icon{background:var(--gold-soft);}
+.kpi.r .kpi-icon{background:var(--rose-soft);}
+.kpi-trend{font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;}
+.kpi-trend.up{background:rgba(0,229,200,0.1);color:var(--cyan);}
+.kpi-trend.dn{background:var(--rose-soft);color:var(--rose);}
+.kpi-trend.nt{background:rgba(255,255,255,0.05);color:var(--text3);}
+.kpi-val{font-family:'Instrument Serif',serif;font-size:28px;line-height:1;color:var(--text);margin-bottom:4px;}
+.kpi-lbl{font-size:11px;color:var(--text3);font-weight:500;}
+
+/* GRIDS */
+.grid-2-1{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:20px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+@media(max-width:900px){.grid-2-1,.grid-2{grid-template-columns:1fr;}}
+
+/* CARD */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
+.card-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;}
+.card-title{font-family:'Instrument Serif',serif;font-size:16px;color:var(--text);}
+.card-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+.pill{font-size:10.5px;font-weight:600;padding:4px 10px;border-radius:20px;}
+.pill-cyan{background:var(--cyan-soft);color:var(--cyan);}
+.pill-gold{background:var(--gold-soft);color:var(--gold);}
+.pill-rose{background:var(--rose-soft);color:var(--rose);}
+.pill-blue{background:var(--blue-soft);color:var(--blue);}
+.pill-muted{background:rgba(255,255,255,0.04);color:var(--text3);}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{text-align:left;padding:9px 12px;color:var(--text3);font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--border);}
+tbody tr{border-bottom:1px solid rgba(22,32,53,0.8);transition:background 0.15s;cursor:pointer;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:rgba(12,20,34,0.7);}
+td{padding:12px;vertical-align:middle;}
+.pt-name{font-weight:600;color:var(--text);font-size:13px;}
+.pt-id{font-size:11px;color:var(--text3);margin-top:2px;}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;}
+.badge-active{background:var(--cyan-soft);color:var(--cyan);}
+.badge-active::before{background:var(--cyan);box-shadow:0 0 5px var(--cyan);}
+.badge-critical{background:var(--rose-soft);color:var(--rose);}
+.badge-critical::before{background:var(--rose);}
+.badge-pending{background:var(--gold-soft);color:var(--gold);}
+.badge-pending::before{background:var(--gold);}
+.badge-discharged{background:rgba(255,255,255,0.04);color:var(--text3);}
+.badge-discharged::before{background:var(--text3);}
+
+/* LOADING */
+.loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--text3);font-size:13px;gap:10px;}
+.spinner{width:18px;height:18px;border:2px solid var(--border2);border-top-color:var(--cyan);border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ALERT */
+.alert-banner{display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,rgba(255,77,109,0.08),transparent);border:1px solid rgba(255,77,109,0.2);border-radius:var(--radius);padding:12px 16px;margin-bottom:18px;}
+.alert-text{flex:1;font-size:13px;}
+.alert-text strong{color:var(--rose);}
+.alert-action{font-size:12px;font-weight:600;color:var(--rose);background:var(--rose-soft);border:none;padding:6px 12px;border-radius:8px;cursor:pointer;white-space:nowrap;}
+
+/* SECTION HDR */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sec-title{font-family:'Instrument Serif',serif;font-size:16px;color:var(--text);}
+
+/* LEGEND */
+.legend{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
+.leg-item{display:flex;align-items:center;gap:10px;font-size:12px;}
+.leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.leg-lbl{flex:1;color:var(--text2);}
+.leg-val{font-weight:700;color:var(--text);}
+.leg-pct{font-size:11px;color:var(--text3);margin-left:4px;}
+
+/* APPOINTMENTS */
+.appt-list{display:flex;flex-direction:column;gap:8px;}
+.appt{display:flex;align-items:center;gap:12px;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:12px 16px;transition:border-color 0.2s,transform 0.2s;cursor:pointer;}
+.appt:hover{border-color:var(--cyan-border);transform:translateX(3px);}
+.appt-time-box{min-width:58px;text-align:center;background:var(--s1);border:1px solid var(--border);border-radius:9px;padding:6px;}
+.appt-hr{font-family:'Instrument Serif',serif;font-size:18px;color:var(--cyan);line-height:1;}
+.appt-period{font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;}
+.appt-body{flex:1;min-width:0;}
+.appt-patient-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.appt-meta{font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.appt-dr{display:flex;align-items:center;gap:8px;}
+.dr-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;}
+@media(max-width:600px){.appt-dr{display:none;}}
+
+/* BILLING */
+.inv-list{display:flex;flex-direction:column;}
+.inv-item{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--border);}
+.inv-item:last-child{border-bottom:none;}
+.inv-icon{width:36px;height:36px;border-radius:10px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.inv-name{font-size:13px;font-weight:600;color:var(--text);}
+.inv-date{font-size:11px;color:var(--text3);margin-top:2px;}
+.inv-amt{font-family:'Instrument Serif',serif;font-size:16px;flex-shrink:0;}
+.inv-amt.paid{color:var(--cyan);}
+.inv-amt.pending{color:var(--gold);}
+.inv-amt.overdue{color:var(--rose);}
+@media(max-width:500px){.inv-badge{display:none;}}
+
+/* PROGRESS */
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:12px;}
+.prog-lbl{color:var(--text2);width:85px;flex-shrink:0;}
+.prog-bar-bg{flex:1;height:5px;background:var(--s3);border-radius:10px;overflow:hidden;}
+.prog-bar-fill{height:100%;border-radius:10px;}
+.prog-val{color:var(--text3);width:36px;text-align:right;flex-shrink:0;}
+
+/* ACTIVITY */
+.activity{display:flex;flex-direction:column;}
+.act-item{display:flex;gap:12px;padding-bottom:16px;position:relative;}
+.act-item::before{content:'';position:absolute;left:14px;top:28px;bottom:0;width:1px;background:var(--border);}
+.act-item:last-child::before{display:none;}
+.act-dot{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;background:var(--s2);border:1px solid var(--border);z-index:1;}
+.act-action{font-size:13px;color:var(--text);font-weight:500;}
+.act-time{font-size:11px;color:var(--text3);margin-top:2px;}
+
+/* MOBILE BOTTOM NAV */
+.bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--s1);border-top:1px solid var(--border);
+  padding:8px 0 12px;z-index:50;
+}
+.bottom-nav-inner{display:flex;justify-content:space-around;}
+.bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 12px;border-radius:10px;transition:all 0.2s;color:var(--text3);font-size:10px;font-weight:500;}
+.bn-item.active{color:var(--cyan);}
+.bn-icon{font-size:20px;}
+@media(max-width:768px){
+  .bottom-nav{display:block;}
+  .content{padding-bottom:80px;}
+}
+
+/* DB STATUS */
+.db-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);padding:6px 12px;background:var(--s2);border:1px solid var(--border);border-radius:20px;white-space:nowrap;}
+.db-dot{width:6px;height:6px;border-radius:50%;background:var(--text3);}
+.db-dot.connected{background:var(--cyan);box-shadow:0 0 5px var(--cyan);}
+@media(max-width:500px){.db-status{display:none;}}
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="toggle-btn" id="toggleBtn" title="Collapse sidebar">‹</div>
+  <div class="logo-area">
+    <div class="logo-icon">⚕</div>
+    <div>
+      <div class="logo-name">Medo<em>Scope</em></div>
+      <div class="logo-tag">Healthcare Intelligence</div>
+    </div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Core</div>
+    <div class="nav-item active" data-page="overview"><div class="nav-icon">◈</div><span class="nav-label-text">Overview</span></div>
+    <div class="nav-item" data-page="patients"><div class="nav-icon">👤</div><span class="nav-label-text">Patients</span><span class="nav-badge" id="badge-critical">3</span></div>
+    <div class="nav-item" data-page="appointments"><div class="nav-icon">📅</div><span class="nav-label-text">Appointments</span><span class="nav-badge amber" id="badge-appt">—</span></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Finance</div>
+    <div class="nav-item" data-page="billing"><div class="nav-icon">💳</div><span class="nav-label-text">Billing</span></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">System</div>
+    <div class="nav-item" data-page=""><div class="nav-icon">⚙</div><span class="nav-label-text">Settings</span></div>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="doc-card">
+      <div class="doc-avatar">AH</div>
+      <div class="doc-info">
+        <div class="doc-name">Dr. Ahmed Hassan</div>
+        <div class="doc-role">Chief Administrator</div>
+      </div>
+      <div class="status-dot"></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="hamburger" id="hamburger">☰</div>
+    <div class="topbar-left">
+      <div class="page-eyebrow" id="eyebrow">Dashboard</div>
+      <div class="page-heading" id="heading">Good morning, Dr. Hassan</div>
+    </div>
+    <div class="topbar-actions">
+      <div class="search">🔍&nbsp; Search patients…</div>
+      <div class="db-status"><div class="db-dot" id="dbDot"></div><span id="dbLabel">Connecting…</span></div>
+      <div class="notif-btn">🔔<div class="notif-dot"></div></div>
+      <button class="btn btn-outline">Export</button>
+      <button class="btn btn-primary">+ New Patient</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- OVERVIEW -->
+    <div class="page active" id="page-overview">
+      <div class="alert-banner">
+        <div style="font-size:18px;">⚠️</div>
+        <div class="alert-text"><strong id="critical-count">3 Critical Patients</strong> require immediate physician review — ICU Wards B, C &amp; D.</div>
+        <button class="alert-action">View Cases</button>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🏥</div><div class="kpi-trend up">↑ 12%</div></div><div class="kpi-val" id="kpi-total">—</div><div class="kpi-lbl">Total Patients</div></div>
+        <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">📅</div><div class="kpi-trend up" id="kpi-appt-trend">Live</div></div><div class="kpi-val" id="kpi-appt">—</div><div class="kpi-lbl">Appointments</div></div>
+        <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">💰</div><div class="kpi-trend up">↑ 8.3%</div></div><div class="kpi-val" id="kpi-revenue">—</div><div class="kpi-lbl">Total Billed</div></div>
+        <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🚨</div><div class="kpi-trend dn">Urgent</div></div><div class="kpi-val" id="kpi-critical">—</div><div class="kpi-lbl">Critical Cases</div></div>
+      </div>
+      <div class="grid-2-1">
+        <div class="card">
+          <div class="card-hd"><div><div class="card-title">Patient Admissions</div><div class="card-sub">Historical trend</div></div><span class="pill pill-cyan">Monthly</span></div>
+          <canvas id="chart-admissions" height="120"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div><div class="card-title">Department Load</div><div class="card-sub">Current distribution</div></div></div>
+          <canvas id="chart-dept" height="130"></canvas>
+          <div class="legend" id="dept-legend">
+            <div class="leg-item"><div class="leg-dot" style="background:var(--cyan)"></div><span class="leg-lbl">Cardiology</span><span class="leg-val" id="dept-cardiology">—</span></div>
+            <div class="leg-item"><div class="leg-dot" style="background:var(--blue)"></div><span class="leg-lbl">Orthopedics</span><span class="leg-val" id="dept-orthopedics">—</span></div>
+            <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div><span class="leg-lbl">Neurology</span><span class="leg-val" id="dept-neurology">—</span></div>
+            <div class="leg-item"><div class="leg-dot" style="background:var(--rose)"></div><span class="leg-lbl">General</span><span class="leg-val" id="dept-general">—</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="grid-2-1">
+        <div class="card" style="padding:0 20px;">
+          <div style="padding:18px 0 0;">
+            <div class="sec-hdr">
+              <div class="sec-title">Recent Patients</div>
+              <button class="btn btn-outline" style="font-size:12px;padding:6px 12px;" id="btn-all-patients">View All →</button>
+            </div>
+          </div>
+          <div id="overview-patients-wrap"><div class="loading"><div class="spinner"></div> Loading patients…</div></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div><div class="card-title">Recent Activity</div><div class="card-sub">Last 2 hours</div></div></div>
+          <div class="activity">
+            <div class="act-item"><div class="act-dot">🩺</div><div><div class="act-action">Karim Youssef moved to ICU</div><div class="act-time">9 mins ago · Dr. Tarek Said</div></div></div>
+            <div class="act-item"><div class="act-dot">📄</div><div><div class="act-action">New lab results — Sara El-Masry</div><div class="act-time">31 mins ago · Lab Dept</div></div></div>
+            <div class="act-item"><div class="act-dot">💊</div><div><div class="act-action">Prescription updated — Nadia Fouad</div><div class="act-time">1h 12m ago · Dr. Nour Amin</div></div></div>
+            <div class="act-item"><div class="act-dot">✅</div><div><div class="act-action">Omar Sharaf discharged</div><div class="act-time">1h 55m ago · Dr. Hana Kamal</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PATIENTS -->
+    <div class="page" id="page-patients">
+      <div class="kpi-grid">
+        <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">👤</div><div class="kpi-trend up">↑ 12%</div></div><div class="kpi-val" id="pt-kpi-total">—</div><div class="kpi-lbl">Registered</div></div>
+        <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">✅</div><div class="kpi-trend nt">Live</div></div><div class="kpi-val" id="pt-kpi-active">—</div><div class="kpi-lbl">Active</div></div>
+        <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">⏳</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="pt-kpi-pending">—</div><div class="kpi-lbl">Pending</div></div>
+        <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🚨</div><div class="kpi-trend dn">Urgent</div></div><div class="kpi-val" id="pt-kpi-critical">—</div><div class="kpi-lbl">Critical</div></div>
+      </div>
+      <div class="sec-hdr">
+        <div class="sec-title">Patient Registry</div>
+        <button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">+ Add Patient</button>
+      </div>
+      <div class="card" style="padding:0 20px;">
+        <div id="patients-table-wrap"><div class="loading"><div class="spinner"></div> Loading from database…</div></div>
+      </div>
+    </div>
+
+    <!-- APPOINTMENTS -->
+    <div class="page" id="page-appointments">
+      <div class="kpi-grid">
+        <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">📅</div><div class="kpi-trend nt">Today</div></div><div class="kpi-val" id="appt-kpi-total">—</div><div class="kpi-lbl">Total</div></div>
+        <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">✅</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="appt-kpi-confirmed">—</div><div class="kpi-lbl">Confirmed</div></div>
+        <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">⏳</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="appt-kpi-pending">—</div><div class="kpi-lbl">Pending</div></div>
+        <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">❌</div><div class="kpi-trend dn">—</div></div><div class="kpi-val" id="appt-kpi-cancelled">—</div><div class="kpi-lbl">Cancelled</div></div>
+      </div>
+      <div class="sec-hdr">
+        <div class="sec-title">Today's Schedule</div>
+        <button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">+ Book</button>
+      </div>
+      <div id="appt-list-wrap"><div class="loading"><div class="spinner"></div> Loading appointments…</div></div>
+    </div>
+
+    <!-- BILLING -->
+    <div class="page" id="page-billing">
+      <div class="kpi-grid">
+        <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">💰</div><div class="kpi-trend up">↑ 8.3%</div></div><div class="kpi-val" id="bill-kpi-total">—</div><div class="kpi-lbl">Total Billed</div></div>
+        <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">✅</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="bill-kpi-paid">—</div><div class="kpi-lbl">Collected</div></div>
+        <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">⏳</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="bill-kpi-pending">—</div><div class="kpi-lbl">Outstanding</div></div>
+        <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🚫</div><div class="kpi-trend dn">—</div></div><div class="kpi-val" id="bill-kpi-overdue">—</div><div class="kpi-lbl">Overdue</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-hd"><div><div class="card-title">Revenue Trend</div><div class="card-sub">Simulated monthly</div></div><span class="pill pill-gold">Monthly</span></div>
+          <canvas id="chart-revenue" height="140"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div><div class="card-title">Collection Rate</div><div class="card-sub">From database</div></div></div>
+          <canvas id="chart-payment" height="120"></canvas>
+          <div class="legend" style="margin-top:14px;">
+            <div class="leg-item"><div class="leg-dot" style="background:var(--cyan)"></div><span class="leg-lbl">Paid</span><span class="leg-val" id="leg-paid">—</span></div>
+            <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div><span class="leg-lbl">Outstanding</span><span class="leg-val" id="leg-pending">—</span></div>
+            <div class="leg-item"><div class="leg-dot" style="background:var(--rose)"></div><span class="leg-lbl">Overdue</span><span class="leg-val" id="leg-overdue">—</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sec-hdr">
+        <div class="sec-title">Invoices</div>
+        <button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">+ New Invoice</button>
+      </div>
+      <div class="card" id="invoices-wrap"><div class="loading"><div class="spinner"></div> Loading invoices…</div></div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- MOBILE BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <div class="bn-item active" data-page="overview"><div class="bn-icon">◈</div>Overview</div>
+    <div class="bn-item" data-page="patients"><div class="bn-icon">👤</div>Patients</div>
+    <div class="bn-item" data-page="appointments"><div class="bn-icon">📅</div>Schedule</div>
+    <div class="bn-item" data-page="billing"><div class="bn-icon">💳</div>Billing</div>
+  </div>
+</div>
+
+<script>
+// ═══ SUPABASE ═══
+const { createClient } = supabase;
+const sb = createClient(
+  'https://ixiajdnykewavnxbgmvo.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4aWFqZG55a2V3YXZueGJnbXZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMzA5MTQsImV4cCI6MjA5MjkwNjkxNH0.wKyCZyXEF8wqlJSW3wbJMscPazuSA-7648QnawprqYI'
+);
+
+// ═══ NAVIGATION ═══
+const META = {
+  overview:     { eyebrow:'Dashboard',          heading:'Good morning, Dr. Hassan' },
+  patients:     { eyebrow:'Patient Management', heading:'Patient Records' },
+  appointments: { eyebrow:'Schedule',           heading:'Appointments' },
+  billing:      { eyebrow:'Finance',            heading:'Billing & Revenue' },
+};
+const loaded = {};
+
+function goTo(pageId) {
+  if (!pageId || !META[pageId]) return;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item, .bn-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + pageId).classList.add('active');
+  document.querySelectorAll(`[data-page="${pageId}"]`).forEach(el => el.classList.add('active'));
+  document.getElementById('eyebrow').textContent = META[pageId].eyebrow;
+  document.getElementById('heading').textContent = META[pageId].heading;
+  closeMobileSidebar();
+  if (!loaded[pageId]) { loaded[pageId] = true; loadPage(pageId); }
+}
+
+document.querySelectorAll('[data-page]').forEach(el => {
+  el.addEventListener('click', () => goTo(el.dataset.page));
+});
+document.getElementById('btn-all-patients').addEventListener('click', () => goTo('patients'));
+
+// ═══ SIDEBAR TOGGLE (desktop) ═══
+const sidebar = document.getElementById('sidebar');
+const toggleBtn = document.getElementById('toggleBtn');
+let collapsed = false;
+toggleBtn.addEventListener('click', () => {
+  collapsed = !collapsed;
+  sidebar.classList.toggle('collapsed', collapsed);
+  toggleBtn.textContent = collapsed ? '›' : '‹';
+  toggleBtn.style.right = collapsed ? '-14px' : '-14px';
+});
+
+// ═══ MOBILE SIDEBAR ═══
+const hamburger = document.getElementById('hamburger');
+const overlay = document.getElementById('overlay');
+function openMobileSidebar() {
+  sidebar.classList.add('mobile-open');
+  overlay.classList.add('show');
+}
+function closeMobileSidebar() {
+  sidebar.classList.remove('mobile-open');
+  overlay.classList.remove('show');
+}
+hamburger.addEventListener('click', openMobileSidebar);
+overlay.addEventListener('click', closeMobileSidebar);
+
+// ═══ HELPERS ═══
+function fmt(n) { return n >= 1000 ? '$' + (n/1000).toFixed(0) + 'K' : '$' + n; }
+function badgeClass(s) {
+  const m = { Active:'badge-active', Critical:'badge-critical', Pending:'badge-pending', Discharged:'badge-discharged', Confirmed:'badge-active', Urgent:'badge-critical', Cancelled:'badge-discharged' };
+  return m[s] || 'badge-discharged';
+}
+function pillClass(b) {
+  const m = { 'A+':'pill-rose','O-':'pill-muted','B+':'pill-blue','AB+':'pill-cyan','O+':'pill-rose','A-':'pill-muted','B-':'pill-blue' };
+  return m[b] || 'pill-muted';
+}
+
+// ═══ CHART DEFAULTS ═══
+Chart.defaults.color = '#4a6080';
+Chart.defaults.borderColor = '#162035';
+Chart.defaults.font.family = 'Outfit';
+const TIP = { backgroundColor:'#0c1422', borderColor:'#1e2f48', borderWidth:1, titleColor:'#dce8f5', bodyColor:'#8ea8c8', padding:10 };
+
+// ═══ STATIC OVERVIEW CHARTS ═══
+new Chart(document.getElementById('chart-admissions'), {
+  type:'line',
+  data:{
+    labels:['Oct','Nov','Dec','Jan','Feb','Mar','Apr'],
+    datasets:[{ data:[210,245,198,280,310,295,340], borderColor:'#00e5c8',
+      backgroundColor:function(ctx){ var g=ctx.chart.ctx.createLinearGradient(0,0,0,180); g.addColorStop(0,'rgba(0,229,200,0.18)'); g.addColorStop(1,'rgba(0,229,200,0)'); return g; },
+      fill:true, tension:0.45, pointBackgroundColor:'#00e5c8', pointRadius:4, pointHoverRadius:7, borderWidth:2.5 }]
+  },
+  options:{ responsive:true, plugins:{ legend:{display:false}, tooltip:TIP }, scales:{ x:{ grid:{color:'rgba(22,32,53,0.8)'}, ticks:{color:'#4a6080'} }, y:{ grid:{color:'rgba(22,32,53,0.8)'}, ticks:{color:'#4a6080'}, beginAtZero:false } } }
+});
+
+let deptChart = new Chart(document.getElementById('chart-dept'), {
+  type:'doughnut',
+  data:{ datasets:[{ data:[1,1,1,1], backgroundColor:['#00e5c8','#4d9fff','#e8b84b','#ff4d6d'], borderWidth:0, hoverOffset:8 }] },
+  options:{ responsive:true, cutout:'72%', plugins:{ legend:{display:false}, tooltip:{ ...TIP, callbacks:{ label:function(c){ return ' '+c.parsed; } } } } }
+});
+
+// ═══ LOAD OVERVIEW DATA ═══
+async function loadOverview() {
+  try {
+    const [{ data: pts }, { data: appts }, { data: invs }] = await Promise.all([
+      sb.from('patients').select('*, departments(name)'),
+      sb.from('appointments').select('*'),
+      sb.from('invoices').select('amount, status'),
+    ]);
+
+    // KPIs
+    const critical = pts ? pts.filter(p => p.status === 'Critical').length : 0;
+    const totalRev = invs ? invs.reduce((s,i) => s + parseFloat(i.amount||0), 0) : 0;
+    document.getElementById('kpi-total').textContent = pts ? pts.length : '—';
+    document.getElementById('kpi-appt').textContent = appts ? appts.length : '—';
+    document.getElementById('kpi-revenue').textContent = fmt(totalRev);
+    document.getElementById('kpi-critical').textContent = critical;
+    document.getElementById('critical-count').textContent = critical + ' Critical Patient' + (critical !== 1 ? 's' : '');
+    document.getElementById('badge-critical').textContent = critical;
+    if (appts) document.getElementById('badge-appt').textContent = appts.length;
+
+    // Dept donut
+    if (pts) {
+      const deptCounts = {};
+      pts.forEach(p => { const d = p.departments?.name || 'Other'; deptCounts[d] = (deptCounts[d]||0)+1; });
+      const names = ['Cardiology','Orthopedics','Neurology','General'];
+      const vals = names.map(n => deptCounts[n]||0);
+      deptChart.data.datasets[0].data = vals;
+      deptChart.update();
+      names.forEach(n => {
+        const el = document.getElementById('dept-'+n.toLowerCase());
+        if (el) el.textContent = deptCounts[n]||0;
+      });
+    }
+
+    // Recent patients table
+    if (pts) {
+      const recent = pts.slice(0,4);
+      document.getElementById('overview-patients-wrap').innerHTML = `
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Patient</th><th>Dept</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody>${recent.map(p=>`
+            <tr>
+              <td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td>
+              <td style="color:var(--text2)">${p.departments?.name||'—'}</td>
+              <td><span class="badge ${badgeClass(p.status)}">${p.status}</span></td>
+              <td style="color:var(--text3)">${p.admitted_at ? new Date(p.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—'}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table></div>`;
+    }
+
+    // DB connected
+    document.getElementById('dbDot').classList.add('connected');
+    document.getElementById('dbLabel').textContent = 'Live DB';
+  } catch(e) {
+    console.error(e);
+    document.getElementById('dbLabel').textContent = 'DB Error';
+  }
+}
+
+// ═══ LOAD PATIENTS ═══
+async function loadPatients() {
+  const { data: pts } = await sb.from('patients').select('*, departments(name), doctors(name)').order('admitted_at', { ascending: false });
+  if (!pts) return;
+  const total = pts.length;
+  const active = pts.filter(p=>p.status==='Active').length;
+  const pending = pts.filter(p=>p.status==='Pending').length;
+  const critical = pts.filter(p=>p.status==='Critical').length;
+  document.getElementById('pt-kpi-total').textContent = total;
+  document.getElementById('pt-kpi-active').textContent = active;
+  document.getElementById('pt-kpi-pending').textContent = pending;
+  document.getElementById('pt-kpi-critical').textContent = critical;
+  document.getElementById('patients-table-wrap').innerHTML = `
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Patient</th><th>Age</th><th>Dept</th><th>Doctor</th><th>Blood</th><th>Status</th><th>Admitted</th></tr></thead>
+      <tbody>${pts.map(p=>`
+        <tr>
+          <td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td>
+          <td style="color:var(--text2)">${p.age||'—'}</td>
+          <td style="color:var(--text2)">${p.departments?.name||'—'}</td>
+          <td style="color:var(--text2);font-size:12px">${p.doctors?.name||'—'}</td>
+          <td><span class="pill ${pillClass(p.blood_type)}">${p.blood_type||'—'}</span></td>
+          <td><span class="badge ${badgeClass(p.status)}">${p.status}</span></td>
+          <td style="color:var(--text3)">${p.admitted_at ? new Date(p.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table></div>`;
+}
+
+// ═══ LOAD APPOINTMENTS ═══
+async function loadAppointments() {
+  const { data: appts } = await sb.from('appointments').select('*, patients(name, patient_code), doctors(name, initials)').order('scheduled_at');
+  if (!appts) return;
+  document.getElementById('appt-kpi-total').textContent = appts.length;
+  document.getElementById('appt-kpi-confirmed').textContent = appts.filter(a=>a.status==='Confirmed').length;
+  document.getElementById('appt-kpi-pending').textContent = appts.filter(a=>a.status==='Pending').length;
+  document.getElementById('appt-kpi-cancelled').textContent = appts.filter(a=>a.status==='Cancelled').length;
+  const colors = { 'Dr. Nour Amin':'linear-gradient(135deg,#00c9b1,#008fa0)', 'Dr. Tarek Said':'linear-gradient(135deg,#4d9fff,#2563eb)', 'Dr. Mona Badr':'linear-gradient(135deg,#e8b84b,#b45309)', 'Dr. Hana Kamal':'linear-gradient(135deg,#a78bfa,#7c3aed)' };
+  document.getElementById('appt-list-wrap').innerHTML = `<div class="appt-list">${appts.map(a=>{
+    const t = a.scheduled_at ? new Date(a.scheduled_at) : null;
+    const hr = t ? t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}) : '—';
+    const period = t ? (t.getHours()<12?'AM':'PM') : '';
+    const bg = colors[a.doctors?.name] || 'linear-gradient(135deg,#4a6080,#2a4060)';
+    return `<div class="appt">
+      <div class="appt-time-box"><div class="appt-hr">${hr}</div><div class="appt-period">${period}</div></div>
+      <div class="appt-body">
+        <div class="appt-patient-name">${a.patients?.name||'Unknown'}</div>
+        <div class="appt-meta">${a.appointment_type||'Consultation'} · ${a.room||'—'}</div>
+      </div>
+      <div class="appt-dr">
+        <div class="dr-av" style="background:${bg}">${a.doctors?.initials||'DR'}</div>
+        <span style="font-size:12px;color:var(--text2);white-space:nowrap;">${a.doctors?.name||'—'}</span>
+      </div>
+      <span class="badge ${badgeClass(a.status)}">${a.status}</span>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ═══ LOAD BILLING ═══
+let billingChartDrawn = false;
+async function loadBilling() {
+  const { data: invs } = await sb.from('invoices').select('*, patients(name)').order('issued_at', { ascending: false });
+  if (!invs) return;
+  const paid = invs.filter(i=>i.status==='Paid').reduce((s,i)=>s+parseFloat(i.amount||0),0);
+  const pending = invs.filter(i=>i.status==='Pending').reduce((s,i)=>s+parseFloat(i.amount||0),0);
+  const overdue = invs.filter(i=>i.status==='Overdue').reduce((s,i)=>s+parseFloat(i.amount||0),0);
+  const total = paid + pending + overdue;
+  document.getElementById('bill-kpi-total').textContent = fmt(total);
+  document.getElementById('bill-kpi-paid').textContent = fmt(paid);
+  document.getElementById('bill-kpi-pending').textContent = fmt(pending);
+  document.getElementById('bill-kpi-overdue').textContent = fmt(overdue);
+  document.getElementById('leg-paid').textContent = fmt(paid);
+  document.getElementById('leg-pending').textContent = fmt(pending);
+  document.getElementById('leg-overdue').textContent = fmt(overdue);
+
+  const icons = { Cardiology:'🫀', Neurology:'🧠', Orthopedics:'🦴', General:'💊' };
+  document.getElementById('invoices-wrap').innerHTML = `<div class="inv-list">${invs.map(i=>`
+    <div class="inv-item">
+      <div class="inv-icon">🧾</div>
+      <div style="flex:1;min-width:0">
+        <div class="inv-name">${i.patients?.name||'Unknown'} — ${i.description||'Invoice'}</div>
+        <div class="inv-date">${i.invoice_code} · ${i.issued_at ? new Date(i.issued_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div>
+      </div>
+      <span class="badge ${badgeClass(i.status)} inv-badge" style="margin-right:12px;">${i.status}</span>
+      <div class="inv-amt ${i.status.toLowerCase()}">${fmt(parseFloat(i.amount||0))}</div>
+    </div>`).join('')}</div>`;
+
+  if (!billingChartDrawn) {
+    billingChartDrawn = true;
+    setTimeout(() => {
+      new Chart(document.getElementById('chart-revenue'), {
+        type:'line',
+        data:{ labels:['Nov','Dec','Jan','Feb','Mar','Apr'], datasets:[{ data:[98,112,125,118,131,Math.round(total/1000*10)/10||142], borderColor:'#e8b84b',
+          backgroundColor:function(ctx){var g=ctx.chart.ctx.createLinearGradient(0,0,0,180);g.addColorStop(0,'rgba(232,184,75,0.15)');g.addColorStop(1,'rgba(232,184,75,0)');return g;},
+          fill:true,tension:0.4,pointBackgroundColor:'#e8b84b',pointRadius:4,pointHoverRadius:7,borderWidth:2.5 }] },
+        options:{ responsive:true, plugins:{ legend:{display:false}, tooltip:{...TIP,callbacks:{label:function(c){return ' $'+c.parsed.y+'K';}}} }, scales:{ x:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'}}, y:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080',callback:function(v){return '$'+v+'K';}}} } }
+      });
+      new Chart(document.getElementById('chart-payment'), {
+        type:'doughnut',
+        data:{ datasets:[{ data:[paid,pending,overdue], backgroundColor:['#00e5c8','#e8b84b','#ff4d6d'], borderWidth:0, hoverOffset:8 }] },
+        options:{ responsive:true, cutout:'70%', plugins:{ legend:{display:false}, tooltip:{...TIP,callbacks:{label:function(c){return ' '+fmt(c.parsed);}}} } }
+      });
+    }, 60);
+  }
+}
+
+// ═══ PAGE LOADER ═══
+function loadPage(pageId) {
+  if (pageId === 'overview') loadOverview();
+  if (pageId === 'patients') loadPatients();
+  if (pageId === 'appointments') loadAppointments();
+  if (pageId === 'billing') loadBilling();
+}
+
+// ═══ INIT ═══
+loadOverview();
+loaded['overview'] = true;
+</script>
+</body>
+</html>
