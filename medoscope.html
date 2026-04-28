@@ -16,6 +16,7 @@
   --gold:#e8b84b;--gold-soft:rgba(232,184,75,0.1);
   --rose:#ff4d6d;--rose-soft:rgba(255,77,109,0.1);
   --blue:#4d9fff;--blue-soft:rgba(77,159,255,0.1);
+  --purple:#a78bfa;--purple-soft:rgba(167,139,250,0.1);
   --text:#dce8f5;--text2:#8ea8c8;--text3:#4a6080;
   --sidebar:260px;--radius:14px;
 }
@@ -27,43 +28,25 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 .overlay.show{display:block;}
 
 /* SIDEBAR */
-.sidebar{
-  width:var(--sidebar);flex-shrink:0;
-  background:linear-gradient(180deg,var(--s1),var(--s2));
-  border-right:1px solid var(--border);
-  display:flex;flex-direction:column;
-  position:relative;z-index:100;overflow:hidden;
-  transition:transform 0.3s cubic-bezier(.16,1,.3,1),width 0.3s cubic-bezier(.16,1,.3,1);
-}
+.sidebar{width:var(--sidebar);flex-shrink:0;background:linear-gradient(180deg,var(--s1),var(--s2));border-right:1px solid var(--border);display:flex;flex-direction:column;position:relative;z-index:100;overflow:hidden;transition:transform 0.3s cubic-bezier(.16,1,.3,1),width 0.3s cubic-bezier(.16,1,.3,1);}
 .sidebar::before{content:'';position:absolute;top:-80px;left:-80px;width:260px;height:260px;background:radial-gradient(circle,rgba(0,229,200,0.06),transparent 70%);pointer-events:none;}
-
-/* COLLAPSED STATE (desktop) */
 .sidebar.collapsed{width:68px;}
-.sidebar.collapsed .logo-name,.sidebar.collapsed .logo-tag,
-.sidebar.collapsed .nav-label-text,.sidebar.collapsed .nav-section-label,
-.sidebar.collapsed .nav-badge,.sidebar.collapsed .doc-info,.sidebar.collapsed .status-dot{display:none;}
+.sidebar.collapsed .logo-name,.sidebar.collapsed .logo-tag,.sidebar.collapsed .nav-label-text,.sidebar.collapsed .nav-section-label,.sidebar.collapsed .nav-badge,.sidebar.collapsed .doc-info,.sidebar.collapsed .status-dot{display:none;}
 .sidebar.collapsed .logo-area{padding:20px 16px;justify-content:center;}
-.sidebar.collapsed .logo-icon{margin:0;}
 .sidebar.collapsed .nav-item{padding:10px;justify-content:center;}
 .sidebar.collapsed .nav-icon{margin:0;}
 .sidebar.collapsed .doc-card{padding:10px;justify-content:center;}
 .sidebar.collapsed .doc-avatar{margin:0;}
 .sidebar.collapsed .nav-section{padding:12px 8px 4px;}
-
-/* MOBILE sidebar */
 @media(max-width:768px){
   .sidebar{position:fixed;top:0;left:0;height:100%;transform:translateX(-100%);width:var(--sidebar)!important;}
   .sidebar.mobile-open{transform:translateX(0);}
-  .sidebar.collapsed .logo-name,.sidebar.collapsed .logo-tag,
-  .sidebar.collapsed .nav-label-text,.sidebar.collapsed .nav-section-label,
-  .sidebar.collapsed .nav-badge,.sidebar.collapsed .doc-info,.sidebar.collapsed .status-dot{display:block;}
+  .sidebar.collapsed .logo-name,.sidebar.collapsed .logo-tag,.sidebar.collapsed .nav-label-text,.sidebar.collapsed .nav-section-label,.sidebar.collapsed .nav-badge,.sidebar.collapsed .doc-info,.sidebar.collapsed .status-dot{display:block;}
   .sidebar.collapsed .logo-area{padding:28px 24px 22px;justify-content:flex-start;}
-  .sidebar.collapsed .logo-icon{margin:0;}
   .sidebar.collapsed .nav-item{padding:10px 14px;justify-content:flex-start;}
   .sidebar.collapsed .nav-section{padding:20px 14px 6px;}
   .sidebar.collapsed .doc-card{padding:10px 12px;justify-content:flex-start;}
 }
-
 .logo-area{padding:24px 20px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;overflow:hidden;}
 .logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--cyan),#008fa0);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;box-shadow:0 4px 16px rgba(0,229,200,0.25);}
 .logo-name{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);line-height:1;white-space:nowrap;}
@@ -84,33 +67,17 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 .doc-card{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:10px;cursor:pointer;transition:background 0.18s;overflow:hidden;}
 .doc-card:hover{background:var(--s3);}
 .doc-avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--cyan),var(--blue));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--bg);}
-.doc-info{}
 .doc-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;}
 .doc-role{font-size:11px;color:var(--text3);white-space:nowrap;}
 .status-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);flex-shrink:0;box-shadow:0 0 6px var(--cyan);margin-left:auto;}
-
-/* TOGGLE BUTTON */
-.toggle-btn{
-  position:absolute;top:50%;right:-14px;transform:translateY(-50%);
-  width:28px;height:28px;border-radius:50%;
-  background:var(--s2);border:1px solid var(--border2);
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:11px;color:var(--text2);
-  transition:all 0.2s;z-index:10;
-}
+.toggle-btn{position:absolute;top:50%;right:-14px;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--s2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:var(--text2);transition:all 0.2s;z-index:10;}
 .toggle-btn:hover{background:var(--cyan);color:var(--bg);border-color:var(--cyan);}
 @media(max-width:768px){.toggle-btn{display:none;}}
 
 /* MAIN */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 .topbar{display:flex;align-items:center;gap:12px;padding:14px 24px;background:var(--s1);border-bottom:1px solid var(--border);flex-shrink:0;}
-.hamburger{
-  display:none;width:38px;height:38px;border-radius:10px;
-  background:var(--s2);border:1px solid var(--border2);
-  align-items:center;justify-content:center;
-  cursor:pointer;font-size:16px;flex-shrink:0;
-  transition:border-color 0.2s;
-}
+.hamburger{display:none;width:38px;height:38px;border-radius:10px;background:var(--s2);border:1px solid var(--border2);align-items:center;justify-content:center;cursor:pointer;font-size:16px;flex-shrink:0;transition:border-color 0.2s;}
 .hamburger:hover{border-color:var(--cyan-border);}
 @media(max-width:768px){.hamburger{display:flex;}}
 .topbar-left{flex:1;min-width:0;}
@@ -125,10 +92,18 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 .btn-primary:hover{box-shadow:0 6px 28px rgba(0,229,200,0.35);transform:translateY(-1px);}
 .btn-outline{background:transparent;color:var(--text2);border:1px solid var(--border2);}
 .btn-outline:hover{border-color:var(--cyan-border);color:var(--cyan);}
-@media(max-width:600px){.btn-outline{display:none;}}
+.btn-danger{background:var(--rose-soft);color:var(--rose);border:1px solid rgba(255,77,109,0.3);}
+.btn-danger:hover{background:var(--rose);color:#fff;}
+.btn-gold{background:var(--gold-soft);color:var(--gold);border:1px solid rgba(232,184,75,0.3);}
+.btn-gold:hover{background:var(--gold);color:#000;}
+@media(max-width:600px){.btn-outline.hide-sm{display:none;}}
 .notif-btn{width:38px;height:38px;border-radius:10px;background:var(--s2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;position:relative;transition:border-color 0.2s;flex-shrink:0;}
 .notif-btn:hover{border-color:var(--cyan-border);}
 .notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--rose);border:1.5px solid var(--s1);}
+.db-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);padding:6px 12px;background:var(--s2);border:1px solid var(--border);border-radius:20px;white-space:nowrap;}
+.db-dot{width:6px;height:6px;border-radius:50%;background:var(--text3);}
+.db-dot.connected{background:var(--cyan);box-shadow:0 0 5px var(--cyan);}
+@media(max-width:500px){.db-status{display:none;}}
 
 /* CONTENT */
 .content{flex:1;overflow-y:auto;padding:24px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
@@ -190,7 +165,7 @@ table{width:100%;border-collapse:collapse;font-size:13px;}
 thead th{text-align:left;padding:9px 12px;color:var(--text3);font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--border);}
 tbody tr{border-bottom:1px solid rgba(22,32,53,0.8);transition:background 0.15s;cursor:pointer;}
 tbody tr:last-child{border-bottom:none;}
-tbody tr:hover{background:rgba(12,20,34,0.7);}
+tbody tr:hover{background:rgba(0,229,200,0.04);}
 td{padding:12px;vertical-align:middle;}
 .pt-name{font-weight:600;color:var(--text);font-size:13px;}
 .pt-id{font-size:11px;color:var(--text3);margin-top:2px;}
@@ -205,33 +180,25 @@ td{padding:12px;vertical-align:middle;}
 .badge-discharged{background:rgba(255,255,255,0.04);color:var(--text3);}
 .badge-discharged::before{background:var(--text3);}
 
-/* LOADING */
+/* LOADING & MISC */
 .loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--text3);font-size:13px;gap:10px;}
 .spinner{width:18px;height:18px;border:2px solid var(--border2);border-top-color:var(--cyan);border-radius:50%;animation:spin 0.7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-
-/* ALERT */
 .alert-banner{display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,rgba(255,77,109,0.08),transparent);border:1px solid rgba(255,77,109,0.2);border-radius:var(--radius);padding:12px 16px;margin-bottom:18px;}
 .alert-text{flex:1;font-size:13px;}
 .alert-text strong{color:var(--rose);}
-.alert-action{font-size:12px;font-weight:600;color:var(--rose);background:var(--rose-soft);border:none;padding:6px 12px;border-radius:8px;cursor:pointer;white-space:nowrap;}
-
-/* SECTION HDR */
+.alert-action{font-size:12px;font-weight:600;color:var(--rose);background:var(--rose-soft);border:none;padding:6px 12px;border-radius:8px;cursor:pointer;white-space:nowrap;transition:background 0.2s;}
+.alert-action:hover{background:rgba(255,77,109,0.2);}
 .sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .sec-title{font-family:'Instrument Serif',serif;font-size:16px;color:var(--text);}
-
-/* LEGEND */
 .legend{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
 .leg-item{display:flex;align-items:center;gap:10px;font-size:12px;}
 .leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
 .leg-lbl{flex:1;color:var(--text2);}
 .leg-val{font-weight:700;color:var(--text);}
-.leg-pct{font-size:11px;color:var(--text3);margin-left:4px;}
-
-/* APPOINTMENTS */
 .appt-list{display:flex;flex-direction:column;gap:8px;}
-.appt{display:flex;align-items:center;gap:12px;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:12px 16px;transition:border-color 0.2s,transform 0.2s;cursor:pointer;}
-.appt:hover{border-color:var(--cyan-border);transform:translateX(3px);}
+.appt{display:flex;align-items:center;gap:12px;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:12px 16px;transition:border-color 0.2s;cursor:pointer;}
+.appt:hover{border-color:var(--cyan-border);}
 .appt-time-box{min-width:58px;text-align:center;background:var(--s1);border:1px solid var(--border);border-radius:9px;padding:6px;}
 .appt-hr{font-family:'Instrument Serif',serif;font-size:18px;color:var(--cyan);line-height:1;}
 .appt-period{font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;}
@@ -241,8 +208,6 @@ td{padding:12px;vertical-align:middle;}
 .appt-dr{display:flex;align-items:center;gap:8px;}
 .dr-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;}
 @media(max-width:600px){.appt-dr{display:none;}}
-
-/* BILLING */
 .inv-list{display:flex;flex-direction:column;}
 .inv-item{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--border);}
 .inv-item:last-child{border-bottom:none;}
@@ -253,16 +218,6 @@ td{padding:12px;vertical-align:middle;}
 .inv-amt.paid{color:var(--cyan);}
 .inv-amt.pending{color:var(--gold);}
 .inv-amt.overdue{color:var(--rose);}
-@media(max-width:500px){.inv-badge{display:none;}}
-
-/* PROGRESS */
-.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:12px;}
-.prog-lbl{color:var(--text2);width:85px;flex-shrink:0;}
-.prog-bar-bg{flex:1;height:5px;background:var(--s3);border-radius:10px;overflow:hidden;}
-.prog-bar-fill{height:100%;border-radius:10px;}
-.prog-val{color:var(--text3);width:36px;text-align:right;flex-shrink:0;}
-
-/* ACTIVITY */
 .activity{display:flex;flex-direction:column;}
 .act-item{display:flex;gap:12px;padding-bottom:16px;position:relative;}
 .act-item::before{content:'';position:absolute;left:14px;top:28px;bottom:0;width:1px;background:var(--border);}
@@ -271,30 +226,288 @@ td{padding:12px;vertical-align:middle;}
 .act-action{font-size:13px;color:var(--text);font-weight:500;}
 .act-time{font-size:11px;color:var(--text3);margin-top:2px;}
 
-/* MOBILE BOTTOM NAV */
-.bottom-nav{
-  display:none;
-  position:fixed;bottom:0;left:0;right:0;
-  background:var(--s1);border-top:1px solid var(--border);
-  padding:8px 0 12px;z-index:50;
+/* FILTER BAR */
+.filter-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.filter-chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border2);color:var(--text3);background:transparent;font-family:'Outfit',sans-serif;transition:all 0.18s;}
+.filter-chip:hover{border-color:var(--cyan-border);color:var(--text);}
+.filter-chip.active-chip{background:var(--cyan-soft);color:var(--cyan);border-color:var(--cyan-border);}
+
+/* ═══ PATIENT 360 PANEL ═══ */
+.patient-panel{
+  position:fixed;top:0;right:0;bottom:0;
+  width:500px;
+  background:var(--s1);
+  border-left:1px solid var(--border2);
+  z-index:200;
+  display:flex;flex-direction:column;
+  transform:translateX(100%);
+  transition:transform 0.35s cubic-bezier(.16,1,.3,1);
+  overflow:hidden;
 }
+.patient-panel.open{transform:translateX(0);}
+@media(max-width:600px){.patient-panel{width:100%;}}
+.panel-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199;
+  display:none;backdrop-filter:blur(2px);
+}
+.panel-overlay.show{display:block;}
+
+.panel-header{
+  padding:20px 24px;
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(180deg,var(--s2),var(--s1));
+  flex-shrink:0;
+  position:relative;
+}
+.panel-close{
+  position:absolute;top:16px;right:16px;
+  width:32px;height:32px;border-radius:8px;
+  background:var(--s3);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:14px;color:var(--text3);
+  transition:all 0.18s;
+}
+.panel-close:hover{background:var(--rose-soft);color:var(--rose);border-color:rgba(255,77,109,0.3);}
+.panel-pt-meta{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+.panel-avatar{
+  width:52px;height:52px;border-radius:14px;
+  background:linear-gradient(135deg,var(--cyan),var(--blue));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Instrument Serif',serif;font-size:20px;
+  color:var(--bg);flex-shrink:0;
+}
+.panel-name{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);}
+.panel-code{font-size:11px;color:var(--text3);margin-top:2px;}
+.panel-status-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+
+/* STATUS ACTIONS */
+.action-group{display:flex;gap:6px;flex-wrap:wrap;}
+.action-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:7px 13px;border-radius:9px;
+  font-size:12px;font-weight:600;
+  cursor:pointer;border:1px solid transparent;
+  font-family:'Outfit',sans-serif;
+  transition:all 0.18s;
+}
+.action-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.action-btn.active-action{background:var(--cyan-soft);color:var(--cyan);border-color:var(--cyan-border);}
+.action-btn.active-action:hover:not(:disabled){background:var(--cyan);color:var(--bg);}
+.action-btn.critical-action{background:var(--rose-soft);color:var(--rose);border-color:rgba(255,77,109,0.3);}
+.action-btn.critical-action:hover:not(:disabled){background:var(--rose);color:#fff;}
+.action-btn.pending-action{background:var(--gold-soft);color:var(--gold);border-color:rgba(232,184,75,0.3);}
+.action-btn.pending-action:hover:not(:disabled){background:var(--gold);color:#000;}
+.action-btn.discharge-action{background:rgba(255,255,255,0.04);color:var(--text3);border-color:var(--border2);}
+.action-btn.discharge-action:hover:not(:disabled){background:var(--s3);color:var(--text);}
+
+/* PANEL TABS */
+.panel-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;}
+.panel-tab{flex:1;padding:13px;text-align:center;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.18s;}
+.panel-tab:hover{color:var(--text2);}
+.panel-tab.active-tab{color:var(--cyan);border-bottom-color:var(--cyan);}
+
+/* PANEL BODY */
+.panel-body{flex:1;overflow-y:auto;padding:20px 24px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
+
+/* PANEL INFO GRID */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.info-cell{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px;}
+.info-label{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
+.info-value{font-size:14px;font-weight:600;color:var(--text);}
+
+/* ASSIGN DOCTOR */
+.assign-section{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;}
+.assign-title{font-size:12px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;}
+.assign-row{display:flex;gap:8px;align-items:center;}
+.panel-select{
+  flex:1;background:var(--s1);border:1px solid var(--border2);
+  border-radius:9px;padding:8px 12px;font-size:13px;
+  color:var(--text);font-family:'Outfit',sans-serif;
+  cursor:pointer;outline:none;
+  transition:border-color 0.2s;
+}
+.panel-select:focus{border-color:var(--cyan-border);}
+.panel-select option{background:var(--s2);}
+
+/* TIMELINE */
+.timeline{display:flex;flex-direction:column;gap:0;}
+.tl-item{display:flex;gap:14px;padding-bottom:20px;position:relative;}
+.tl-item::before{content:'';position:absolute;left:15px;top:30px;bottom:0;width:1px;background:linear-gradient(180deg,var(--border2),transparent);}
+.tl-item:last-child::before{display:none;}
+.tl-dot{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;z-index:1;border:2px solid var(--border);}
+.tl-dot.cyan-dot{background:var(--cyan-soft);border-color:var(--cyan-border);}
+.tl-dot.rose-dot{background:var(--rose-soft);border-color:rgba(255,77,109,0.3);}
+.tl-dot.gold-dot{background:var(--gold-soft);border-color:rgba(232,184,75,0.3);}
+.tl-dot.muted-dot{background:var(--s3);border-color:var(--border);}
+.tl-label{font-size:13px;font-weight:600;color:var(--text);}
+.tl-time{font-size:11px;color:var(--text3);margin-top:3px;}
+.tl-note{font-size:12px;color:var(--text2);margin-top:6px;background:var(--s2);border-radius:8px;padding:8px 10px;border-left:2px solid var(--border2);}
+
+/* PANEL MINI TABLE */
+.mini-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+.mini-table th{text-align:left;padding:8px 10px;color:var(--text3);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--border);}
+.mini-table td{padding:10px;border-bottom:1px solid rgba(22,32,53,0.8);color:var(--text2);}
+.mini-table tr:last-child td{border-bottom:none;}
+
+/* NOTES */
+.notes-area{
+  width:100%;background:var(--s2);border:1px solid var(--border2);
+  border-radius:10px;padding:12px;font-size:13px;
+  color:var(--text);font-family:'Outfit',sans-serif;
+  resize:vertical;min-height:100px;outline:none;
+  transition:border-color 0.2s;
+}
+.notes-area:focus{border-color:var(--cyan-border);}
+.panel-save-btn{
+  margin-top:8px;padding:8px 16px;background:var(--cyan);
+  color:var(--bg);border:none;border-radius:8px;
+  font-size:12px;font-weight:700;cursor:pointer;
+  font-family:'Outfit',sans-serif;transition:all 0.18s;
+}
+.panel-save-btn:hover{box-shadow:0 4px 16px rgba(0,229,200,0.3);}
+
+/* ═══ ADD PATIENT MODAL ═══ */
+.modal-wrap{
+  position:fixed;inset:0;z-index:300;
+  display:none;align-items:center;justify-content:center;
+  padding:20px;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);
+}
+.modal-wrap.show{display:flex;}
+.modal{
+  background:var(--s1);border:1px solid var(--border2);
+  border-radius:20px;width:100%;max-width:540px;
+  max-height:90vh;overflow-y:auto;
+  animation:modalIn 0.3s cubic-bezier(.16,1,.3,1);
+}
+@keyframes modalIn{from{opacity:0;transform:scale(0.95) translateY(16px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modal-hd{padding:24px 24px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);}
+.modal-close{width:32px;height:32px;border-radius:8px;background:var(--s3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:14px;transition:all 0.18s;}
+.modal-close:hover{background:var(--rose-soft);color:var(--rose);}
+.modal-body{padding:24px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:460px){.form-grid{grid-template-columns:1fr;}}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group.full{grid-column:1/-1;}
+.form-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase;}
+.form-input,.form-select{
+  background:var(--s2);border:1px solid var(--border2);
+  border-radius:9px;padding:10px 13px;font-size:13px;
+  color:var(--text);font-family:'Outfit',sans-serif;outline:none;
+  transition:border-color 0.2s;
+}
+.form-input:focus,.form-select:focus{border-color:var(--cyan-border);}
+.form-select option{background:var(--s2);}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;}
+
+/* TOAST */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:500;display:flex;flex-direction:column;gap:8px;}
+.toast{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;border-radius:12px;
+  font-size:13px;font-weight:500;
+  animation:toastIn 0.3s cubic-bezier(.16,1,.3,1);
+  min-width:240px;max-width:320px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
+.toast.success{background:var(--s2);border:1px solid var(--cyan-border);color:var(--cyan);}
+.toast.error{background:var(--s2);border:1px solid rgba(255,77,109,0.4);color:var(--rose);}
+.toast.info{background:var(--s2);border:1px solid var(--border2);color:var(--text2);}
+
+/* MOBILE BOTTOM NAV */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:1px solid var(--border);padding:8px 0 12px;z-index:50;}
 .bottom-nav-inner{display:flex;justify-content:space-around;}
 .bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 12px;border-radius:10px;transition:all 0.2s;color:var(--text3);font-size:10px;font-weight:500;}
 .bn-item.active{color:var(--cyan);}
 .bn-icon{font-size:20px;}
-@media(max-width:768px){
-  .bottom-nav{display:block;}
-  .content{padding-bottom:80px;}
-}
+@media(max-width:768px){.bottom-nav{display:block;}.content{padding-bottom:80px;}}
 
-/* DB STATUS */
-.db-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);padding:6px 12px;background:var(--s2);border:1px solid var(--border);border-radius:20px;white-space:nowrap;}
-.db-dot{width:6px;height:6px;border-radius:50%;background:var(--text3);}
-.db-dot.connected{background:var(--cyan);box-shadow:0 0 5px var(--cyan);}
-@media(max-width:500px){.db-status{display:none;}}
+/* PROG BAR */
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:12px;}
+.prog-lbl{color:var(--text2);width:85px;flex-shrink:0;}
+.prog-bar-bg{flex:1;height:5px;background:var(--s3);border-radius:10px;overflow:hidden;}
+.prog-bar-fill{height:100%;border-radius:10px;}
+.prog-val{color:var(--text3);width:36px;text-align:right;flex-shrink:0;}
+
+/* EMPTY STATE */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;gap:10px;}
+.empty-icon{font-size:36px;opacity:0.4;}
+.empty-title{font-size:15px;font-weight:600;color:var(--text2);}
+.empty-sub{font-size:12px;color:var(--text3);}
 </style>
 </head>
 <body>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- PANEL OVERLAY -->
+<div class="panel-overlay" id="panelOverlay"></div>
+
+<!-- PATIENT 360 PANEL -->
+<div class="patient-panel" id="patientPanel">
+  <div class="panel-header">
+    <div class="panel-close" id="panelClose">✕</div>
+    <div class="panel-pt-meta">
+      <div class="panel-avatar" id="panelAvatar">—</div>
+      <div>
+        <div class="panel-name" id="panelName">—</div>
+        <div class="panel-code" id="panelCode">—</div>
+      </div>
+    </div>
+    <div class="panel-status-row">
+      <div class="action-group" id="statusActions"></div>
+    </div>
+  </div>
+  <div class="panel-tabs">
+    <div class="panel-tab active-tab" data-tab="overview">Overview</div>
+    <div class="panel-tab" data-tab="timeline">Timeline</div>
+    <div class="panel-tab" data-tab="appointments">Appointments</div>
+    <div class="panel-tab" data-tab="billing">Billing</div>
+    <div class="panel-tab" data-tab="notes">Notes</div>
+  </div>
+  <div class="panel-body" id="panelBody">
+    <div class="loading"><div class="spinner"></div> Loading case…</div>
+  </div>
+</div>
+
+<!-- ADD PATIENT MODAL -->
+<div class="modal-wrap" id="addPatientModal">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title">Admit New Patient</div>
+      <div class="modal-close" id="modalClose">✕</div>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full"><div class="form-label">Full Name</div><input class="form-input" id="f-name" placeholder="Patient full name…" type="text"></div>
+        <div class="form-group"><div class="form-label">Age</div><input class="form-input" id="f-age" placeholder="—" type="number" min="0" max="150"></div>
+        <div class="form-group"><div class="form-label">Gender</div>
+          <select class="form-select" id="f-gender"><option value="M">Male</option><option value="F">Female</option></select>
+        </div>
+        <div class="form-group"><div class="form-label">Blood Type</div>
+          <select class="form-select" id="f-blood"><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
+        </div>
+        <div class="form-group"><div class="form-label">Department</div>
+          <select class="form-select" id="f-dept" onchange="updateDoctorOptions()"></select>
+        </div>
+        <div class="form-group full"><div class="form-label">Assigned Doctor</div>
+          <select class="form-select" id="f-doctor"></select>
+        </div>
+        <div class="form-group"><div class="form-label">Initial Status</div>
+          <select class="form-select" id="f-status"><option>Active</option><option>Pending</option><option>Critical</option></select>
+        </div>
+        <div class="form-group"><div class="form-label">Admission Date</div>
+          <input class="form-input" id="f-date" type="date"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" id="modalCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="modalSubmitBtn">Admit Patient</button>
+    </div>
+  </div>
+</div>
 
 <div class="overlay" id="overlay"></div>
 
@@ -311,7 +524,7 @@ td{padding:12px;vertical-align:middle;}
   <div class="nav-section">
     <div class="nav-section-label">Core</div>
     <div class="nav-item active" data-page="overview"><div class="nav-icon">◈</div><span class="nav-label-text">Overview</span></div>
-    <div class="nav-item" data-page="patients"><div class="nav-icon">👤</div><span class="nav-label-text">Patients</span><span class="nav-badge" id="badge-critical">3</span></div>
+    <div class="nav-item" data-page="patients"><div class="nav-icon">👤</div><span class="nav-label-text">Patients</span><span class="nav-badge" id="badge-critical">—</span></div>
     <div class="nav-item" data-page="appointments"><div class="nav-icon">📅</div><span class="nav-label-text">Appointments</span><span class="nav-badge amber" id="badge-appt">—</span></div>
   </div>
   <div class="nav-section">
@@ -346,8 +559,8 @@ td{padding:12px;vertical-align:middle;}
       <div class="search">🔍&nbsp; Search patients…</div>
       <div class="db-status"><div class="db-dot" id="dbDot"></div><span id="dbLabel">Connecting…</span></div>
       <div class="notif-btn">🔔<div class="notif-dot"></div></div>
-      <button class="btn btn-outline">Export</button>
-      <button class="btn btn-primary">+ New Patient</button>
+      <button class="btn btn-outline hide-sm" id="topExportBtn">Export</button>
+      <button class="btn btn-primary" id="topNewPatientBtn">+ Admit</button>
     </div>
   </div>
 
@@ -355,14 +568,14 @@ td{padding:12px;vertical-align:middle;}
 
     <!-- OVERVIEW -->
     <div class="page active" id="page-overview">
-      <div class="alert-banner">
+      <div class="alert-banner" id="criticalBanner">
         <div style="font-size:18px;">⚠️</div>
         <div class="alert-text"><strong id="critical-count">3 Critical Patients</strong> require immediate physician review — ICU Wards B, C &amp; D.</div>
-        <button class="alert-action">View Cases</button>
+        <button class="alert-action" id="viewCasesBtn">View Cases →</button>
       </div>
       <div class="kpi-grid">
         <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🏥</div><div class="kpi-trend up">↑ 12%</div></div><div class="kpi-val" id="kpi-total">—</div><div class="kpi-lbl">Total Patients</div></div>
-        <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">📅</div><div class="kpi-trend up" id="kpi-appt-trend">Live</div></div><div class="kpi-val" id="kpi-appt">—</div><div class="kpi-lbl">Appointments</div></div>
+        <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">📅</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="kpi-appt">—</div><div class="kpi-lbl">Appointments</div></div>
         <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">💰</div><div class="kpi-trend up">↑ 8.3%</div></div><div class="kpi-val" id="kpi-revenue">—</div><div class="kpi-lbl">Total Billed</div></div>
         <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🚨</div><div class="kpi-trend dn">Urgent</div></div><div class="kpi-val" id="kpi-critical">—</div><div class="kpi-lbl">Critical Cases</div></div>
       </div>
@@ -374,7 +587,7 @@ td{padding:12px;vertical-align:middle;}
         <div class="card">
           <div class="card-hd"><div><div class="card-title">Department Load</div><div class="card-sub">Current distribution</div></div></div>
           <canvas id="chart-dept" height="130"></canvas>
-          <div class="legend" id="dept-legend">
+          <div class="legend">
             <div class="leg-item"><div class="leg-dot" style="background:var(--cyan)"></div><span class="leg-lbl">Cardiology</span><span class="leg-val" id="dept-cardiology">—</span></div>
             <div class="leg-item"><div class="leg-dot" style="background:var(--blue)"></div><span class="leg-lbl">Orthopedics</span><span class="leg-val" id="dept-orthopedics">—</span></div>
             <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div><span class="leg-lbl">Neurology</span><span class="leg-val" id="dept-neurology">—</span></div>
@@ -414,7 +627,14 @@ td{padding:12px;vertical-align:middle;}
       </div>
       <div class="sec-hdr">
         <div class="sec-title">Patient Registry</div>
-        <button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">+ Add Patient</button>
+        <button class="btn btn-primary" style="font-size:12px;padding:7px 14px;" id="admitNewBtn">+ Admit Patient</button>
+      </div>
+      <div class="filter-bar" id="patientFilters">
+        <button class="filter-chip active-chip" data-filter="All">All</button>
+        <button class="filter-chip" data-filter="Active">Active</button>
+        <button class="filter-chip" data-filter="Critical">⚠ Critical</button>
+        <button class="filter-chip" data-filter="Pending">Pending</button>
+        <button class="filter-chip" data-filter="Discharged">Discharged</button>
       </div>
       <div class="card" style="padding:0 20px;">
         <div id="patients-table-wrap"><div class="loading"><div class="spinner"></div> Loading from database…</div></div>
@@ -446,7 +666,7 @@ td{padding:12px;vertical-align:middle;}
       </div>
       <div class="grid-2">
         <div class="card">
-          <div class="card-hd"><div><div class="card-title">Revenue Trend</div><div class="card-sub">Simulated monthly</div></div><span class="pill pill-gold">Monthly</span></div>
+          <div class="card-hd"><div><div class="card-title">Revenue Trend</div><div class="card-sub">Monthly</div></div><span class="pill pill-gold">Monthly</span></div>
           <canvas id="chart-revenue" height="140"></canvas>
         </div>
         <div class="card">
@@ -459,10 +679,7 @@ td{padding:12px;vertical-align:middle;}
           </div>
         </div>
       </div>
-      <div class="sec-hdr">
-        <div class="sec-title">Invoices</div>
-        <button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">+ New Invoice</button>
-      </div>
+      <div class="sec-hdr"><div class="sec-title">Invoices</div><button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">+ New Invoice</button></div>
       <div class="card" id="invoices-wrap"><div class="loading"><div class="spinner"></div> Loading invoices…</div></div>
     </div>
 
@@ -486,6 +703,37 @@ const sb = createClient(
   'https://ixiajdnykewavnxbgmvo.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4aWFqZG55a2V3YXZueGJnbXZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMzA5MTQsImV4cCI6MjA5MjkwNjkxNH0.wKyCZyXEF8wqlJSW3wbJMscPazuSA-7648QnawprqYI'
 );
+
+// ═══ GLOBAL STATE ═══
+let allPatients = [], allDepts = [], allDoctors = [];
+let currentPatient = null;
+let activeTab = 'overview';
+let patientFilter = 'All';
+
+// ═══ HELPERS ═══
+function fmt(n) { return n >= 1000 ? '$' + (n/1000).toFixed(1) + 'K' : '$' + n; }
+function badgeClass(s) {
+  const m = { Active:'badge-active', Critical:'badge-critical', Pending:'badge-pending', Discharged:'badge-discharged', Confirmed:'badge-active', Urgent:'badge-critical', Cancelled:'badge-discharged' };
+  return m[s] || 'badge-discharged';
+}
+function pillClass(b) {
+  const m = { 'A+':'pill-rose','O-':'pill-muted','B+':'pill-blue','AB+':'pill-cyan','O+':'pill-rose','A-':'pill-muted','B-':'pill-blue' };
+  return m[b] || 'pill-muted';
+}
+function initials(name) {
+  if (!name) return '?';
+  return name.split(' ').filter(w => w.length > 1).slice(0,2).map(w => w[0].toUpperCase()).join('');
+}
+
+// ═══ TOAST ═══
+function toast(msg, type = 'success') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  const icon = { success:'✓', error:'✕', info:'ℹ' }[type] || '✓';
+  el.innerHTML = `<span style="font-size:16px;">${icon}</span><span>${msg}</span>`;
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(() => el.remove(), 3200);
+}
 
 // ═══ NAVIGATION ═══
 const META = {
@@ -512,8 +760,12 @@ document.querySelectorAll('[data-page]').forEach(el => {
   el.addEventListener('click', () => goTo(el.dataset.page));
 });
 document.getElementById('btn-all-patients').addEventListener('click', () => goTo('patients'));
+document.getElementById('viewCasesBtn').addEventListener('click', () => {
+  goTo('patients');
+  setTimeout(() => applyFilter('Critical'), 200);
+});
 
-// ═══ SIDEBAR TOGGLE (desktop) ═══
+// ═══ SIDEBAR ═══
 const sidebar = document.getElementById('sidebar');
 const toggleBtn = document.getElementById('toggleBtn');
 let collapsed = false;
@@ -521,33 +773,15 @@ toggleBtn.addEventListener('click', () => {
   collapsed = !collapsed;
   sidebar.classList.toggle('collapsed', collapsed);
   toggleBtn.textContent = collapsed ? '›' : '‹';
-  toggleBtn.style.right = collapsed ? '-14px' : '-14px';
 });
 
 // ═══ MOBILE SIDEBAR ═══
 const hamburger = document.getElementById('hamburger');
 const overlay = document.getElementById('overlay');
-function openMobileSidebar() {
-  sidebar.classList.add('mobile-open');
-  overlay.classList.add('show');
-}
-function closeMobileSidebar() {
-  sidebar.classList.remove('mobile-open');
-  overlay.classList.remove('show');
-}
+function openMobileSidebar() { sidebar.classList.add('mobile-open'); overlay.classList.add('show'); }
+function closeMobileSidebar() { sidebar.classList.remove('mobile-open'); overlay.classList.remove('show'); }
 hamburger.addEventListener('click', openMobileSidebar);
 overlay.addEventListener('click', closeMobileSidebar);
-
-// ═══ HELPERS ═══
-function fmt(n) { return n >= 1000 ? '$' + (n/1000).toFixed(0) + 'K' : '$' + n; }
-function badgeClass(s) {
-  const m = { Active:'badge-active', Critical:'badge-critical', Pending:'badge-pending', Discharged:'badge-discharged', Confirmed:'badge-active', Urgent:'badge-critical', Cancelled:'badge-discharged' };
-  return m[s] || 'badge-discharged';
-}
-function pillClass(b) {
-  const m = { 'A+':'pill-rose','O-':'pill-muted','B+':'pill-blue','AB+':'pill-cyan','O+':'pill-rose','A-':'pill-muted','B-':'pill-blue' };
-  return m[b] || 'pill-muted';
-}
 
 // ═══ CHART DEFAULTS ═══
 Chart.defaults.color = '#4a6080';
@@ -555,25 +789,23 @@ Chart.defaults.borderColor = '#162035';
 Chart.defaults.font.family = 'Outfit';
 const TIP = { backgroundColor:'#0c1422', borderColor:'#1e2f48', borderWidth:1, titleColor:'#dce8f5', bodyColor:'#8ea8c8', padding:10 };
 
-// ═══ STATIC OVERVIEW CHARTS ═══
+// ═══ STATIC CHARTS ═══
 new Chart(document.getElementById('chart-admissions'), {
   type:'line',
-  data:{
-    labels:['Oct','Nov','Dec','Jan','Feb','Mar','Apr'],
+  data:{ labels:['Oct','Nov','Dec','Jan','Feb','Mar','Apr'],
     datasets:[{ data:[210,245,198,280,310,295,340], borderColor:'#00e5c8',
       backgroundColor:function(ctx){ var g=ctx.chart.ctx.createLinearGradient(0,0,0,180); g.addColorStop(0,'rgba(0,229,200,0.18)'); g.addColorStop(1,'rgba(0,229,200,0)'); return g; },
-      fill:true, tension:0.45, pointBackgroundColor:'#00e5c8', pointRadius:4, pointHoverRadius:7, borderWidth:2.5 }]
-  },
-  options:{ responsive:true, plugins:{ legend:{display:false}, tooltip:TIP }, scales:{ x:{ grid:{color:'rgba(22,32,53,0.8)'}, ticks:{color:'#4a6080'} }, y:{ grid:{color:'rgba(22,32,53,0.8)'}, ticks:{color:'#4a6080'}, beginAtZero:false } } }
+      fill:true,tension:0.45,pointBackgroundColor:'#00e5c8',pointRadius:4,pointHoverRadius:7,borderWidth:2.5 }] },
+  options:{ responsive:true, plugins:{ legend:{display:false},tooltip:TIP }, scales:{ x:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'}}, y:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'},beginAtZero:false} } }
 });
 
 let deptChart = new Chart(document.getElementById('chart-dept'), {
   type:'doughnut',
   data:{ datasets:[{ data:[1,1,1,1], backgroundColor:['#00e5c8','#4d9fff','#e8b84b','#ff4d6d'], borderWidth:0, hoverOffset:8 }] },
-  options:{ responsive:true, cutout:'72%', plugins:{ legend:{display:false}, tooltip:{ ...TIP, callbacks:{ label:function(c){ return ' '+c.parsed; } } } } }
+  options:{ responsive:true, cutout:'72%', plugins:{ legend:{display:false}, tooltip:{ ...TIP, callbacks:{ label:c => ' '+c.parsed } } } }
 });
 
-// ═══ LOAD OVERVIEW DATA ═══
+// ═══ LOAD OVERVIEW ═══
 async function loadOverview() {
   try {
     const [{ data: pts }, { data: appts }, { data: invs }] = await Promise.all([
@@ -581,8 +813,7 @@ async function loadOverview() {
       sb.from('appointments').select('*'),
       sb.from('invoices').select('amount, status'),
     ]);
-
-    // KPIs
+    if (pts) allPatients = pts;
     const critical = pts ? pts.filter(p => p.status === 'Critical').length : 0;
     const totalRev = invs ? invs.reduce((s,i) => s + parseFloat(i.amount||0), 0) : 0;
     document.getElementById('kpi-total').textContent = pts ? pts.length : '—';
@@ -593,28 +824,22 @@ async function loadOverview() {
     document.getElementById('badge-critical').textContent = critical;
     if (appts) document.getElementById('badge-appt').textContent = appts.length;
 
-    // Dept donut
     if (pts) {
       const deptCounts = {};
       pts.forEach(p => { const d = p.departments?.name || 'Other'; deptCounts[d] = (deptCounts[d]||0)+1; });
       const names = ['Cardiology','Orthopedics','Neurology','General'];
-      const vals = names.map(n => deptCounts[n]||0);
-      deptChart.data.datasets[0].data = vals;
+      deptChart.data.datasets[0].data = names.map(n => deptCounts[n]||0);
       deptChart.update();
-      names.forEach(n => {
-        const el = document.getElementById('dept-'+n.toLowerCase());
-        if (el) el.textContent = deptCounts[n]||0;
-      });
+      names.forEach(n => { const el = document.getElementById('dept-'+n.toLowerCase()); if(el) el.textContent = deptCounts[n]||0; });
     }
 
-    // Recent patients table
     if (pts) {
-      const recent = pts.slice(0,4);
+      const recent = pts.slice(0, 5);
       document.getElementById('overview-patients-wrap').innerHTML = `
         <div class="tbl-wrap"><table>
           <thead><tr><th>Patient</th><th>Dept</th><th>Status</th><th>Date</th></tr></thead>
           <tbody>${recent.map(p=>`
-            <tr>
+            <tr onclick="openPatient('${p.id}')">
               <td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td>
               <td style="color:var(--text2)">${p.departments?.name||'—'}</td>
               <td><span class="badge ${badgeClass(p.status)}">${p.status}</span></td>
@@ -623,33 +848,42 @@ async function loadOverview() {
           </tbody>
         </table></div>`;
     }
-
-    // DB connected
     document.getElementById('dbDot').classList.add('connected');
     document.getElementById('dbLabel').textContent = 'Live DB';
   } catch(e) {
     console.error(e);
     document.getElementById('dbLabel').textContent = 'DB Error';
+    toast('Database connection failed', 'error');
   }
 }
 
-// ═══ LOAD PATIENTS ═══
+// ═══ LOAD PATIENTS (with filter) ═══
 async function loadPatients() {
   const { data: pts } = await sb.from('patients').select('*, departments(name), doctors(name)').order('admitted_at', { ascending: false });
   if (!pts) return;
-  const total = pts.length;
-  const active = pts.filter(p=>p.status==='Active').length;
-  const pending = pts.filter(p=>p.status==='Pending').length;
-  const critical = pts.filter(p=>p.status==='Critical').length;
-  document.getElementById('pt-kpi-total').textContent = total;
-  document.getElementById('pt-kpi-active').textContent = active;
-  document.getElementById('pt-kpi-pending').textContent = pending;
-  document.getElementById('pt-kpi-critical').textContent = critical;
+  allPatients = pts;
+  updatePatientKPIs(pts);
+  renderPatientTable(pts);
+}
+
+function updatePatientKPIs(pts) {
+  document.getElementById('pt-kpi-total').textContent = pts.length;
+  document.getElementById('pt-kpi-active').textContent = pts.filter(p=>p.status==='Active').length;
+  document.getElementById('pt-kpi-pending').textContent = pts.filter(p=>p.status==='Pending').length;
+  document.getElementById('pt-kpi-critical').textContent = pts.filter(p=>p.status==='Critical').length;
+}
+
+function renderPatientTable(pts) {
+  const filtered = patientFilter === 'All' ? pts : pts.filter(p => p.status === patientFilter);
+  if (filtered.length === 0) {
+    document.getElementById('patients-table-wrap').innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">No patients found</div><div class="empty-sub">No ${patientFilter === 'All' ? '' : patientFilter.toLowerCase()+' '}patients in the registry.</div></div>`;
+    return;
+  }
   document.getElementById('patients-table-wrap').innerHTML = `
     <div class="tbl-wrap"><table>
       <thead><tr><th>Patient</th><th>Age</th><th>Dept</th><th>Doctor</th><th>Blood</th><th>Status</th><th>Admitted</th></tr></thead>
-      <tbody>${pts.map(p=>`
-        <tr>
+      <tbody>${filtered.map(p=>`
+        <tr onclick="openPatient('${p.id}')">
           <td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td>
           <td style="color:var(--text2)">${p.age||'—'}</td>
           <td style="color:var(--text2)">${p.departments?.name||'—'}</td>
@@ -660,6 +894,344 @@ async function loadPatients() {
         </tr>`).join('')}
       </tbody>
     </table></div>`;
+}
+
+function applyFilter(f) {
+  patientFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.classList.toggle('active-chip', chip.dataset.filter === f);
+  });
+  if (allPatients.length) renderPatientTable(allPatients);
+}
+
+document.getElementById('patientFilters').addEventListener('click', e => {
+  const chip = e.target.closest('.filter-chip');
+  if (chip) applyFilter(chip.dataset.filter);
+});
+
+// ═══ PATIENT 360 PANEL ═══
+const panelEl = document.getElementById('patientPanel');
+const panelOverlay = document.getElementById('panelOverlay');
+document.getElementById('panelClose').addEventListener('click', closePanel);
+panelOverlay.addEventListener('click', closePanel);
+
+function closePanel() {
+  panelEl.classList.remove('open');
+  panelOverlay.classList.remove('show');
+  currentPatient = null;
+}
+
+async function openPatient(id) {
+  // find patient in local state or fetch
+  let pt = allPatients.find(p => p.id === id);
+  if (!pt) {
+    const { data } = await sb.from('patients').select('*, departments(name), doctors(name)').eq('id', id).single();
+    pt = data;
+  }
+  if (!pt) { toast('Patient not found', 'error'); return; }
+  currentPatient = pt;
+  activeTab = 'overview';
+
+  // Render header
+  document.getElementById('panelAvatar').textContent = initials(pt.name);
+  document.getElementById('panelName').textContent = pt.name;
+  document.getElementById('panelCode').textContent = `${pt.patient_code} · ${pt.departments?.name||'—'} · ${pt.gender === 'M' ? 'Male' : 'Female'}, ${pt.age||'?'}`;
+
+  // Status action buttons
+  const statuses = [
+    { label:'✓ Active', cls:'active-action', val:'Active' },
+    { label:'⚠ Critical', cls:'critical-action', val:'Critical' },
+    { label:'⏳ Pending', cls:'pending-action', val:'Pending' },
+    { label:'↗ Discharge', cls:'discharge-action', val:'Discharged' },
+  ];
+  document.getElementById('statusActions').innerHTML = statuses.map(s =>
+    `<button class="action-btn ${s.cls} ${pt.status === s.val ? 'ring' : ''}" 
+      ${pt.status === s.val ? 'disabled' : ''}
+      onclick="updateStatus('${pt.id}','${s.val}')"
+      style="${pt.status === s.val ? 'opacity:0.5;cursor:default;' : ''}"
+    >${s.label}</button>`
+  ).join('');
+
+  // Show panel
+  panelEl.classList.add('open');
+  panelOverlay.classList.add('show');
+
+  // Render default tab
+  renderPanelTab('overview');
+}
+
+// Panel tab switching
+document.querySelectorAll('.panel-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active-tab'));
+    tab.classList.add('active-tab');
+    activeTab = tab.dataset.tab;
+    renderPanelTab(activeTab);
+  });
+});
+
+async function renderPanelTab(tab) {
+  const body = document.getElementById('panelBody');
+  const pt = currentPatient;
+  if (!pt) return;
+
+  if (tab === 'overview') {
+    // Fetch full detail
+    const { data: fullPt } = await sb.from('patients').select('*, departments(name,id), doctors(name,id)').eq('id', pt.id).single();
+    const p = fullPt || pt;
+
+    // Build doctor options for assign
+    if (allDoctors.length === 0) {
+      const { data: docs } = await sb.from('doctors').select('*');
+      if (docs) allDoctors = docs;
+    }
+    const deptDocs = allDoctors.filter(d => d.department_id === (p.departments?.id || p.department_id));
+
+    body.innerHTML = `
+      <div class="info-grid">
+        <div class="info-cell"><div class="info-label">Age</div><div class="info-value">${p.age || '—'} yrs</div></div>
+        <div class="info-cell"><div class="info-label">Gender</div><div class="info-value">${p.gender === 'M' ? 'Male' : 'Female'}</div></div>
+        <div class="info-cell"><div class="info-label">Blood Type</div><div class="info-value" style="color:var(--rose)">${p.blood_type || '—'}</div></div>
+        <div class="info-cell"><div class="info-label">Admitted</div><div class="info-value">${p.admitted_at ? new Date(p.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div></div>
+        <div class="info-cell"><div class="info-label">Department</div><div class="info-value">${p.departments?.name || '—'}</div></div>
+        <div class="info-cell"><div class="info-label">Status</div><div class="info-value"><span class="badge ${badgeClass(p.status)}">${p.status}</span></div></div>
+      </div>
+
+      <div class="assign-section">
+        <div class="assign-title">Assigned Physician</div>
+        <div class="assign-row">
+          <select class="panel-select" id="assignDoctorSelect">
+            ${allDoctors.map(d => `<option value="${d.id}" ${d.id === p.doctor_id ? 'selected' : ''}>${d.name}</option>`).join('')}
+          </select>
+          <button class="btn btn-primary" style="font-size:12px;padding:8px 14px;" onclick="assignDoctor('${p.id}')">Assign</button>
+        </div>
+      </div>
+
+      <div class="assign-section">
+        <div class="assign-title">Transfer Department</div>
+        <div class="assign-row">
+          <select class="panel-select" id="transferDeptSelect">
+            ${allDepts.map(d => `<option value="${d.id}" ${d.id === (p.departments?.id || p.department_id) ? 'selected' : ''}>${d.name}</option>`).join('')}
+          </select>
+          <button class="btn btn-gold" style="font-size:12px;padding:8px 14px;" onclick="transferDept('${p.id}')">Transfer</button>
+        </div>
+      </div>
+    `;
+  }
+
+  else if (tab === 'timeline') {
+    const days = currentPatient.admitted_at ? Math.floor((new Date() - new Date(currentPatient.admitted_at)) / 86400000) : '?';
+    body.innerHTML = `
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot cyan-dot">🏥</div>
+          <div>
+            <div class="tl-label">Patient Admitted</div>
+            <div class="tl-time">${pt.admitted_at ? new Date(pt.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}) : '—'} · ${pt.departments?.name||'—'}</div>
+            <div class="tl-note">Initial admission recorded. Assigned to ${pt.doctors?.name||'—'}.</div>
+          </div>
+        </div>
+        ${pt.status === 'Critical' ? `
+        <div class="tl-item">
+          <div class="tl-dot rose-dot">🚨</div>
+          <div>
+            <div class="tl-label">Status Escalated → Critical</div>
+            <div class="tl-time">Recent update · ICU Review triggered</div>
+            <div class="tl-note">Physician notified. Immediate review required.</div>
+          </div>
+        </div>` : ''}
+        ${pt.status === 'Discharged' ? `
+        <div class="tl-item">
+          <div class="tl-dot muted-dot">✅</div>
+          <div>
+            <div class="tl-label">Patient Discharged</div>
+            <div class="tl-time">Follow-up in 2 weeks</div>
+            <div class="tl-note">Discharge summary issued. Follow-up scheduled.</div>
+          </div>
+        </div>` : ''}
+        <div class="tl-item">
+          <div class="tl-dot gold-dot">📋</div>
+          <div>
+            <div class="tl-label">Record created in MedoScope</div>
+            <div class="tl-time">${days} days ago · System</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  else if (tab === 'appointments') {
+    body.innerHTML = `<div class="loading"><div class="spinner"></div></div>`;
+    const { data: appts } = await sb.from('appointments').select('*, doctors(name,initials)').eq('patient_id', pt.id).order('scheduled_at');
+    if (!appts || appts.length === 0) {
+      body.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-title">No appointments</div><div class="empty-sub">No appointments found for this patient.</div></div>`;
+      return;
+    }
+    const colors = { 'Dr. Nour Amin':'linear-gradient(135deg,#00c9b1,#008fa0)', 'Dr. Tarek Said':'linear-gradient(135deg,#4d9fff,#2563eb)', 'Dr. Mona Badr':'linear-gradient(135deg,#e8b84b,#b45309)', 'Dr. Hana Kamal':'linear-gradient(135deg,#a78bfa,#7c3aed)' };
+    body.innerHTML = `<div class="appt-list">${appts.map(a => {
+      const t = a.scheduled_at ? new Date(a.scheduled_at) : null;
+      const hr = t ? t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}) : '—';
+      const bg = colors[a.doctors?.name] || 'linear-gradient(135deg,#4a6080,#2a4060)';
+      return `<div class="appt">
+        <div class="appt-time-box"><div class="appt-hr">${hr}</div><div class="appt-period">${t && t.getHours()<12?'AM':'PM'}</div></div>
+        <div class="appt-body">
+          <div class="appt-patient-name">${a.appointment_type||'Consultation'}</div>
+          <div class="appt-meta">${a.room||'—'} · ${a.doctors?.name||'—'}</div>
+        </div>
+        <span class="badge ${badgeClass(a.status)}">${a.status}</span>
+      </div>`;
+    }).join('')}</div>`;
+  }
+
+  else if (tab === 'billing') {
+    body.innerHTML = `<div class="loading"><div class="spinner"></div></div>`;
+    const { data: invs } = await sb.from('invoices').select('*').eq('patient_id', pt.id).order('issued_at', { ascending: false });
+    if (!invs || invs.length === 0) {
+      body.innerHTML = `<div class="empty-state"><div class="empty-icon">🧾</div><div class="empty-title">No invoices</div><div class="empty-sub">No billing records found for this patient.</div></div>`;
+      return;
+    }
+    const total = invs.reduce((s,i) => s + parseFloat(i.amount||0), 0);
+    body.innerHTML = `
+      <div style="display:flex;gap:10px;margin-bottom:16px;">
+        <div class="info-cell" style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px;">
+          <div class="info-label">Total Billed</div>
+          <div class="info-value" style="font-family:'Instrument Serif',serif;font-size:22px;">${fmt(total)}</div>
+        </div>
+        <div class="info-cell" style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px;">
+          <div class="info-label">Invoices</div>
+          <div class="info-value" style="font-family:'Instrument Serif',serif;font-size:22px;">${invs.length}</div>
+        </div>
+      </div>
+      <div class="inv-list">${invs.map(i => `
+        <div class="inv-item">
+          <div class="inv-icon">🧾</div>
+          <div style="flex:1;min-width:0">
+            <div class="inv-name">${i.description||'Invoice'}</div>
+            <div class="inv-date">${i.invoice_code} · ${i.issued_at ? new Date(i.issued_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div>
+          </div>
+          <span class="badge ${badgeClass(i.status)}" style="margin-right:10px;">${i.status}</span>
+          <div class="inv-amt ${i.status.toLowerCase()}">${fmt(parseFloat(i.amount||0))}</div>
+        </div>`).join('')}
+      </div>`;
+  }
+
+  else if (tab === 'notes') {
+    body.innerHTML = `
+      <div style="margin-bottom:12px;font-size:12px;color:var(--text3);">Clinical notes and observations for this patient.</div>
+      <textarea class="notes-area" id="patientNotesInput" placeholder="Type clinical notes, observations, or updates…">${pt._notes||''}</textarea>
+      <button class="panel-save-btn" onclick="saveNote('${pt.id}')">Save Note</button>
+      <div style="margin-top:20px;font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Recent Notes</div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot cyan-dot">📝</div>
+          <div>
+            <div class="tl-label">Dr. Ahmed Hassan</div>
+            <div class="tl-time">Today · 09:41</div>
+            <div class="tl-note">Patient is stable. Continue current medication protocol. Review labs in 48h.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot muted-dot">📝</div>
+          <div>
+            <div class="tl-label">${pt.doctors?.name || 'Assigned Doctor'}</div>
+            <div class="tl-time">Yesterday · 14:22</div>
+            <div class="tl-note">Initial assessment complete. Monitoring vitals every 4 hours.</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function saveNote(id) {
+  const val = document.getElementById('patientNotesInput')?.value;
+  if (!val?.trim()) { toast('Note is empty', 'info'); return; }
+  toast('Note saved successfully', 'success');
+}
+
+// ═══ STATUS UPDATE ═══
+async function updateStatus(id, newStatus) {
+  try {
+    const { error } = await sb.from('patients').update({ status: newStatus }).eq('id', id);
+    if (error) throw error;
+    // Update local state
+    const idx = allPatients.findIndex(p => p.id === id);
+    if (idx >= 0) allPatients[idx].status = newStatus;
+    if (currentPatient?.id === id) currentPatient.status = newStatus;
+    toast(`Status updated → ${newStatus}`, 'success');
+    // Re-render status buttons
+    const statuses = [
+      { label:'✓ Active', cls:'active-action', val:'Active' },
+      { label:'⚠ Critical', cls:'critical-action', val:'Critical' },
+      { label:'⏳ Pending', cls:'pending-action', val:'Pending' },
+      { label:'↗ Discharge', cls:'discharge-action', val:'Discharged' },
+    ];
+    document.getElementById('statusActions').innerHTML = statuses.map(s =>
+      `<button class="action-btn ${s.cls}" ${newStatus === s.val ? 'disabled style="opacity:0.5;cursor:default;"' : ''} onclick="updateStatus('${id}','${s.val}')">${s.label}</button>`
+    ).join('');
+    // Update panel code line
+    document.getElementById('panelCode').innerHTML = `${currentPatient?.patient_code} · ${currentPatient?.departments?.name||'—'} · ${currentPatient?.gender === 'M' ? 'Male' : 'Female'}, ${currentPatient?.age||'?'} · <span class="badge ${badgeClass(newStatus)}">${newStatus}</span>`;
+    // Refresh tables if visible
+    if (loaded['patients']) renderPatientTable(allPatients);
+    if (loaded['overview']) refreshOverviewTable();
+  } catch(e) {
+    console.error(e);
+    toast('Failed to update status', 'error');
+  }
+}
+
+function refreshOverviewTable() {
+  const recent = allPatients.slice(0, 5);
+  document.getElementById('overview-patients-wrap').innerHTML = `
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Patient</th><th>Dept</th><th>Status</th><th>Date</th></tr></thead>
+      <tbody>${recent.map(p=>`
+        <tr onclick="openPatient('${p.id}')">
+          <td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td>
+          <td style="color:var(--text2)">${p.departments?.name||'—'}</td>
+          <td><span class="badge ${badgeClass(p.status)}">${p.status}</span></td>
+          <td style="color:var(--text3)">${p.admitted_at ? new Date(p.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table></div>`;
+}
+
+// ═══ ASSIGN DOCTOR ═══
+async function assignDoctor(patientId) {
+  const sel = document.getElementById('assignDoctorSelect');
+  if (!sel) return;
+  const doctorId = sel.value;
+  const doctorName = sel.options[sel.selectedIndex]?.text;
+  try {
+    const { error } = await sb.from('patients').update({ doctor_id: doctorId }).eq('id', patientId);
+    if (error) throw error;
+    const idx = allPatients.findIndex(p => p.id === patientId);
+    if (idx >= 0) allPatients[idx].doctor_id = doctorId;
+    toast(`Assigned to ${doctorName}`, 'success');
+    if (loaded['patients']) renderPatientTable(allPatients);
+  } catch(e) {
+    toast('Failed to assign doctor', 'error');
+  }
+}
+
+// ═══ TRANSFER DEPT ═══
+async function transferDept(patientId) {
+  const sel = document.getElementById('transferDeptSelect');
+  if (!sel) return;
+  const deptId = sel.value;
+  const deptName = sel.options[sel.selectedIndex]?.text;
+  try {
+    const { error } = await sb.from('patients').update({ department_id: deptId }).eq('id', patientId);
+    if (error) throw error;
+    const idx = allPatients.findIndex(p => p.id === patientId);
+    if (idx >= 0 && allDepts.length) {
+      const dept = allDepts.find(d => d.id === deptId);
+      if (dept) allPatients[idx].departments = dept;
+    }
+    toast(`Transferred to ${deptName}`, 'success');
+    if (loaded['patients']) renderPatientTable(allPatients);
+  } catch(e) {
+    toast('Failed to transfer department', 'error');
+  }
 }
 
 // ═══ LOAD APPOINTMENTS ═══
@@ -676,7 +1248,7 @@ async function loadAppointments() {
     const hr = t ? t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}) : '—';
     const period = t ? (t.getHours()<12?'AM':'PM') : '';
     const bg = colors[a.doctors?.name] || 'linear-gradient(135deg,#4a6080,#2a4060)';
-    return `<div class="appt">
+    return `<div class="appt" onclick="openPatient('${a.patient_id}')">
       <div class="appt-time-box"><div class="appt-hr">${hr}</div><div class="appt-period">${period}</div></div>
       <div class="appt-body">
         <div class="appt-patient-name">${a.patients?.name||'Unknown'}</div>
@@ -707,8 +1279,6 @@ async function loadBilling() {
   document.getElementById('leg-paid').textContent = fmt(paid);
   document.getElementById('leg-pending').textContent = fmt(pending);
   document.getElementById('leg-overdue').textContent = fmt(overdue);
-
-  const icons = { Cardiology:'🫀', Neurology:'🧠', Orthopedics:'🦴', General:'💊' };
   document.getElementById('invoices-wrap').innerHTML = `<div class="inv-list">${invs.map(i=>`
     <div class="inv-item">
       <div class="inv-icon">🧾</div>
@@ -716,7 +1286,7 @@ async function loadBilling() {
         <div class="inv-name">${i.patients?.name||'Unknown'} — ${i.description||'Invoice'}</div>
         <div class="inv-date">${i.invoice_code} · ${i.issued_at ? new Date(i.issued_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div>
       </div>
-      <span class="badge ${badgeClass(i.status)} inv-badge" style="margin-right:12px;">${i.status}</span>
+      <span class="badge ${badgeClass(i.status)}" style="margin-right:12px;">${i.status}</span>
       <div class="inv-amt ${i.status.toLowerCase()}">${fmt(parseFloat(i.amount||0))}</div>
     </div>`).join('')}</div>`;
 
@@ -728,16 +1298,100 @@ async function loadBilling() {
         data:{ labels:['Nov','Dec','Jan','Feb','Mar','Apr'], datasets:[{ data:[98,112,125,118,131,Math.round(total/1000*10)/10||142], borderColor:'#e8b84b',
           backgroundColor:function(ctx){var g=ctx.chart.ctx.createLinearGradient(0,0,0,180);g.addColorStop(0,'rgba(232,184,75,0.15)');g.addColorStop(1,'rgba(232,184,75,0)');return g;},
           fill:true,tension:0.4,pointBackgroundColor:'#e8b84b',pointRadius:4,pointHoverRadius:7,borderWidth:2.5 }] },
-        options:{ responsive:true, plugins:{ legend:{display:false}, tooltip:{...TIP,callbacks:{label:function(c){return ' $'+c.parsed.y+'K';}}} }, scales:{ x:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'}}, y:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080',callback:function(v){return '$'+v+'K';}}} } }
+        options:{ responsive:true, plugins:{ legend:{display:false}, tooltip:{...TIP,callbacks:{label:c=>' $'+c.parsed.y+'K'}} }, scales:{ x:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'}}, y:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080',callback:v=>'$'+v+'K'}} } }
       });
       new Chart(document.getElementById('chart-payment'), {
         type:'doughnut',
         data:{ datasets:[{ data:[paid,pending,overdue], backgroundColor:['#00e5c8','#e8b84b','#ff4d6d'], borderWidth:0, hoverOffset:8 }] },
-        options:{ responsive:true, cutout:'70%', plugins:{ legend:{display:false}, tooltip:{...TIP,callbacks:{label:function(c){return ' '+fmt(c.parsed);}}} } }
+        options:{ responsive:true, cutout:'70%', plugins:{ legend:{display:false}, tooltip:{...TIP,callbacks:{label:c=>' '+fmt(c.parsed)}} } }
       });
     }, 60);
   }
 }
+
+// ═══ ADD PATIENT MODAL ═══
+async function openAddPatient() {
+  // Load depts + doctors if needed
+  if (allDepts.length === 0) {
+    const { data: depts } = await sb.from('departments').select('*');
+    if (depts) allDepts = depts;
+  }
+  if (allDoctors.length === 0) {
+    const { data: docs } = await sb.from('doctors').select('*');
+    if (docs) allDoctors = docs;
+  }
+  const deptSel = document.getElementById('f-dept');
+  deptSel.innerHTML = allDepts.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+  updateDoctorOptions();
+  // Set default date to today
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('addPatientModal').classList.add('show');
+}
+
+function updateDoctorOptions() {
+  const deptSel = document.getElementById('f-dept');
+  const deptId = deptSel?.value;
+  const docSel = document.getElementById('f-doctor');
+  if (!docSel) return;
+  const filtered = deptId ? allDoctors.filter(d => d.department_id === deptId) : allDoctors;
+  docSel.innerHTML = filtered.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+}
+
+function closeAddPatient() {
+  document.getElementById('addPatientModal').classList.remove('show');
+}
+
+async function submitNewPatient() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { toast('Patient name is required', 'error'); return; }
+  const age = parseInt(document.getElementById('f-age').value) || null;
+  const gender = document.getElementById('f-gender').value;
+  const blood_type = document.getElementById('f-blood').value;
+  const department_id = document.getElementById('f-dept').value || null;
+  const doctor_id = document.getElementById('f-doctor').value || null;
+  const status = document.getElementById('f-status').value;
+  const admitted_at = document.getElementById('f-date').value || new Date().toISOString().split('T')[0];
+
+  // Generate patient code
+  const lastCode = allPatients.length > 0
+    ? Math.max(...allPatients.map(p => parseInt(p.patient_code?.replace('#PT-',''))||0))
+    : 420;
+  const patient_code = `#PT-${String(lastCode + 1).padStart(5,'0')}`;
+
+  const btn = document.getElementById('modalSubmitBtn');
+  btn.textContent = 'Admitting…';
+  btn.disabled = true;
+
+  try {
+    const { data, error } = await sb.from('patients').insert([{
+      name, age, gender, blood_type, department_id, doctor_id, status, admitted_at, patient_code
+    }]).select('*, departments(name), doctors(name)').single();
+    if (error) throw error;
+    allPatients.unshift(data);
+    closeAddPatient();
+    toast(`${name} admitted successfully`, 'success');
+    // Refresh
+    updatePatientKPIs(allPatients);
+    renderPatientTable(allPatients);
+    if (loaded['overview']) refreshOverviewTable();
+  } catch(e) {
+    console.error(e);
+    toast('Failed to admit patient: ' + (e.message || 'Unknown error'), 'error');
+  } finally {
+    btn.textContent = 'Admit Patient';
+    btn.disabled = false;
+  }
+}
+
+// Wire up modal buttons
+document.getElementById('topNewPatientBtn').addEventListener('click', openAddPatient);
+document.getElementById('admitNewBtn')?.addEventListener('click', openAddPatient);
+document.getElementById('modalClose').addEventListener('click', closeAddPatient);
+document.getElementById('modalCancelBtn').addEventListener('click', closeAddPatient);
+document.getElementById('modalSubmitBtn').addEventListener('click', submitNewPatient);
+document.getElementById('addPatientModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeAddPatient();
+});
 
 // ═══ PAGE LOADER ═══
 function loadPage(pageId) {
@@ -747,7 +1401,18 @@ function loadPage(pageId) {
   if (pageId === 'billing') loadBilling();
 }
 
+// ═══ PRELOAD DEPTS + DOCTORS ═══
+async function preload() {
+  const [{ data: depts }, { data: docs }] = await Promise.all([
+    sb.from('departments').select('*'),
+    sb.from('doctors').select('*'),
+  ]);
+  if (depts) allDepts = depts;
+  if (docs) allDoctors = docs;
+}
+
 // ═══ INIT ═══
+preload();
 loadOverview();
 loaded['overview'] = true;
 </script>
