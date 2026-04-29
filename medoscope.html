@@ -16,12 +16,48 @@
   --gold:#e8b84b;--gold-soft:rgba(232,184,75,0.1);
   --rose:#ff4d6d;--rose-soft:rgba(255,77,109,0.1);
   --blue:#4d9fff;--blue-soft:rgba(77,159,255,0.1);
-  --purple:#a78bfa;--purple-soft:rgba(167,139,250,0.1);
   --text:#dce8f5;--text2:#8ea8c8;--text3:#4a6080;
   --sidebar:260px;--radius:14px;
 }
 html,body{height:100%;overflow:hidden;}
 body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);display:flex;}
+
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;z-index:1000;display:flex;background:var(--bg);}
+.login-brand{width:420px;flex-shrink:0;background:linear-gradient(160deg,#050c18,#08142a);border-right:1px solid var(--border2);display:flex;flex-direction:column;justify-content:space-between;padding:48px 44px;position:relative;overflow:hidden;}
+@media(max-width:800px){.login-brand{display:none;}}
+.login-brand::before{content:'';position:absolute;top:-120px;left:-120px;width:400px;height:400px;background:radial-gradient(circle,rgba(0,229,200,0.08),transparent 65%);pointer-events:none;}
+.login-brand::after{content:'';position:absolute;bottom:-80px;right:-80px;width:300px;height:300px;background:radial-gradient(circle,rgba(77,159,255,0.06),transparent 65%);pointer-events:none;}
+.brand-headline{font-family:'Instrument Serif',serif;font-size:36px;line-height:1.15;color:var(--text);margin-bottom:16px;}
+.brand-headline span{color:var(--cyan);}
+.brand-sub{font-size:14px;color:var(--text3);line-height:1.65;max-width:300px;}
+.brand-stats{display:flex;flex-direction:column;gap:10px;margin-top:36px;}
+.brand-stat{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:12px 14px;}
+.brand-stat-icon{font-size:18px;}
+.brand-stat-label{font-size:12px;color:var(--text3);}
+.brand-stat-val{font-size:14px;font-weight:700;color:var(--text);margin-top:2px;}
+.login-form-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 24px;position:relative;overflow:hidden;}
+.login-form-wrap::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(0,229,200,0.04),transparent 60%);pointer-events:none;}
+.login-card{width:100%;max-width:400px;position:relative;}
+.login-card-title{font-family:'Instrument Serif',serif;font-size:28px;color:var(--text);margin-bottom:6px;}
+.login-card-sub{font-size:13px;color:var(--text3);margin-bottom:32px;}
+.login-card-sub span{color:var(--cyan);}
+.form-field{margin-bottom:16px;}
+.form-field label{display:block;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:7px;}
+.form-field input{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:11px;padding:13px 16px;font-size:14px;color:var(--text);font-family:'Outfit',sans-serif;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+.form-field input:focus{border-color:var(--cyan-border);box-shadow:0 0 0 3px rgba(0,229,200,0.07);}
+.form-field input::placeholder{color:var(--text3);}
+.login-btn{width:100%;padding:14px;background:var(--cyan);color:var(--bg);border:none;border-radius:11px;font-size:14px;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 24px rgba(0,229,200,0.25);margin-top:8px;}
+.login-btn:hover:not(:disabled){box-shadow:0 8px 32px rgba(0,229,200,0.4);transform:translateY(-1px);}
+.login-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.login-error{background:var(--rose-soft);border:1px solid rgba(255,77,109,0.3);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--rose);margin-bottom:14px;display:none;}
+.login-error.show{display:block;}
+.login-note{margin-top:24px;padding:14px;background:rgba(0,229,200,0.04);border:1px solid var(--cyan-border);border-radius:10px;font-size:12px;color:var(--text3);line-height:1.6;}
+.login-note strong{color:var(--cyan);}
+
+/* APP WRAP */
+#appWrap{display:none;flex:1;width:100%;}
+#appWrap.ready{display:flex;}
 
 /* OVERLAY */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99;backdrop-filter:blur(2px);}
@@ -31,7 +67,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 .sidebar{width:var(--sidebar);flex-shrink:0;background:linear-gradient(180deg,var(--s1),var(--s2));border-right:1px solid var(--border);display:flex;flex-direction:column;position:relative;z-index:100;overflow:hidden;transition:transform 0.3s cubic-bezier(.16,1,.3,1),width 0.3s cubic-bezier(.16,1,.3,1);}
 .sidebar::before{content:'';position:absolute;top:-80px;left:-80px;width:260px;height:260px;background:radial-gradient(circle,rgba(0,229,200,0.06),transparent 70%);pointer-events:none;}
 .sidebar.collapsed{width:68px;}
-.sidebar.collapsed .logo-name,.sidebar.collapsed .logo-tag,.sidebar.collapsed .nav-label-text,.sidebar.collapsed .nav-section-label,.sidebar.collapsed .nav-badge,.sidebar.collapsed .doc-info,.sidebar.collapsed .status-dot{display:none;}
+.sidebar.collapsed .logo-name,.sidebar.collapsed .logo-tag,.sidebar.collapsed .nav-label-text,.sidebar.collapsed .nav-section-label,.sidebar.collapsed .nav-badge,.sidebar.collapsed .doc-info,.sidebar.collapsed .status-dot,.sidebar.collapsed .user-email{display:none;}
 .sidebar.collapsed .logo-area{padding:20px 16px;justify-content:center;}
 .sidebar.collapsed .nav-item{padding:10px;justify-content:center;}
 .sidebar.collapsed .nav-icon{margin:0;}
@@ -63,13 +99,14 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 .nav-label-text{flex:1;white-space:nowrap;}
 .nav-badge{background:var(--rose);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap;}
 .nav-badge.amber{background:var(--gold);color:#000;}
-.sidebar-bottom{margin-top:auto;padding:14px 10px;border-top:1px solid var(--border);}
-.doc-card{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:10px;cursor:pointer;transition:background 0.18s;overflow:hidden;}
-.doc-card:hover{background:var(--s3);}
+.sidebar-bottom{margin-top:auto;border-top:1px solid var(--border);}
+.doc-card{display:flex;align-items:center;gap:10px;padding:14px 12px;overflow:hidden;}
 .doc-avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--cyan),var(--blue));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--bg);}
 .doc-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;}
-.doc-role{font-size:11px;color:var(--text3);white-space:nowrap;}
-.status-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);flex-shrink:0;box-shadow:0 0 6px var(--cyan);margin-left:auto;}
+.user-email{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
+.logout-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;transition:background 0.18s;color:var(--text3);font-size:13px;font-weight:500;border-top:1px solid var(--border);}
+.logout-btn:hover{background:var(--rose-soft);color:var(--rose);}
+.logout-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;background:rgba(255,255,255,0.03);}
 .toggle-btn{position:absolute;top:50%;right:-14px;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--s2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:var(--text2);transition:all 0.2s;z-index:10;}
 .toggle-btn:hover{background:var(--cyan);color:var(--bg);border-color:var(--cyan);}
 @media(max-width:768px){.toggle-btn{display:none;}}
@@ -77,7 +114,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 /* MAIN */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 .topbar{display:flex;align-items:center;gap:12px;padding:14px 24px;background:var(--s1);border-bottom:1px solid var(--border);flex-shrink:0;}
-.hamburger{display:none;width:38px;height:38px;border-radius:10px;background:var(--s2);border:1px solid var(--border2);align-items:center;justify-content:center;cursor:pointer;font-size:16px;flex-shrink:0;transition:border-color 0.2s;}
+.hamburger{display:none;width:38px;height:38px;border-radius:10px;background:var(--s2);border:1px solid var(--border2);align-items:center;justify-content:center;cursor:pointer;font-size:16px;flex-shrink:0;}
 .hamburger:hover{border-color:var(--cyan-border);}
 @media(max-width:768px){.hamburger{display:flex;}}
 .topbar-left{flex:1;min-width:0;}
@@ -93,10 +130,9 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 .btn-outline{background:transparent;color:var(--text2);border:1px solid var(--border2);}
 .btn-outline:hover{border-color:var(--cyan-border);color:var(--cyan);}
 .btn-danger{background:var(--rose-soft);color:var(--rose);border:1px solid rgba(255,77,109,0.3);}
-.btn-danger:hover{background:var(--rose);color:#fff;}
+.btn-danger:hover{background:var(--rose);color:#fff;border-color:var(--rose);}
 .btn-gold{background:var(--gold-soft);color:var(--gold);border:1px solid rgba(232,184,75,0.3);}
 .btn-gold:hover{background:var(--gold);color:#000;}
-@media(max-width:600px){.btn-outline.hide-sm{display:none;}}
 .notif-btn{width:38px;height:38px;border-radius:10px;background:var(--s2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;position:relative;transition:border-color 0.2s;flex-shrink:0;}
 .notif-btn:hover{border-color:var(--cyan-border);}
 .notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--rose);border:1.5px solid var(--s1);}
@@ -117,8 +153,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 /* KPI */
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
 @media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:480px){.kpi-grid{grid-template-columns:repeat(2,1fr);gap:8px;}}
-.kpi{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:border-color 0.2s,transform 0.2s;cursor:default;}
+.kpi{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:border-color 0.2s,transform 0.2s;}
 .kpi:hover{transform:translateY(-2px);}
 .kpi.c{border-color:var(--cyan-border);}
 .kpi.b{border-color:rgba(77,159,255,0.2);}
@@ -142,12 +177,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 .kpi-val{font-family:'Instrument Serif',serif;font-size:28px;line-height:1;color:var(--text);margin-bottom:4px;}
 .kpi-lbl{font-size:11px;color:var(--text3);font-weight:500;}
 
-/* GRIDS */
+/* GRIDS / CARDS */
 .grid-2-1{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:20px;}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
 @media(max-width:900px){.grid-2-1,.grid-2{grid-template-columns:1fr;}}
-
-/* CARD */
 .card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
 .card-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;}
 .card-title{font-family:'Instrument Serif',serif;font-size:16px;color:var(--text);}
@@ -160,7 +193,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 .pill-muted{background:rgba(255,255,255,0.04);color:var(--text3);}
 
 /* TABLE */
-.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.tbl-wrap{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:13px;}
 thead th{text-align:left;padding:9px 12px;color:var(--text3);font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--border);}
 tbody tr{border-bottom:1px solid rgba(22,32,53,0.8);transition:background 0.15s;cursor:pointer;}
@@ -180,7 +213,7 @@ td{padding:12px;vertical-align:middle;}
 .badge-discharged{background:rgba(255,255,255,0.04);color:var(--text3);}
 .badge-discharged::before{background:var(--text3);}
 
-/* LOADING & MISC */
+/* MISC */
 .loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--text3);font-size:13px;gap:10px;}
 .spinner{width:18px;height:18px;border:2px solid var(--border2);border-top-color:var(--cyan);border-radius:50%;animation:spin 0.7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -196,6 +229,10 @@ td{padding:12px;vertical-align:middle;}
 .leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
 .leg-lbl{flex:1;color:var(--text2);}
 .leg-val{font-weight:700;color:var(--text);}
+.filter-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.filter-chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border2);color:var(--text3);background:transparent;font-family:'Outfit',sans-serif;transition:all 0.18s;}
+.filter-chip:hover{border-color:var(--cyan-border);color:var(--text);}
+.filter-chip.active-chip{background:var(--cyan-soft);color:var(--cyan);border-color:var(--cyan-border);}
 .appt-list{display:flex;flex-direction:column;gap:8px;}
 .appt{display:flex;align-items:center;gap:12px;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:12px 16px;transition:border-color 0.2s;cursor:pointer;}
 .appt:hover{border-color:var(--cyan-border);}
@@ -204,7 +241,7 @@ td{padding:12px;vertical-align:middle;}
 .appt-period{font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;}
 .appt-body{flex:1;min-width:0;}
 .appt-patient-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.appt-meta{font-size:11px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.appt-meta{font-size:11px;color:var(--text3);margin-top:2px;}
 .appt-dr{display:flex;align-items:center;gap:8px;}
 .dr-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;}
 @media(max-width:600px){.appt-dr{display:none;}}
@@ -225,72 +262,27 @@ td{padding:12px;vertical-align:middle;}
 .act-dot{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;background:var(--s2);border:1px solid var(--border);z-index:1;}
 .act-action{font-size:13px;color:var(--text);font-weight:500;}
 .act-time{font-size:11px;color:var(--text3);margin-top:2px;}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;gap:10px;}
+.empty-icon{font-size:36px;opacity:0.4;}
+.empty-title{font-size:15px;font-weight:600;color:var(--text2);}
+.empty-sub{font-size:12px;color:var(--text3);}
 
-/* FILTER BAR */
-.filter-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
-.filter-chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border2);color:var(--text3);background:transparent;font-family:'Outfit',sans-serif;transition:all 0.18s;}
-.filter-chip:hover{border-color:var(--cyan-border);color:var(--text);}
-.filter-chip.active-chip{background:var(--cyan-soft);color:var(--cyan);border-color:var(--cyan-border);}
-
-/* ═══ PATIENT 360 PANEL ═══ */
-.patient-panel{
-  position:fixed;top:0;right:0;bottom:0;
-  width:500px;
-  background:var(--s1);
-  border-left:1px solid var(--border2);
-  z-index:200;
-  display:flex;flex-direction:column;
-  transform:translateX(100%);
-  transition:transform 0.35s cubic-bezier(.16,1,.3,1);
-  overflow:hidden;
-}
+/* PATIENT 360 PANEL */
+.patient-panel{position:fixed;top:0;right:0;bottom:0;width:500px;background:var(--s1);border-left:1px solid var(--border2);z-index:200;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.35s cubic-bezier(.16,1,.3,1);overflow:hidden;}
 .patient-panel.open{transform:translateX(0);}
 @media(max-width:600px){.patient-panel{width:100%;}}
-.panel-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199;
-  display:none;backdrop-filter:blur(2px);
-}
+.panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199;display:none;backdrop-filter:blur(2px);}
 .panel-overlay.show{display:block;}
-
-.panel-header{
-  padding:20px 24px;
-  border-bottom:1px solid var(--border);
-  background:linear-gradient(180deg,var(--s2),var(--s1));
-  flex-shrink:0;
-  position:relative;
-}
-.panel-close{
-  position:absolute;top:16px;right:16px;
-  width:32px;height:32px;border-radius:8px;
-  background:var(--s3);border:1px solid var(--border2);
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;font-size:14px;color:var(--text3);
-  transition:all 0.18s;
-}
-.panel-close:hover{background:var(--rose-soft);color:var(--rose);border-color:rgba(255,77,109,0.3);}
+.panel-header{padding:20px 24px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,var(--s2),var(--s1));flex-shrink:0;position:relative;}
+.panel-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;background:var(--s3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--text3);transition:all 0.18s;}
+.panel-close:hover{background:var(--rose-soft);color:var(--rose);}
 .panel-pt-meta{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
-.panel-avatar{
-  width:52px;height:52px;border-radius:14px;
-  background:linear-gradient(135deg,var(--cyan),var(--blue));
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Instrument Serif',serif;font-size:20px;
-  color:var(--bg);flex-shrink:0;
-}
+.panel-avatar{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--cyan),var(--blue));display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:20px;color:var(--bg);flex-shrink:0;}
 .panel-name{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);}
 .panel-code{font-size:11px;color:var(--text3);margin-top:2px;}
-.panel-status-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-
-/* STATUS ACTIONS */
 .action-group{display:flex;gap:6px;flex-wrap:wrap;}
-.action-btn{
-  display:flex;align-items:center;gap:6px;
-  padding:7px 13px;border-radius:9px;
-  font-size:12px;font-weight:600;
-  cursor:pointer;border:1px solid transparent;
-  font-family:'Outfit',sans-serif;
-  transition:all 0.18s;
-}
-.action-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.action-btn{display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid transparent;font-family:'Outfit',sans-serif;transition:all 0.18s;}
+.action-btn:disabled{opacity:0.45;cursor:not-allowed;}
 .action-btn.active-action{background:var(--cyan-soft);color:var(--cyan);border-color:var(--cyan-border);}
 .action-btn.active-action:hover:not(:disabled){background:var(--cyan);color:var(--bg);}
 .action-btn.critical-action{background:var(--rose-soft);color:var(--rose);border-color:rgba(255,77,109,0.3);}
@@ -299,38 +291,22 @@ td{padding:12px;vertical-align:middle;}
 .action-btn.pending-action:hover:not(:disabled){background:var(--gold);color:#000;}
 .action-btn.discharge-action{background:rgba(255,255,255,0.04);color:var(--text3);border-color:var(--border2);}
 .action-btn.discharge-action:hover:not(:disabled){background:var(--s3);color:var(--text);}
-
-/* PANEL TABS */
 .panel-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;}
 .panel-tab{flex:1;padding:13px;text-align:center;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.18s;}
 .panel-tab:hover{color:var(--text2);}
 .panel-tab.active-tab{color:var(--cyan);border-bottom-color:var(--cyan);}
-
-/* PANEL BODY */
 .panel-body{flex:1;overflow-y:auto;padding:20px 24px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
-
-/* PANEL INFO GRID */
 .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
 .info-cell{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px;}
 .info-label{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
 .info-value{font-size:14px;font-weight:600;color:var(--text);}
-
-/* ASSIGN DOCTOR */
-.assign-section{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;}
+.assign-section{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;}
 .assign-title{font-size:12px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;}
 .assign-row{display:flex;gap:8px;align-items:center;}
-.panel-select{
-  flex:1;background:var(--s1);border:1px solid var(--border2);
-  border-radius:9px;padding:8px 12px;font-size:13px;
-  color:var(--text);font-family:'Outfit',sans-serif;
-  cursor:pointer;outline:none;
-  transition:border-color 0.2s;
-}
+.panel-select{flex:1;background:var(--s1);border:1px solid var(--border2);border-radius:9px;padding:8px 12px;font-size:13px;color:var(--text);font-family:'Outfit',sans-serif;cursor:pointer;outline:none;transition:border-color 0.2s;}
 .panel-select:focus{border-color:var(--cyan-border);}
 .panel-select option{background:var(--s2);}
-
-/* TIMELINE */
-.timeline{display:flex;flex-direction:column;gap:0;}
+.timeline{display:flex;flex-direction:column;}
 .tl-item{display:flex;gap:14px;padding-bottom:20px;position:relative;}
 .tl-item::before{content:'';position:absolute;left:15px;top:30px;bottom:0;width:1px;background:linear-gradient(180deg,var(--border2),transparent);}
 .tl-item:last-child::before{display:none;}
@@ -342,44 +318,31 @@ td{padding:12px;vertical-align:middle;}
 .tl-label{font-size:13px;font-weight:600;color:var(--text);}
 .tl-time{font-size:11px;color:var(--text3);margin-top:3px;}
 .tl-note{font-size:12px;color:var(--text2);margin-top:6px;background:var(--s2);border-radius:8px;padding:8px 10px;border-left:2px solid var(--border2);}
-
-/* PANEL MINI TABLE */
-.mini-table{width:100%;border-collapse:collapse;font-size:12.5px;}
-.mini-table th{text-align:left;padding:8px 10px;color:var(--text3);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--border);}
-.mini-table td{padding:10px;border-bottom:1px solid rgba(22,32,53,0.8);color:var(--text2);}
-.mini-table tr:last-child td{border-bottom:none;}
-
-/* NOTES */
-.notes-area{
-  width:100%;background:var(--s2);border:1px solid var(--border2);
-  border-radius:10px;padding:12px;font-size:13px;
-  color:var(--text);font-family:'Outfit',sans-serif;
-  resize:vertical;min-height:100px;outline:none;
-  transition:border-color 0.2s;
-}
+.notes-area{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:10px;padding:12px;font-size:13px;color:var(--text);font-family:'Outfit',sans-serif;resize:vertical;min-height:100px;outline:none;transition:border-color 0.2s;}
 .notes-area:focus{border-color:var(--cyan-border);}
-.panel-save-btn{
-  margin-top:8px;padding:8px 16px;background:var(--cyan);
-  color:var(--bg);border:none;border-radius:8px;
-  font-size:12px;font-weight:700;cursor:pointer;
-  font-family:'Outfit',sans-serif;transition:all 0.18s;
-}
+.panel-save-btn{margin-top:8px;padding:8px 16px;background:var(--cyan);color:var(--bg);border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.18s;}
 .panel-save-btn:hover{box-shadow:0 4px 16px rgba(0,229,200,0.3);}
 
-/* ═══ ADD PATIENT MODAL ═══ */
-.modal-wrap{
-  position:fixed;inset:0;z-index:300;
-  display:none;align-items:center;justify-content:center;
-  padding:20px;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);
-}
+/* DELETE ZONE */
+.delete-zone{margin-top:20px;border:1px dashed rgba(255,77,109,0.3);border-radius:12px;padding:16px;background:rgba(255,77,109,0.03);}
+.delete-zone-title{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--rose);margin-bottom:6px;}
+.delete-zone-sub{font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.6;}
+
+/* CONFIRM DIALOG */
+.confirm-wrap{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);}
+.confirm-wrap.show{display:flex;}
+.confirm-box{background:var(--s1);border:1px solid rgba(255,77,109,0.35);border-radius:18px;padding:32px;max-width:380px;width:100%;animation:modalIn 0.25s cubic-bezier(.16,1,.3,1);text-align:center;}
+@keyframes modalIn{from{opacity:0;transform:scale(0.94);}to{opacity:1;transform:scale(1);}}
+.confirm-icon{font-size:40px;margin-bottom:12px;}
+.confirm-title{font-family:'Instrument Serif',serif;font-size:22px;color:var(--text);margin-bottom:8px;}
+.confirm-sub{font-size:13px;color:var(--text3);line-height:1.65;margin-bottom:24px;}
+.confirm-sub strong{color:var(--rose);}
+.confirm-actions{display:flex;gap:10px;justify-content:center;}
+
+/* ADD PATIENT MODAL */
+.modal-wrap{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);}
 .modal-wrap.show{display:flex;}
-.modal{
-  background:var(--s1);border:1px solid var(--border2);
-  border-radius:20px;width:100%;max-width:540px;
-  max-height:90vh;overflow-y:auto;
-  animation:modalIn 0.3s cubic-bezier(.16,1,.3,1);
-}
-@keyframes modalIn{from{opacity:0;transform:scale(0.95) translateY(16px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modal{background:var(--s1);border:1px solid var(--border2);border-radius:20px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;animation:modalIn 0.3s cubic-bezier(.16,1,.3,1);}
 .modal-hd{padding:24px 24px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .modal-title{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);}
 .modal-close{width:32px;height:32px;border-radius:8px;background:var(--s3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:14px;transition:all 0.18s;}
@@ -390,26 +353,14 @@ td{padding:12px;vertical-align:middle;}
 .form-group{display:flex;flex-direction:column;gap:6px;}
 .form-group.full{grid-column:1/-1;}
 .form-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase;}
-.form-input,.form-select{
-  background:var(--s2);border:1px solid var(--border2);
-  border-radius:9px;padding:10px 13px;font-size:13px;
-  color:var(--text);font-family:'Outfit',sans-serif;outline:none;
-  transition:border-color 0.2s;
-}
+.form-input,.form-select{background:var(--s2);border:1px solid var(--border2);border-radius:9px;padding:10px 13px;font-size:13px;color:var(--text);font-family:'Outfit',sans-serif;outline:none;transition:border-color 0.2s;}
 .form-input:focus,.form-select:focus{border-color:var(--cyan-border);}
 .form-select option{background:var(--s2);}
 .modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;}
 
 /* TOAST */
 .toast-container{position:fixed;bottom:24px;right:24px;z-index:500;display:flex;flex-direction:column;gap:8px;}
-.toast{
-  display:flex;align-items:center;gap:10px;
-  padding:12px 16px;border-radius:12px;
-  font-size:13px;font-weight:500;
-  animation:toastIn 0.3s cubic-bezier(.16,1,.3,1);
-  min-width:240px;max-width:320px;
-  box-shadow:0 8px 32px rgba(0,0,0,0.4);
-}
+.toast{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:500;animation:toastIn 0.3s cubic-bezier(.16,1,.3,1);min-width:240px;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,0.4);}
 @keyframes toastIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
 .toast.success{background:var(--s2);border:1px solid var(--cyan-border);color:var(--cyan);}
 .toast.error{background:var(--s2);border:1px solid rgba(255,77,109,0.4);color:var(--rose);}
@@ -422,999 +373,677 @@ td{padding:12px;vertical-align:middle;}
 .bn-item.active{color:var(--cyan);}
 .bn-icon{font-size:20px;}
 @media(max-width:768px){.bottom-nav{display:block;}.content{padding-bottom:80px;}}
-
-/* PROG BAR */
-.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:12px;}
-.prog-lbl{color:var(--text2);width:85px;flex-shrink:0;}
-.prog-bar-bg{flex:1;height:5px;background:var(--s3);border-radius:10px;overflow:hidden;}
-.prog-bar-fill{height:100%;border-radius:10px;}
-.prog-val{color:var(--text3);width:36px;text-align:right;flex-shrink:0;}
-
-/* EMPTY STATE */
-.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;gap:10px;}
-.empty-icon{font-size:36px;opacity:0.4;}
-.empty-title{font-size:15px;font-weight:600;color:var(--text2);}
-.empty-sub{font-size:12px;color:var(--text3);}
 </style>
 </head>
 <body>
 
-<!-- TOAST CONTAINER -->
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- PANEL OVERLAY -->
-<div class="panel-overlay" id="panelOverlay"></div>
-
-<!-- PATIENT 360 PANEL -->
-<div class="patient-panel" id="patientPanel">
-  <div class="panel-header">
-    <div class="panel-close" id="panelClose">✕</div>
-    <div class="panel-pt-meta">
-      <div class="panel-avatar" id="panelAvatar">—</div>
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <div class="login-brand">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div style="width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,var(--cyan),#008fa0);display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 6px 24px rgba(0,229,200,0.3);">⚕</div>
       <div>
-        <div class="panel-name" id="panelName">—</div>
-        <div class="panel-code" id="panelCode">—</div>
+        <div style="font-family:'Instrument Serif',serif;font-size:22px;">Medo<em style="color:var(--cyan);font-style:normal;">Scope</em></div>
+        <div style="font-size:9px;color:var(--text3);letter-spacing:2.5px;text-transform:uppercase;margin-top:2px;">Healthcare Intelligence</div>
       </div>
     </div>
-    <div class="panel-status-row">
+    <div>
+      <div class="brand-headline">Your clinic,<br><span>fully in view.</span></div>
+      <div class="brand-sub">Patient records, appointments, billing and clinical actions — one real-time system for modern healthcare teams.</div>
+      <div class="brand-stats">
+        <div class="brand-stat"><div class="brand-stat-icon">🏥</div><div><div class="brand-stat-label">Patient Management</div><div class="brand-stat-val">Admit, discharge &amp; transfer</div></div></div>
+        <div class="brand-stat"><div class="brand-stat-icon">📅</div><div><div class="brand-stat-label">Scheduling</div><div class="brand-stat-val">Full appointment control</div></div></div>
+        <div class="brand-stat"><div class="brand-stat-icon">💳</div><div><div class="brand-stat-label">Billing</div><div class="brand-stat-val">Track invoices live</div></div></div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);">© 2026 MedoScope · Secure Healthcare Platform</div>
+  </div>
+  <div class="login-form-wrap">
+    <div class="login-card">
+      <div class="login-card-title">Welcome back</div>
+      <div class="login-card-sub">Sign in to your <span>MedoScope</span> workspace</div>
+      <div class="login-error" id="loginError"></div>
+      <div class="form-field"><label>Email address</label><input type="email" id="loginEmail" placeholder="doctor@hospital.com" autocomplete="email"></div>
+      <div class="form-field"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="login-btn" id="loginBtn">Sign In</button>
+      <div class="login-note"><strong>First time?</strong> Go to your Supabase dashboard → Authentication → Users → Add user, then sign in here with that email and password.</div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appWrap">
+
+  <div class="panel-overlay" id="panelOverlay"></div>
+
+  <!-- PATIENT PANEL -->
+  <div class="patient-panel" id="patientPanel">
+    <div class="panel-header">
+      <div class="panel-close" id="panelClose">✕</div>
+      <div class="panel-pt-meta">
+        <div class="panel-avatar" id="panelAvatar">—</div>
+        <div><div class="panel-name" id="panelName">—</div><div class="panel-code" id="panelCode">—</div></div>
+      </div>
       <div class="action-group" id="statusActions"></div>
     </div>
-  </div>
-  <div class="panel-tabs">
-    <div class="panel-tab active-tab" data-tab="overview">Overview</div>
-    <div class="panel-tab" data-tab="timeline">Timeline</div>
-    <div class="panel-tab" data-tab="appointments">Appointments</div>
-    <div class="panel-tab" data-tab="billing">Billing</div>
-    <div class="panel-tab" data-tab="notes">Notes</div>
-  </div>
-  <div class="panel-body" id="panelBody">
-    <div class="loading"><div class="spinner"></div> Loading case…</div>
-  </div>
-</div>
-
-<!-- ADD PATIENT MODAL -->
-<div class="modal-wrap" id="addPatientModal">
-  <div class="modal">
-    <div class="modal-hd">
-      <div class="modal-title">Admit New Patient</div>
-      <div class="modal-close" id="modalClose">✕</div>
+    <div class="panel-tabs">
+      <div class="panel-tab active-tab" data-tab="overview">Overview</div>
+      <div class="panel-tab" data-tab="timeline">Timeline</div>
+      <div class="panel-tab" data-tab="appointments">Appts</div>
+      <div class="panel-tab" data-tab="billing">Billing</div>
+      <div class="panel-tab" data-tab="notes">Notes</div>
     </div>
-    <div class="modal-body">
-      <div class="form-grid">
-        <div class="form-group full"><div class="form-label">Full Name</div><input class="form-input" id="f-name" placeholder="Patient full name…" type="text"></div>
-        <div class="form-group"><div class="form-label">Age</div><input class="form-input" id="f-age" placeholder="—" type="number" min="0" max="150"></div>
-        <div class="form-group"><div class="form-label">Gender</div>
-          <select class="form-select" id="f-gender"><option value="M">Male</option><option value="F">Female</option></select>
-        </div>
-        <div class="form-group"><div class="form-label">Blood Type</div>
-          <select class="form-select" id="f-blood"><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
-        </div>
-        <div class="form-group"><div class="form-label">Department</div>
-          <select class="form-select" id="f-dept" onchange="updateDoctorOptions()"></select>
-        </div>
-        <div class="form-group full"><div class="form-label">Assigned Doctor</div>
-          <select class="form-select" id="f-doctor"></select>
-        </div>
-        <div class="form-group"><div class="form-label">Initial Status</div>
-          <select class="form-select" id="f-status"><option>Active</option><option>Pending</option><option>Critical</option></select>
-        </div>
-        <div class="form-group"><div class="form-label">Admission Date</div>
-          <input class="form-input" id="f-date" type="date"></div>
+    <div class="panel-body" id="panelBody"><div class="loading"><div class="spinner"></div></div></div>
+  </div>
+
+  <!-- CONFIRM DELETE -->
+  <div class="confirm-wrap" id="confirmWrap">
+    <div class="confirm-box">
+      <div class="confirm-icon">🗑️</div>
+      <div class="confirm-title" id="confirmTitle">Delete Patient?</div>
+      <div class="confirm-sub" id="confirmSub">This will permanently remove the patient and all linked records. <strong>This cannot be undone.</strong></div>
+      <div class="confirm-actions">
+        <button class="btn btn-outline" id="confirmCancel">Cancel</button>
+        <button class="btn btn-danger" id="confirmOk">Delete Permanently</button>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" id="modalCancelBtn">Cancel</button>
-      <button class="btn btn-primary" id="modalSubmitBtn">Admit Patient</button>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="overlay"></div>
-
-<!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar">
-  <div class="toggle-btn" id="toggleBtn" title="Collapse sidebar">‹</div>
-  <div class="logo-area">
-    <div class="logo-icon">⚕</div>
-    <div>
-      <div class="logo-name">Medo<em>Scope</em></div>
-      <div class="logo-tag">Healthcare Intelligence</div>
-    </div>
-  </div>
-  <div class="nav-section">
-    <div class="nav-section-label">Core</div>
-    <div class="nav-item active" data-page="overview"><div class="nav-icon">◈</div><span class="nav-label-text">Overview</span></div>
-    <div class="nav-item" data-page="patients"><div class="nav-icon">👤</div><span class="nav-label-text">Patients</span><span class="nav-badge" id="badge-critical">—</span></div>
-    <div class="nav-item" data-page="appointments"><div class="nav-icon">📅</div><span class="nav-label-text">Appointments</span><span class="nav-badge amber" id="badge-appt">—</span></div>
-  </div>
-  <div class="nav-section">
-    <div class="nav-section-label">Finance</div>
-    <div class="nav-item" data-page="billing"><div class="nav-icon">💳</div><span class="nav-label-text">Billing</span></div>
-  </div>
-  <div class="nav-section">
-    <div class="nav-section-label">System</div>
-    <div class="nav-item" data-page=""><div class="nav-icon">⚙</div><span class="nav-label-text">Settings</span></div>
-  </div>
-  <div class="sidebar-bottom">
-    <div class="doc-card">
-      <div class="doc-avatar">AH</div>
-      <div class="doc-info">
-        <div class="doc-name">Dr. Ahmed Hassan</div>
-        <div class="doc-role">Chief Administrator</div>
-      </div>
-      <div class="status-dot"></div>
-    </div>
-  </div>
-</aside>
-
-<!-- MAIN -->
-<div class="main">
-  <div class="topbar">
-    <div class="hamburger" id="hamburger">☰</div>
-    <div class="topbar-left">
-      <div class="page-eyebrow" id="eyebrow">Dashboard</div>
-      <div class="page-heading" id="heading">Good morning, Dr. Hassan</div>
-    </div>
-    <div class="topbar-actions">
-      <div class="search">🔍&nbsp; Search patients…</div>
-      <div class="db-status"><div class="db-dot" id="dbDot"></div><span id="dbLabel">Connecting…</span></div>
-      <div class="notif-btn">🔔<div class="notif-dot"></div></div>
-      <button class="btn btn-outline hide-sm" id="topExportBtn">Export</button>
-      <button class="btn btn-primary" id="topNewPatientBtn">+ Admit</button>
-    </div>
   </div>
 
-  <div class="content">
-
-    <!-- OVERVIEW -->
-    <div class="page active" id="page-overview">
-      <div class="alert-banner" id="criticalBanner">
-        <div style="font-size:18px;">⚠️</div>
-        <div class="alert-text"><strong id="critical-count">3 Critical Patients</strong> require immediate physician review — ICU Wards B, C &amp; D.</div>
-        <button class="alert-action" id="viewCasesBtn">View Cases →</button>
-      </div>
-      <div class="kpi-grid">
-        <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🏥</div><div class="kpi-trend up">↑ 12%</div></div><div class="kpi-val" id="kpi-total">—</div><div class="kpi-lbl">Total Patients</div></div>
-        <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">📅</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="kpi-appt">—</div><div class="kpi-lbl">Appointments</div></div>
-        <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">💰</div><div class="kpi-trend up">↑ 8.3%</div></div><div class="kpi-val" id="kpi-revenue">—</div><div class="kpi-lbl">Total Billed</div></div>
-        <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🚨</div><div class="kpi-trend dn">Urgent</div></div><div class="kpi-val" id="kpi-critical">—</div><div class="kpi-lbl">Critical Cases</div></div>
-      </div>
-      <div class="grid-2-1">
-        <div class="card">
-          <div class="card-hd"><div><div class="card-title">Patient Admissions</div><div class="card-sub">Historical trend</div></div><span class="pill pill-cyan">Monthly</span></div>
-          <canvas id="chart-admissions" height="120"></canvas>
+  <!-- ADD PATIENT MODAL -->
+  <div class="modal-wrap" id="addPatientModal">
+    <div class="modal">
+      <div class="modal-hd"><div class="modal-title">Admit New Patient</div><div class="modal-close" id="modalClose">✕</div></div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group full"><div class="form-label">Full Name</div><input class="form-input" id="f-name" placeholder="Patient full name…" type="text"></div>
+          <div class="form-group"><div class="form-label">Age</div><input class="form-input" id="f-age" placeholder="—" type="number" min="0" max="150"></div>
+          <div class="form-group"><div class="form-label">Gender</div><select class="form-select" id="f-gender"><option value="M">Male</option><option value="F">Female</option></select></div>
+          <div class="form-group"><div class="form-label">Blood Type</div><select class="form-select" id="f-blood"><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+          <div class="form-group"><div class="form-label">Department</div><select class="form-select" id="f-dept" onchange="updateDoctorOptions()"></select></div>
+          <div class="form-group full"><div class="form-label">Assigned Doctor</div><select class="form-select" id="f-doctor"></select></div>
+          <div class="form-group"><div class="form-label">Initial Status</div><select class="form-select" id="f-status"><option>Active</option><option>Pending</option><option>Critical</option></select></div>
+          <div class="form-group"><div class="form-label">Admission Date</div><input class="form-input" id="f-date" type="date"></div>
         </div>
-        <div class="card">
-          <div class="card-hd"><div><div class="card-title">Department Load</div><div class="card-sub">Current distribution</div></div></div>
-          <canvas id="chart-dept" height="130"></canvas>
-          <div class="legend">
-            <div class="leg-item"><div class="leg-dot" style="background:var(--cyan)"></div><span class="leg-lbl">Cardiology</span><span class="leg-val" id="dept-cardiology">—</span></div>
-            <div class="leg-item"><div class="leg-dot" style="background:var(--blue)"></div><span class="leg-lbl">Orthopedics</span><span class="leg-val" id="dept-orthopedics">—</span></div>
-            <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div><span class="leg-lbl">Neurology</span><span class="leg-val" id="dept-neurology">—</span></div>
-            <div class="leg-item"><div class="leg-dot" style="background:var(--rose)"></div><span class="leg-lbl">General</span><span class="leg-val" id="dept-general">—</span></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-outline" id="modalCancelBtn">Cancel</button><button class="btn btn-primary" id="modalSubmitBtn">Admit Patient</button></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="toggle-btn" id="toggleBtn">‹</div>
+    <div class="logo-area">
+      <div class="logo-icon">⚕</div>
+      <div><div class="logo-name">Medo<em>Scope</em></div><div class="logo-tag">Healthcare Intelligence</div></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Core</div>
+      <div class="nav-item active" data-page="overview"><div class="nav-icon">◈</div><span class="nav-label-text">Overview</span></div>
+      <div class="nav-item" data-page="patients"><div class="nav-icon">👤</div><span class="nav-label-text">Patients</span><span class="nav-badge" id="badge-critical">—</span></div>
+      <div class="nav-item" data-page="appointments"><div class="nav-icon">📅</div><span class="nav-label-text">Appointments</span><span class="nav-badge amber" id="badge-appt">—</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Finance</div>
+      <div class="nav-item" data-page="billing"><div class="nav-icon">💳</div><span class="nav-label-text">Billing</span></div>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="doc-card">
+        <div class="doc-avatar" id="sidebarInitials">—</div>
+        <div class="doc-info"><div class="doc-name">Administrator</div><div class="user-email" id="sidebarEmail">—</div></div>
+      </div>
+      <div class="logout-btn" id="logoutBtn"><div class="logout-icon">↩</div><span class="nav-label-text">Sign Out</span></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="hamburger" id="hamburger">☰</div>
+      <div class="topbar-left">
+        <div class="page-eyebrow" id="eyebrow">Dashboard</div>
+        <div class="page-heading" id="heading">Good morning</div>
+      </div>
+      <div class="topbar-actions">
+        <div class="search">🔍&nbsp; Search patients…</div>
+        <div class="db-status"><div class="db-dot" id="dbDot"></div><span id="dbLabel">Connecting…</span></div>
+        <div class="notif-btn">🔔<div class="notif-dot"></div></div>
+        <button class="btn btn-primary" id="topNewPatientBtn">+ Admit</button>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- OVERVIEW -->
+      <div class="page active" id="page-overview">
+        <div class="alert-banner" id="criticalBanner">
+          <div style="font-size:18px;">⚠️</div>
+          <div class="alert-text"><strong id="critical-count">0 Critical Patients</strong> require immediate review.</div>
+          <button class="alert-action" id="viewCasesBtn">View Cases →</button>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🏥</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="kpi-total">—</div><div class="kpi-lbl">Total Patients</div></div>
+          <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">📅</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="kpi-appt">—</div><div class="kpi-lbl">Appointments</div></div>
+          <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">💰</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="kpi-revenue">—</div><div class="kpi-lbl">Total Billed</div></div>
+          <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🚨</div><div class="kpi-trend dn">Urgent</div></div><div class="kpi-val" id="kpi-critical">—</div><div class="kpi-lbl">Critical Cases</div></div>
+        </div>
+        <div class="grid-2-1">
+          <div class="card">
+            <div class="card-hd"><div><div class="card-title">Patient Admissions</div><div class="card-sub">Historical trend</div></div><span class="pill pill-cyan">Monthly</span></div>
+            <canvas id="chart-admissions" height="120"></canvas>
           </div>
-        </div>
-      </div>
-      <div class="grid-2-1">
-        <div class="card" style="padding:0 20px;">
-          <div style="padding:18px 0 0;">
-            <div class="sec-hdr">
-              <div class="sec-title">Recent Patients</div>
-              <button class="btn btn-outline" style="font-size:12px;padding:6px 12px;" id="btn-all-patients">View All →</button>
+          <div class="card">
+            <div class="card-hd"><div><div class="card-title">Department Load</div><div class="card-sub">Current</div></div></div>
+            <canvas id="chart-dept" height="130"></canvas>
+            <div class="legend">
+              <div class="leg-item"><div class="leg-dot" style="background:var(--cyan)"></div><span class="leg-lbl">Cardiology</span><span class="leg-val" id="dept-cardiology">0</span></div>
+              <div class="leg-item"><div class="leg-dot" style="background:var(--blue)"></div><span class="leg-lbl">Orthopedics</span><span class="leg-val" id="dept-orthopedics">0</span></div>
+              <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div><span class="leg-lbl">Neurology</span><span class="leg-val" id="dept-neurology">0</span></div>
+              <div class="leg-item"><div class="leg-dot" style="background:var(--rose)"></div><span class="leg-lbl">General</span><span class="leg-val" id="dept-general">0</span></div>
             </div>
           </div>
-          <div id="overview-patients-wrap"><div class="loading"><div class="spinner"></div> Loading patients…</div></div>
         </div>
-        <div class="card">
-          <div class="card-hd"><div><div class="card-title">Recent Activity</div><div class="card-sub">Last 2 hours</div></div></div>
-          <div class="activity">
-            <div class="act-item"><div class="act-dot">🩺</div><div><div class="act-action">Karim Youssef moved to ICU</div><div class="act-time">9 mins ago · Dr. Tarek Said</div></div></div>
-            <div class="act-item"><div class="act-dot">📄</div><div><div class="act-action">New lab results — Sara El-Masry</div><div class="act-time">31 mins ago · Lab Dept</div></div></div>
-            <div class="act-item"><div class="act-dot">💊</div><div><div class="act-action">Prescription updated — Nadia Fouad</div><div class="act-time">1h 12m ago · Dr. Nour Amin</div></div></div>
-            <div class="act-item"><div class="act-dot">✅</div><div><div class="act-action">Omar Sharaf discharged</div><div class="act-time">1h 55m ago · Dr. Hana Kamal</div></div></div>
+        <div class="grid-2-1">
+          <div class="card" style="padding:0 20px;">
+            <div style="padding:18px 0 0;"><div class="sec-hdr"><div class="sec-title">Recent Patients</div><button class="btn btn-outline" style="font-size:12px;padding:6px 12px;" id="btn-all-patients">View All →</button></div></div>
+            <div id="overview-patients-wrap"><div class="loading"><div class="spinner"></div></div></div>
+          </div>
+          <div class="card">
+            <div class="card-hd"><div><div class="card-title">Activity Feed</div><div class="card-sub">System log</div></div></div>
+            <div class="activity" id="activityFeed">
+              <div class="act-item"><div class="act-dot">◈</div><div><div class="act-action">MedoScope connected</div><div class="act-time">Live database ready</div></div></div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- PATIENTS -->
-    <div class="page" id="page-patients">
-      <div class="kpi-grid">
-        <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">👤</div><div class="kpi-trend up">↑ 12%</div></div><div class="kpi-val" id="pt-kpi-total">—</div><div class="kpi-lbl">Registered</div></div>
-        <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">✅</div><div class="kpi-trend nt">Live</div></div><div class="kpi-val" id="pt-kpi-active">—</div><div class="kpi-lbl">Active</div></div>
-        <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">⏳</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="pt-kpi-pending">—</div><div class="kpi-lbl">Pending</div></div>
-        <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🚨</div><div class="kpi-trend dn">Urgent</div></div><div class="kpi-val" id="pt-kpi-critical">—</div><div class="kpi-lbl">Critical</div></div>
-      </div>
-      <div class="sec-hdr">
-        <div class="sec-title">Patient Registry</div>
-        <button class="btn btn-primary" style="font-size:12px;padding:7px 14px;" id="admitNewBtn">+ Admit Patient</button>
-      </div>
-      <div class="filter-bar" id="patientFilters">
-        <button class="filter-chip active-chip" data-filter="All">All</button>
-        <button class="filter-chip" data-filter="Active">Active</button>
-        <button class="filter-chip" data-filter="Critical">⚠ Critical</button>
-        <button class="filter-chip" data-filter="Pending">Pending</button>
-        <button class="filter-chip" data-filter="Discharged">Discharged</button>
-      </div>
-      <div class="card" style="padding:0 20px;">
-        <div id="patients-table-wrap"><div class="loading"><div class="spinner"></div> Loading from database…</div></div>
-      </div>
-    </div>
-
-    <!-- APPOINTMENTS -->
-    <div class="page" id="page-appointments">
-      <div class="kpi-grid">
-        <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">📅</div><div class="kpi-trend nt">Today</div></div><div class="kpi-val" id="appt-kpi-total">—</div><div class="kpi-lbl">Total</div></div>
-        <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">✅</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="appt-kpi-confirmed">—</div><div class="kpi-lbl">Confirmed</div></div>
-        <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">⏳</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="appt-kpi-pending">—</div><div class="kpi-lbl">Pending</div></div>
-        <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">❌</div><div class="kpi-trend dn">—</div></div><div class="kpi-val" id="appt-kpi-cancelled">—</div><div class="kpi-lbl">Cancelled</div></div>
-      </div>
-      <div class="sec-hdr">
-        <div class="sec-title">Today's Schedule</div>
-        <button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">+ Book</button>
-      </div>
-      <div id="appt-list-wrap"><div class="loading"><div class="spinner"></div> Loading appointments…</div></div>
-    </div>
-
-    <!-- BILLING -->
-    <div class="page" id="page-billing">
-      <div class="kpi-grid">
-        <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">💰</div><div class="kpi-trend up">↑ 8.3%</div></div><div class="kpi-val" id="bill-kpi-total">—</div><div class="kpi-lbl">Total Billed</div></div>
-        <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">✅</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="bill-kpi-paid">—</div><div class="kpi-lbl">Collected</div></div>
-        <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">⏳</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="bill-kpi-pending">—</div><div class="kpi-lbl">Outstanding</div></div>
-        <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🚫</div><div class="kpi-trend dn">—</div></div><div class="kpi-val" id="bill-kpi-overdue">—</div><div class="kpi-lbl">Overdue</div></div>
-      </div>
-      <div class="grid-2">
-        <div class="card">
-          <div class="card-hd"><div><div class="card-title">Revenue Trend</div><div class="card-sub">Monthly</div></div><span class="pill pill-gold">Monthly</span></div>
-          <canvas id="chart-revenue" height="140"></canvas>
+      <!-- PATIENTS -->
+      <div class="page" id="page-patients">
+        <div class="kpi-grid">
+          <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">👤</div><div class="kpi-trend nt">Live</div></div><div class="kpi-val" id="pt-kpi-total">—</div><div class="kpi-lbl">Registered</div></div>
+          <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">✅</div><div class="kpi-trend nt">Live</div></div><div class="kpi-val" id="pt-kpi-active">—</div><div class="kpi-lbl">Active</div></div>
+          <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">⏳</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="pt-kpi-pending">—</div><div class="kpi-lbl">Pending</div></div>
+          <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🚨</div><div class="kpi-trend dn">Urgent</div></div><div class="kpi-val" id="pt-kpi-critical">—</div><div class="kpi-lbl">Critical</div></div>
         </div>
-        <div class="card">
-          <div class="card-hd"><div><div class="card-title">Collection Rate</div><div class="card-sub">From database</div></div></div>
-          <canvas id="chart-payment" height="120"></canvas>
-          <div class="legend" style="margin-top:14px;">
-            <div class="leg-item"><div class="leg-dot" style="background:var(--cyan)"></div><span class="leg-lbl">Paid</span><span class="leg-val" id="leg-paid">—</span></div>
-            <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div><span class="leg-lbl">Outstanding</span><span class="leg-val" id="leg-pending">—</span></div>
-            <div class="leg-item"><div class="leg-dot" style="background:var(--rose)"></div><span class="leg-lbl">Overdue</span><span class="leg-val" id="leg-overdue">—</span></div>
-          </div>
+        <div class="sec-hdr"><div class="sec-title">Patient Registry</div><button class="btn btn-primary" style="font-size:12px;padding:7px 14px;" id="admitNewBtn">+ Admit Patient</button></div>
+        <div class="filter-bar" id="patientFilters">
+          <button class="filter-chip active-chip" data-filter="All">All</button>
+          <button class="filter-chip" data-filter="Active">Active</button>
+          <button class="filter-chip" data-filter="Critical">⚠ Critical</button>
+          <button class="filter-chip" data-filter="Pending">Pending</button>
+          <button class="filter-chip" data-filter="Discharged">Discharged</button>
         </div>
+        <div class="card" style="padding:0 20px;"><div id="patients-table-wrap"><div class="loading"><div class="spinner"></div></div></div></div>
       </div>
-      <div class="sec-hdr"><div class="sec-title">Invoices</div><button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">+ New Invoice</button></div>
-      <div class="card" id="invoices-wrap"><div class="loading"><div class="spinner"></div> Loading invoices…</div></div>
+
+      <!-- APPOINTMENTS -->
+      <div class="page" id="page-appointments">
+        <div class="kpi-grid">
+          <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">📅</div><div class="kpi-trend nt">Total</div></div><div class="kpi-val" id="appt-kpi-total">—</div><div class="kpi-lbl">Total</div></div>
+          <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">✅</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="appt-kpi-confirmed">—</div><div class="kpi-lbl">Confirmed</div></div>
+          <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">⏳</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="appt-kpi-pending">—</div><div class="kpi-lbl">Pending</div></div>
+          <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">❌</div><div class="kpi-trend dn">—</div></div><div class="kpi-val" id="appt-kpi-cancelled">—</div><div class="kpi-lbl">Cancelled</div></div>
+        </div>
+        <div class="sec-hdr"><div class="sec-title">Schedule</div><button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">+ Book</button></div>
+        <div id="appt-list-wrap"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+
+      <!-- BILLING -->
+      <div class="page" id="page-billing">
+        <div class="kpi-grid">
+          <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">💰</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="bill-kpi-total">—</div><div class="kpi-lbl">Total Billed</div></div>
+          <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">✅</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="bill-kpi-paid">—</div><div class="kpi-lbl">Collected</div></div>
+          <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">⏳</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="bill-kpi-pending">—</div><div class="kpi-lbl">Outstanding</div></div>
+          <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🚫</div><div class="kpi-trend dn">—</div></div><div class="kpi-val" id="bill-kpi-overdue">—</div><div class="kpi-lbl">Overdue</div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card"><div class="card-hd"><div><div class="card-title">Revenue Trend</div><div class="card-sub">Monthly</div></div><span class="pill pill-gold">Monthly</span></div><canvas id="chart-revenue" height="140"></canvas></div>
+          <div class="card"><div class="card-hd"><div><div class="card-title">Collection Rate</div></div></div><canvas id="chart-payment" height="120"></canvas><div class="legend" style="margin-top:14px;"><div class="leg-item"><div class="leg-dot" style="background:var(--cyan)"></div><span class="leg-lbl">Paid</span><span class="leg-val" id="leg-paid">—</span></div><div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div><span class="leg-lbl">Outstanding</span><span class="leg-val" id="leg-pending">—</span></div><div class="leg-item"><div class="leg-dot" style="background:var(--rose)"></div><span class="leg-lbl">Overdue</span><span class="leg-val" id="leg-overdue">—</span></div></div></div>
+        </div>
+        <div class="sec-hdr"><div class="sec-title">Invoices</div><button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">+ New Invoice</button></div>
+        <div class="card" id="invoices-wrap"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+
     </div>
+  </div>
 
-  </div><!-- /content -->
-</div><!-- /main -->
-
-<!-- MOBILE BOTTOM NAV -->
-<div class="bottom-nav">
-  <div class="bottom-nav-inner">
-    <div class="bn-item active" data-page="overview"><div class="bn-icon">◈</div>Overview</div>
-    <div class="bn-item" data-page="patients"><div class="bn-icon">👤</div>Patients</div>
-    <div class="bn-item" data-page="appointments"><div class="bn-icon">📅</div>Schedule</div>
-    <div class="bn-item" data-page="billing"><div class="bn-icon">💳</div>Billing</div>
+  <div class="bottom-nav">
+    <div class="bottom-nav-inner">
+      <div class="bn-item active" data-page="overview"><div class="bn-icon">◈</div>Overview</div>
+      <div class="bn-item" data-page="patients"><div class="bn-icon">👤</div>Patients</div>
+      <div class="bn-item" data-page="appointments"><div class="bn-icon">📅</div>Schedule</div>
+      <div class="bn-item" data-page="billing"><div class="bn-icon">💳</div>Billing</div>
+    </div>
   </div>
 </div>
 
 <script>
-// ═══ SUPABASE ═══
 const { createClient } = supabase;
 const sb = createClient(
   'https://ixiajdnykewavnxbgmvo.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4aWFqZG55a2V3YXZueGJnbXZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMzA5MTQsImV4cCI6MjA5MjkwNjkxNH0.wKyCZyXEF8wqlJSW3wbJMscPazuSA-7648QnawprqYI'
 );
 
-// ═══ GLOBAL STATE ═══
-let allPatients = [], allDepts = [], allDoctors = [];
-let currentPatient = null;
-let activeTab = 'overview';
-let patientFilter = 'All';
+// ═══ AUTH ═══
+sb.auth.onAuthStateChange((event, session) => {
+  if (session) showApp(session.user);
+  else showLogin();
+});
+
+function showApp(user) {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appWrap').classList.add('ready');
+  const email = user.email || '';
+  document.getElementById('sidebarEmail').textContent = email;
+  document.getElementById('sidebarInitials').textContent = email.slice(0,2).toUpperCase();
+  const h = new Date().getHours();
+  document.getElementById('heading').textContent = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  if (!loaded['overview']) { loadOverview(); loaded['overview'] = true; }
+}
+function showLogin() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('appWrap').classList.remove('ready');
+}
+
+document.getElementById('loginBtn').addEventListener('click', doLogin);
+document.getElementById('loginPassword').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+document.getElementById('loginEmail').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('loginPassword').focus(); });
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  const btn = document.getElementById('loginBtn');
+  errEl.classList.remove('show');
+  if (!email||!password) { errEl.textContent='Please enter your email and password.'; errEl.classList.add('show'); return; }
+  btn.textContent='Signing in…'; btn.disabled=true;
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  btn.textContent='Sign In'; btn.disabled=false;
+  if (error) { errEl.textContent=error.message; errEl.classList.add('show'); }
+}
+document.getElementById('logoutBtn').addEventListener('click', () => sb.auth.signOut());
+
+// ═══ STATE ═══
+let allPatients=[], allDepts=[], allDoctors=[];
+let currentPatient=null, activeTab='overview', patientFilter='All';
+const loaded={};
 
 // ═══ HELPERS ═══
-function fmt(n) { return n >= 1000 ? '$' + (n/1000).toFixed(1) + 'K' : '$' + n; }
-function badgeClass(s) {
-  const m = { Active:'badge-active', Critical:'badge-critical', Pending:'badge-pending', Discharged:'badge-discharged', Confirmed:'badge-active', Urgent:'badge-critical', Cancelled:'badge-discharged' };
-  return m[s] || 'badge-discharged';
-}
-function pillClass(b) {
-  const m = { 'A+':'pill-rose','O-':'pill-muted','B+':'pill-blue','AB+':'pill-cyan','O+':'pill-rose','A-':'pill-muted','B-':'pill-blue' };
-  return m[b] || 'pill-muted';
-}
-function initials(name) {
-  if (!name) return '?';
-  return name.split(' ').filter(w => w.length > 1).slice(0,2).map(w => w[0].toUpperCase()).join('');
-}
-
-// ═══ TOAST ═══
-function toast(msg, type = 'success') {
-  const el = document.createElement('div');
-  el.className = `toast ${type}`;
-  const icon = { success:'✓', error:'✕', info:'ℹ' }[type] || '✓';
-  el.innerHTML = `<span style="font-size:16px;">${icon}</span><span>${msg}</span>`;
+function fmt(n){ return n>=1000?'$'+(n/1000).toFixed(1)+'K':'$'+n; }
+function badgeClass(s){ const m={Active:'badge-active',Critical:'badge-critical',Pending:'badge-pending',Discharged:'badge-discharged',Confirmed:'badge-active',Urgent:'badge-critical',Cancelled:'badge-discharged'}; return m[s]||'badge-discharged'; }
+function pillClass(b){ const m={'A+':'pill-rose','O-':'pill-muted','B+':'pill-blue','AB+':'pill-cyan','O+':'pill-rose','A-':'pill-muted','B-':'pill-blue'}; return m[b]||'pill-muted'; }
+function initials(name){ if(!name) return '?'; return name.split(' ').filter(w=>w.length>1).slice(0,2).map(w=>w[0].toUpperCase()).join(''); }
+function toast(msg, type='success'){
+  const el=document.createElement('div'); el.className=`toast ${type}`;
+  const icon={success:'✓',error:'✕',info:'ℹ'}[type]||'✓';
+  el.innerHTML=`<span style="font-size:16px;">${icon}</span><span>${msg}</span>`;
   document.getElementById('toastContainer').appendChild(el);
-  setTimeout(() => el.remove(), 3200);
+  setTimeout(()=>el.remove(),3200);
+}
+function logActivity(icon,action,detail){
+  const feed=document.getElementById('activityFeed'); if(!feed) return;
+  const item=document.createElement('div'); item.className='act-item';
+  item.innerHTML=`<div class="act-dot">${icon}</div><div><div class="act-action">${action}</div><div class="act-time">${detail}</div></div>`;
+  feed.prepend(item);
+  while(feed.children.length>6) feed.removeChild(feed.lastChild);
 }
 
-// ═══ NAVIGATION ═══
-const META = {
-  overview:     { eyebrow:'Dashboard',          heading:'Good morning, Dr. Hassan' },
-  patients:     { eyebrow:'Patient Management', heading:'Patient Records' },
-  appointments: { eyebrow:'Schedule',           heading:'Appointments' },
-  billing:      { eyebrow:'Finance',            heading:'Billing & Revenue' },
-};
-const loaded = {};
-
-function goTo(pageId) {
-  if (!pageId || !META[pageId]) return;
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item, .bn-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + pageId).classList.add('active');
-  document.querySelectorAll(`[data-page="${pageId}"]`).forEach(el => el.classList.add('active'));
-  document.getElementById('eyebrow').textContent = META[pageId].eyebrow;
-  document.getElementById('heading').textContent = META[pageId].heading;
+// ═══ NAV ═══
+const META={overview:{eyebrow:'Dashboard',heading:null},patients:{eyebrow:'Patient Management',heading:'Patient Records'},appointments:{eyebrow:'Schedule',heading:'Appointments'},billing:{eyebrow:'Finance',heading:'Billing & Revenue'}};
+function goTo(pageId){
+  if(!pageId||!META[pageId]) return;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item, .bn-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+pageId).classList.add('active');
+  document.querySelectorAll(`[data-page="${pageId}"]`).forEach(el=>el.classList.add('active'));
+  document.getElementById('eyebrow').textContent=META[pageId].eyebrow;
+  if(META[pageId].heading) document.getElementById('heading').textContent=META[pageId].heading;
   closeMobileSidebar();
-  if (!loaded[pageId]) { loaded[pageId] = true; loadPage(pageId); }
+  if(!loaded[pageId]){loaded[pageId]=true;loadPage(pageId);}
 }
-
-document.querySelectorAll('[data-page]').forEach(el => {
-  el.addEventListener('click', () => goTo(el.dataset.page));
-});
-document.getElementById('btn-all-patients').addEventListener('click', () => goTo('patients'));
-document.getElementById('viewCasesBtn').addEventListener('click', () => {
-  goTo('patients');
-  setTimeout(() => applyFilter('Critical'), 200);
-});
+document.querySelectorAll('[data-page]').forEach(el=>el.addEventListener('click',()=>goTo(el.dataset.page)));
+document.getElementById('btn-all-patients').addEventListener('click',()=>goTo('patients'));
+document.getElementById('viewCasesBtn').addEventListener('click',()=>{goTo('patients');setTimeout(()=>applyFilter('Critical'),150);});
 
 // ═══ SIDEBAR ═══
-const sidebar = document.getElementById('sidebar');
-const toggleBtn = document.getElementById('toggleBtn');
-let collapsed = false;
-toggleBtn.addEventListener('click', () => {
-  collapsed = !collapsed;
-  sidebar.classList.toggle('collapsed', collapsed);
-  toggleBtn.textContent = collapsed ? '›' : '‹';
-});
+const sidebar=document.getElementById('sidebar');
+let collapsed=false;
+document.getElementById('toggleBtn').addEventListener('click',()=>{collapsed=!collapsed;sidebar.classList.toggle('collapsed',collapsed);document.getElementById('toggleBtn').textContent=collapsed?'›':'‹';});
+function openMobileSidebar(){sidebar.classList.add('mobile-open');document.getElementById('overlay').classList.add('show');}
+function closeMobileSidebar(){sidebar.classList.remove('mobile-open');document.getElementById('overlay').classList.remove('show');}
+document.getElementById('hamburger').addEventListener('click',openMobileSidebar);
+document.getElementById('overlay').addEventListener('click',closeMobileSidebar);
 
-// ═══ MOBILE SIDEBAR ═══
-const hamburger = document.getElementById('hamburger');
-const overlay = document.getElementById('overlay');
-function openMobileSidebar() { sidebar.classList.add('mobile-open'); overlay.classList.add('show'); }
-function closeMobileSidebar() { sidebar.classList.remove('mobile-open'); overlay.classList.remove('show'); }
-hamburger.addEventListener('click', openMobileSidebar);
-overlay.addEventListener('click', closeMobileSidebar);
+// ═══ CHARTS ═══
+Chart.defaults.color='#4a6080'; Chart.defaults.borderColor='#162035'; Chart.defaults.font.family='Outfit';
+const TIP={backgroundColor:'#0c1422',borderColor:'#1e2f48',borderWidth:1,titleColor:'#dce8f5',bodyColor:'#8ea8c8',padding:10};
+new Chart(document.getElementById('chart-admissions'),{type:'line',data:{labels:['Oct','Nov','Dec','Jan','Feb','Mar','Apr'],datasets:[{data:[210,245,198,280,310,295,340],borderColor:'#00e5c8',backgroundColor:ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,180);g.addColorStop(0,'rgba(0,229,200,0.18)');g.addColorStop(1,'rgba(0,229,200,0)');return g;},fill:true,tension:0.45,pointBackgroundColor:'#00e5c8',pointRadius:4,pointHoverRadius:7,borderWidth:2.5}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:TIP},scales:{x:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'}},y:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'},beginAtZero:false}}}});
+let deptChart=new Chart(document.getElementById('chart-dept'),{type:'doughnut',data:{datasets:[{data:[1,1,1,1],backgroundColor:['#00e5c8','#4d9fff','#e8b84b','#ff4d6d'],borderWidth:0,hoverOffset:8}]},options:{responsive:true,cutout:'72%',plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:c=>' '+c.parsed}}}}});
 
-// ═══ CHART DEFAULTS ═══
-Chart.defaults.color = '#4a6080';
-Chart.defaults.borderColor = '#162035';
-Chart.defaults.font.family = 'Outfit';
-const TIP = { backgroundColor:'#0c1422', borderColor:'#1e2f48', borderWidth:1, titleColor:'#dce8f5', bodyColor:'#8ea8c8', padding:10 };
-
-// ═══ STATIC CHARTS ═══
-new Chart(document.getElementById('chart-admissions'), {
-  type:'line',
-  data:{ labels:['Oct','Nov','Dec','Jan','Feb','Mar','Apr'],
-    datasets:[{ data:[210,245,198,280,310,295,340], borderColor:'#00e5c8',
-      backgroundColor:function(ctx){ var g=ctx.chart.ctx.createLinearGradient(0,0,0,180); g.addColorStop(0,'rgba(0,229,200,0.18)'); g.addColorStop(1,'rgba(0,229,200,0)'); return g; },
-      fill:true,tension:0.45,pointBackgroundColor:'#00e5c8',pointRadius:4,pointHoverRadius:7,borderWidth:2.5 }] },
-  options:{ responsive:true, plugins:{ legend:{display:false},tooltip:TIP }, scales:{ x:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'}}, y:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'},beginAtZero:false} } }
-});
-
-let deptChart = new Chart(document.getElementById('chart-dept'), {
-  type:'doughnut',
-  data:{ datasets:[{ data:[1,1,1,1], backgroundColor:['#00e5c8','#4d9fff','#e8b84b','#ff4d6d'], borderWidth:0, hoverOffset:8 }] },
-  options:{ responsive:true, cutout:'72%', plugins:{ legend:{display:false}, tooltip:{ ...TIP, callbacks:{ label:c => ' '+c.parsed } } } }
-});
-
-// ═══ LOAD OVERVIEW ═══
-async function loadOverview() {
-  try {
-    const [{ data: pts }, { data: appts }, { data: invs }] = await Promise.all([
-      sb.from('patients').select('*, departments(name)'),
-      sb.from('appointments').select('*'),
-      sb.from('invoices').select('amount, status'),
-    ]);
-    if (pts) allPatients = pts;
-    const critical = pts ? pts.filter(p => p.status === 'Critical').length : 0;
-    const totalRev = invs ? invs.reduce((s,i) => s + parseFloat(i.amount||0), 0) : 0;
-    document.getElementById('kpi-total').textContent = pts ? pts.length : '—';
-    document.getElementById('kpi-appt').textContent = appts ? appts.length : '—';
-    document.getElementById('kpi-revenue').textContent = fmt(totalRev);
-    document.getElementById('kpi-critical').textContent = critical;
-    document.getElementById('critical-count').textContent = critical + ' Critical Patient' + (critical !== 1 ? 's' : '');
-    document.getElementById('badge-critical').textContent = critical;
-    if (appts) document.getElementById('badge-appt').textContent = appts.length;
-
-    if (pts) {
-      const deptCounts = {};
-      pts.forEach(p => { const d = p.departments?.name || 'Other'; deptCounts[d] = (deptCounts[d]||0)+1; });
-      const names = ['Cardiology','Orthopedics','Neurology','General'];
-      deptChart.data.datasets[0].data = names.map(n => deptCounts[n]||0);
-      deptChart.update();
-      names.forEach(n => { const el = document.getElementById('dept-'+n.toLowerCase()); if(el) el.textContent = deptCounts[n]||0; });
-    }
-
-    if (pts) {
-      const recent = pts.slice(0, 5);
-      document.getElementById('overview-patients-wrap').innerHTML = `
-        <div class="tbl-wrap"><table>
-          <thead><tr><th>Patient</th><th>Dept</th><th>Status</th><th>Date</th></tr></thead>
-          <tbody>${recent.map(p=>`
-            <tr onclick="openPatient('${p.id}')">
-              <td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td>
-              <td style="color:var(--text2)">${p.departments?.name||'—'}</td>
-              <td><span class="badge ${badgeClass(p.status)}">${p.status}</span></td>
-              <td style="color:var(--text3)">${p.admitted_at ? new Date(p.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—'}</td>
-            </tr>`).join('')}
-          </tbody>
-        </table></div>`;
-    }
+// ═══ OVERVIEW ═══
+async function loadOverview(){
+  try{
+    const [{data:pts},{data:appts},{data:invs}]=await Promise.all([sb.from('patients').select('*, departments(name)'),sb.from('appointments').select('*'),sb.from('invoices').select('amount, status')]);
+    if(pts) allPatients=pts;
+    const critical=pts?pts.filter(p=>p.status==='Critical').length:0;
+    const totalRev=invs?invs.reduce((s,i)=>s+parseFloat(i.amount||0),0):0;
+    document.getElementById('kpi-total').textContent=pts?.length??'—';
+    document.getElementById('kpi-appt').textContent=appts?.length??'—';
+    document.getElementById('kpi-revenue').textContent=fmt(totalRev);
+    document.getElementById('kpi-critical').textContent=critical;
+    document.getElementById('critical-count').textContent=critical+' Critical Patient'+(critical!==1?'s':'');
+    document.getElementById('badge-critical').textContent=critical;
+    if(appts) document.getElementById('badge-appt').textContent=appts.length;
+    if(pts){const dc={};pts.forEach(p=>{const d=p.departments?.name||'Other';dc[d]=(dc[d]||0)+1;});const names=['Cardiology','Orthopedics','Neurology','General'];deptChart.data.datasets[0].data=names.map(n=>dc[n]||0);deptChart.update();names.forEach(n=>{const el=document.getElementById('dept-'+n.toLowerCase());if(el)el.textContent=dc[n]||0;});}
+    renderOverviewTable();
     document.getElementById('dbDot').classList.add('connected');
-    document.getElementById('dbLabel').textContent = 'Live DB';
-  } catch(e) {
-    console.error(e);
-    document.getElementById('dbLabel').textContent = 'DB Error';
-    toast('Database connection failed', 'error');
-  }
+    document.getElementById('dbLabel').textContent='Live DB';
+  }catch(e){console.error(e);document.getElementById('dbLabel').textContent='DB Error';}
 }
 
-// ═══ LOAD PATIENTS (with filter) ═══
-async function loadPatients() {
-  const { data: pts } = await sb.from('patients').select('*, departments(name), doctors(name)').order('admitted_at', { ascending: false });
-  if (!pts) return;
-  allPatients = pts;
-  updatePatientKPIs(pts);
-  renderPatientTable(pts);
+function renderOverviewTable(){
+  const recent=allPatients.slice(0,5);
+  const wrap=document.getElementById('overview-patients-wrap'); if(!wrap) return;
+  if(!recent.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">🏥</div><div class="empty-title">No patients yet</div><div class="empty-sub">Admit your first patient to get started.</div></div>`;return;}
+  wrap.innerHTML=`<div class="tbl-wrap"><table><thead><tr><th>Patient</th><th>Dept</th><th>Status</th><th>Date</th></tr></thead><tbody>${recent.map(p=>`<tr onclick="openPatient('${p.id}')"><td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td><td style="color:var(--text2)">${p.departments?.name||'—'}</td><td><span class="badge ${badgeClass(p.status)}">${p.status}</span></td><td style="color:var(--text3)">${p.admitted_at?new Date(p.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—'}</td></tr>`).join('')}</tbody></table></div>`;
 }
 
-function updatePatientKPIs(pts) {
-  document.getElementById('pt-kpi-total').textContent = pts.length;
-  document.getElementById('pt-kpi-active').textContent = pts.filter(p=>p.status==='Active').length;
-  document.getElementById('pt-kpi-pending').textContent = pts.filter(p=>p.status==='Pending').length;
-  document.getElementById('pt-kpi-critical').textContent = pts.filter(p=>p.status==='Critical').length;
+// ═══ PATIENTS ═══
+async function loadPatients(){
+  const {data:pts}=await sb.from('patients').select('*, departments(name), doctors(name)').order('admitted_at',{ascending:false});
+  if(!pts) return;
+  allPatients=pts; updatePatientKPIs(pts); renderPatientTable(pts);
 }
-
-function renderPatientTable(pts) {
-  const filtered = patientFilter === 'All' ? pts : pts.filter(p => p.status === patientFilter);
-  if (filtered.length === 0) {
-    document.getElementById('patients-table-wrap').innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">No patients found</div><div class="empty-sub">No ${patientFilter === 'All' ? '' : patientFilter.toLowerCase()+' '}patients in the registry.</div></div>`;
-    return;
-  }
-  document.getElementById('patients-table-wrap').innerHTML = `
-    <div class="tbl-wrap"><table>
-      <thead><tr><th>Patient</th><th>Age</th><th>Dept</th><th>Doctor</th><th>Blood</th><th>Status</th><th>Admitted</th></tr></thead>
-      <tbody>${filtered.map(p=>`
-        <tr onclick="openPatient('${p.id}')">
-          <td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td>
-          <td style="color:var(--text2)">${p.age||'—'}</td>
-          <td style="color:var(--text2)">${p.departments?.name||'—'}</td>
-          <td style="color:var(--text2);font-size:12px">${p.doctors?.name||'—'}</td>
-          <td><span class="pill ${pillClass(p.blood_type)}">${p.blood_type||'—'}</span></td>
-          <td><span class="badge ${badgeClass(p.status)}">${p.status}</span></td>
-          <td style="color:var(--text3)">${p.admitted_at ? new Date(p.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—'}</td>
-        </tr>`).join('')}
-      </tbody>
-    </table></div>`;
+function updatePatientKPIs(pts){
+  document.getElementById('pt-kpi-total').textContent=pts.length;
+  document.getElementById('pt-kpi-active').textContent=pts.filter(p=>p.status==='Active').length;
+  document.getElementById('pt-kpi-pending').textContent=pts.filter(p=>p.status==='Pending').length;
+  document.getElementById('pt-kpi-critical').textContent=pts.filter(p=>p.status==='Critical').length;
 }
-
-function applyFilter(f) {
-  patientFilter = f;
-  document.querySelectorAll('.filter-chip').forEach(chip => {
-    chip.classList.toggle('active-chip', chip.dataset.filter === f);
-  });
-  if (allPatients.length) renderPatientTable(allPatients);
+function renderPatientTable(pts){
+  const filtered=patientFilter==='All'?pts:pts.filter(p=>p.status===patientFilter);
+  const wrap=document.getElementById('patients-table-wrap');
+  if(!filtered.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">No patients found</div><div class="empty-sub">No ${patientFilter==='All'?'':patientFilter.toLowerCase()+' '}patients in registry.</div></div>`;return;}
+  wrap.innerHTML=`<div class="tbl-wrap"><table><thead><tr><th>Patient</th><th>Age</th><th>Dept</th><th>Doctor</th><th>Blood</th><th>Status</th><th>Admitted</th></tr></thead><tbody>${filtered.map(p=>`<tr onclick="openPatient('${p.id}')"><td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td><td style="color:var(--text2)">${p.age||'—'}</td><td style="color:var(--text2)">${p.departments?.name||'—'}</td><td style="color:var(--text2);font-size:12px">${p.doctors?.name||'—'}</td><td><span class="pill ${pillClass(p.blood_type)}">${p.blood_type||'—'}</span></td><td><span class="badge ${badgeClass(p.status)}">${p.status}</span></td><td style="color:var(--text3)">${p.admitted_at?new Date(p.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—'}</td></tr>`).join('')}</tbody></table></div>`;
 }
-
-document.getElementById('patientFilters').addEventListener('click', e => {
-  const chip = e.target.closest('.filter-chip');
-  if (chip) applyFilter(chip.dataset.filter);
-});
+function applyFilter(f){
+  patientFilter=f;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.toggle('active-chip',c.dataset.filter===f));
+  if(allPatients.length) renderPatientTable(allPatients);
+}
+document.getElementById('patientFilters').addEventListener('click',e=>{const chip=e.target.closest('.filter-chip');if(chip) applyFilter(chip.dataset.filter);});
 
 // ═══ PATIENT 360 PANEL ═══
-const panelEl = document.getElementById('patientPanel');
-const panelOverlay = document.getElementById('panelOverlay');
-document.getElementById('panelClose').addEventListener('click', closePanel);
-panelOverlay.addEventListener('click', closePanel);
+const panelEl=document.getElementById('patientPanel');
+const panelOverlay=document.getElementById('panelOverlay');
+document.getElementById('panelClose').addEventListener('click',closePanel);
+panelOverlay.addEventListener('click',closePanel);
+function closePanel(){panelEl.classList.remove('open');panelOverlay.classList.remove('show');currentPatient=null;}
 
-function closePanel() {
-  panelEl.classList.remove('open');
-  panelOverlay.classList.remove('show');
-  currentPatient = null;
-}
-
-async function openPatient(id) {
-  // find patient in local state or fetch
-  let pt = allPatients.find(p => p.id === id);
-  if (!pt) {
-    const { data } = await sb.from('patients').select('*, departments(name), doctors(name)').eq('id', id).single();
-    pt = data;
-  }
-  if (!pt) { toast('Patient not found', 'error'); return; }
-  currentPatient = pt;
-  activeTab = 'overview';
-
-  // Render header
-  document.getElementById('panelAvatar').textContent = initials(pt.name);
-  document.getElementById('panelName').textContent = pt.name;
-  document.getElementById('panelCode').textContent = `${pt.patient_code} · ${pt.departments?.name||'—'} · ${pt.gender === 'M' ? 'Male' : 'Female'}, ${pt.age||'?'}`;
-
-  // Status action buttons
-  const statuses = [
-    { label:'✓ Active', cls:'active-action', val:'Active' },
-    { label:'⚠ Critical', cls:'critical-action', val:'Critical' },
-    { label:'⏳ Pending', cls:'pending-action', val:'Pending' },
-    { label:'↗ Discharge', cls:'discharge-action', val:'Discharged' },
-  ];
-  document.getElementById('statusActions').innerHTML = statuses.map(s =>
-    `<button class="action-btn ${s.cls} ${pt.status === s.val ? 'ring' : ''}" 
-      ${pt.status === s.val ? 'disabled' : ''}
-      onclick="updateStatus('${pt.id}','${s.val}')"
-      style="${pt.status === s.val ? 'opacity:0.5;cursor:default;' : ''}"
-    >${s.label}</button>`
-  ).join('');
-
-  // Show panel
-  panelEl.classList.add('open');
-  panelOverlay.classList.add('show');
-
-  // Render default tab
+async function openPatient(id){
+  let pt=allPatients.find(p=>p.id===id);
+  if(!pt){const {data}=await sb.from('patients').select('*, departments(name,id), doctors(name,id)').eq('id',id).single();pt=data;}
+  if(!pt){toast('Patient not found','error');return;}
+  currentPatient=pt; activeTab='overview';
+  document.getElementById('panelAvatar').textContent=initials(pt.name);
+  document.getElementById('panelName').textContent=pt.name;
+  document.getElementById('panelCode').textContent=`${pt.patient_code} · ${pt.departments?.name||'—'} · ${pt.gender==='M'?'Male':'Female'}, ${pt.age||'?'}y`;
+  renderStatusActions(pt);
+  document.querySelectorAll('.panel-tab').forEach(t=>t.classList.toggle('active-tab',t.dataset.tab==='overview'));
+  panelEl.classList.add('open'); panelOverlay.classList.add('show');
   renderPanelTab('overview');
 }
 
-// Panel tab switching
-document.querySelectorAll('.panel-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active-tab'));
-    tab.classList.add('active-tab');
-    activeTab = tab.dataset.tab;
-    renderPanelTab(activeTab);
+function renderStatusActions(pt){
+  const statuses=[{label:'✓ Active',cls:'active-action',val:'Active'},{label:'⚠ Critical',cls:'critical-action',val:'Critical'},{label:'⏳ Pending',cls:'pending-action',val:'Pending'},{label:'↗ Discharge',cls:'discharge-action',val:'Discharged'}];
+  document.getElementById('statusActions').innerHTML=statuses.map(s=>`<button class="action-btn ${s.cls}" ${pt.status===s.val?'disabled style="opacity:0.45;cursor:default;"':''} onclick="updateStatus('${pt.id}','${s.val}')">${s.label}</button>`).join('');
+}
+
+document.querySelectorAll('.panel-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.panel-tab').forEach(t=>t.classList.remove('active-tab'));
+    tab.classList.add('active-tab'); activeTab=tab.dataset.tab; renderPanelTab(activeTab);
   });
 });
 
-async function renderPanelTab(tab) {
-  const body = document.getElementById('panelBody');
-  const pt = currentPatient;
-  if (!pt) return;
+async function renderPanelTab(tab){
+  const body=document.getElementById('panelBody');
+  const pt=currentPatient; if(!pt) return;
 
-  if (tab === 'overview') {
-    // Fetch full detail
-    const { data: fullPt } = await sb.from('patients').select('*, departments(name,id), doctors(name,id)').eq('id', pt.id).single();
-    const p = fullPt || pt;
-
-    // Build doctor options for assign
-    if (allDoctors.length === 0) {
-      const { data: docs } = await sb.from('doctors').select('*');
-      if (docs) allDoctors = docs;
-    }
-    const deptDocs = allDoctors.filter(d => d.department_id === (p.departments?.id || p.department_id));
-
-    body.innerHTML = `
+  if(tab==='overview'){
+    if(!allDepts.length){const {data:d}=await sb.from('departments').select('*');if(d)allDepts=d;}
+    if(!allDoctors.length){const {data:d}=await sb.from('doctors').select('*');if(d)allDoctors=d;}
+    const {data:fullPt}=await sb.from('patients').select('*, departments(name,id), doctors(name,id)').eq('id',pt.id).single();
+    const p=fullPt||pt;
+    body.innerHTML=`
       <div class="info-grid">
-        <div class="info-cell"><div class="info-label">Age</div><div class="info-value">${p.age || '—'} yrs</div></div>
-        <div class="info-cell"><div class="info-label">Gender</div><div class="info-value">${p.gender === 'M' ? 'Male' : 'Female'}</div></div>
-        <div class="info-cell"><div class="info-label">Blood Type</div><div class="info-value" style="color:var(--rose)">${p.blood_type || '—'}</div></div>
-        <div class="info-cell"><div class="info-label">Admitted</div><div class="info-value">${p.admitted_at ? new Date(p.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div></div>
-        <div class="info-cell"><div class="info-label">Department</div><div class="info-value">${p.departments?.name || '—'}</div></div>
+        <div class="info-cell"><div class="info-label">Age</div><div class="info-value">${p.age||'—'} yrs</div></div>
+        <div class="info-cell"><div class="info-label">Gender</div><div class="info-value">${p.gender==='M'?'Male':'Female'}</div></div>
+        <div class="info-cell"><div class="info-label">Blood Type</div><div class="info-value" style="color:var(--rose)">${p.blood_type||'—'}</div></div>
+        <div class="info-cell"><div class="info-label">Admitted</div><div class="info-value">${p.admitted_at?new Date(p.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—'}</div></div>
+        <div class="info-cell"><div class="info-label">Department</div><div class="info-value">${p.departments?.name||'—'}</div></div>
         <div class="info-cell"><div class="info-label">Status</div><div class="info-value"><span class="badge ${badgeClass(p.status)}">${p.status}</span></div></div>
       </div>
-
       <div class="assign-section">
         <div class="assign-title">Assigned Physician</div>
         <div class="assign-row">
-          <select class="panel-select" id="assignDoctorSelect">
-            ${allDoctors.map(d => `<option value="${d.id}" ${d.id === p.doctor_id ? 'selected' : ''}>${d.name}</option>`).join('')}
-          </select>
+          <select class="panel-select" id="assignDoctorSelect">${allDoctors.map(d=>`<option value="${d.id}" ${d.id===p.doctor_id?'selected':''}>${d.name}</option>`).join('')}</select>
           <button class="btn btn-primary" style="font-size:12px;padding:8px 14px;" onclick="assignDoctor('${p.id}')">Assign</button>
         </div>
       </div>
-
       <div class="assign-section">
         <div class="assign-title">Transfer Department</div>
         <div class="assign-row">
-          <select class="panel-select" id="transferDeptSelect">
-            ${allDepts.map(d => `<option value="${d.id}" ${d.id === (p.departments?.id || p.department_id) ? 'selected' : ''}>${d.name}</option>`).join('')}
-          </select>
+          <select class="panel-select" id="transferDeptSelect">${allDepts.map(d=>`<option value="${d.id}" ${d.id===(p.departments?.id||p.department_id)?'selected':''}>${d.name}</option>`).join('')}</select>
           <button class="btn btn-gold" style="font-size:12px;padding:8px 14px;" onclick="transferDept('${p.id}')">Transfer</button>
         </div>
       </div>
-    `;
-  }
-
-  else if (tab === 'timeline') {
-    const days = currentPatient.admitted_at ? Math.floor((new Date() - new Date(currentPatient.admitted_at)) / 86400000) : '?';
-    body.innerHTML = `
-      <div class="timeline">
-        <div class="tl-item">
-          <div class="tl-dot cyan-dot">🏥</div>
-          <div>
-            <div class="tl-label">Patient Admitted</div>
-            <div class="tl-time">${pt.admitted_at ? new Date(pt.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}) : '—'} · ${pt.departments?.name||'—'}</div>
-            <div class="tl-note">Initial admission recorded. Assigned to ${pt.doctors?.name||'—'}.</div>
-          </div>
-        </div>
-        ${pt.status === 'Critical' ? `
-        <div class="tl-item">
-          <div class="tl-dot rose-dot">🚨</div>
-          <div>
-            <div class="tl-label">Status Escalated → Critical</div>
-            <div class="tl-time">Recent update · ICU Review triggered</div>
-            <div class="tl-note">Physician notified. Immediate review required.</div>
-          </div>
-        </div>` : ''}
-        ${pt.status === 'Discharged' ? `
-        <div class="tl-item">
-          <div class="tl-dot muted-dot">✅</div>
-          <div>
-            <div class="tl-label">Patient Discharged</div>
-            <div class="tl-time">Follow-up in 2 weeks</div>
-            <div class="tl-note">Discharge summary issued. Follow-up scheduled.</div>
-          </div>
-        </div>` : ''}
-        <div class="tl-item">
-          <div class="tl-dot gold-dot">📋</div>
-          <div>
-            <div class="tl-label">Record created in MedoScope</div>
-            <div class="tl-time">${days} days ago · System</div>
-          </div>
-        </div>
+      <div class="delete-zone">
+        <div class="delete-zone-title">⚠ Danger Zone</div>
+        <div class="delete-zone-sub">Permanently remove this patient and all linked appointments and invoices. This cannot be undone.</div>
+        <button class="btn btn-danger" onclick="confirmDelete('${p.id}','${p.name.replace(/'/g,"\\'")}')">🗑 Delete Patient Permanently</button>
       </div>`;
   }
 
-  else if (tab === 'appointments') {
-    body.innerHTML = `<div class="loading"><div class="spinner"></div></div>`;
-    const { data: appts } = await sb.from('appointments').select('*, doctors(name,initials)').eq('patient_id', pt.id).order('scheduled_at');
-    if (!appts || appts.length === 0) {
-      body.innerHTML = `<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-title">No appointments</div><div class="empty-sub">No appointments found for this patient.</div></div>`;
-      return;
-    }
-    const colors = { 'Dr. Nour Amin':'linear-gradient(135deg,#00c9b1,#008fa0)', 'Dr. Tarek Said':'linear-gradient(135deg,#4d9fff,#2563eb)', 'Dr. Mona Badr':'linear-gradient(135deg,#e8b84b,#b45309)', 'Dr. Hana Kamal':'linear-gradient(135deg,#a78bfa,#7c3aed)' };
-    body.innerHTML = `<div class="appt-list">${appts.map(a => {
-      const t = a.scheduled_at ? new Date(a.scheduled_at) : null;
-      const hr = t ? t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}) : '—';
-      const bg = colors[a.doctors?.name] || 'linear-gradient(135deg,#4a6080,#2a4060)';
-      return `<div class="appt">
-        <div class="appt-time-box"><div class="appt-hr">${hr}</div><div class="appt-period">${t && t.getHours()<12?'AM':'PM'}</div></div>
-        <div class="appt-body">
-          <div class="appt-patient-name">${a.appointment_type||'Consultation'}</div>
-          <div class="appt-meta">${a.room||'—'} · ${a.doctors?.name||'—'}</div>
-        </div>
-        <span class="badge ${badgeClass(a.status)}">${a.status}</span>
-      </div>`;
-    }).join('')}</div>`;
+  else if(tab==='timeline'){
+    const days=pt.admitted_at?Math.floor((Date.now()-new Date(pt.admitted_at))/86400000):'?';
+    body.innerHTML=`<div class="timeline">
+      <div class="tl-item"><div class="tl-dot cyan-dot">🏥</div><div><div class="tl-label">Patient Admitted</div><div class="tl-time">${pt.admitted_at?new Date(pt.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'—'} · ${pt.departments?.name||'—'}</div><div class="tl-note">Initial admission. Assigned to ${pt.doctors?.name||'—'}.</div></div></div>
+      ${pt.status==='Critical'?`<div class="tl-item"><div class="tl-dot rose-dot">🚨</div><div><div class="tl-label">Status → Critical</div><div class="tl-time">Immediate review required</div></div></div>`:''}
+      ${pt.status==='Discharged'?`<div class="tl-item"><div class="tl-dot muted-dot">✅</div><div><div class="tl-label">Patient Discharged</div><div class="tl-time">Follow-up recommended</div></div></div>`:''}
+      <div class="tl-item"><div class="tl-dot gold-dot">📋</div><div><div class="tl-label">Record created</div><div class="tl-time">${days} day${days!==1?'s':''} ago · MedoScope</div></div></div>
+    </div>`;
   }
 
-  else if (tab === 'billing') {
-    body.innerHTML = `<div class="loading"><div class="spinner"></div></div>`;
-    const { data: invs } = await sb.from('invoices').select('*').eq('patient_id', pt.id).order('issued_at', { ascending: false });
-    if (!invs || invs.length === 0) {
-      body.innerHTML = `<div class="empty-state"><div class="empty-icon">🧾</div><div class="empty-title">No invoices</div><div class="empty-sub">No billing records found for this patient.</div></div>`;
-      return;
-    }
-    const total = invs.reduce((s,i) => s + parseFloat(i.amount||0), 0);
-    body.innerHTML = `
-      <div style="display:flex;gap:10px;margin-bottom:16px;">
-        <div class="info-cell" style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px;">
-          <div class="info-label">Total Billed</div>
-          <div class="info-value" style="font-family:'Instrument Serif',serif;font-size:22px;">${fmt(total)}</div>
-        </div>
-        <div class="info-cell" style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px;">
-          <div class="info-label">Invoices</div>
-          <div class="info-value" style="font-family:'Instrument Serif',serif;font-size:22px;">${invs.length}</div>
-        </div>
-      </div>
-      <div class="inv-list">${invs.map(i => `
-        <div class="inv-item">
-          <div class="inv-icon">🧾</div>
-          <div style="flex:1;min-width:0">
-            <div class="inv-name">${i.description||'Invoice'}</div>
-            <div class="inv-date">${i.invoice_code} · ${i.issued_at ? new Date(i.issued_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div>
-          </div>
-          <span class="badge ${badgeClass(i.status)}" style="margin-right:10px;">${i.status}</span>
-          <div class="inv-amt ${i.status.toLowerCase()}">${fmt(parseFloat(i.amount||0))}</div>
-        </div>`).join('')}
-      </div>`;
+  else if(tab==='appointments'){
+    body.innerHTML=`<div class="loading"><div class="spinner"></div></div>`;
+    const {data:appts}=await sb.from('appointments').select('*, doctors(name,initials)').eq('patient_id',pt.id).order('scheduled_at');
+    if(!appts||!appts.length){body.innerHTML=`<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-title">No appointments</div></div>`;return;}
+    const colors={'Dr. Nour Amin':'linear-gradient(135deg,#00c9b1,#008fa0)','Dr. Tarek Said':'linear-gradient(135deg,#4d9fff,#2563eb)','Dr. Mona Badr':'linear-gradient(135deg,#e8b84b,#b45309)','Dr. Hana Kamal':'linear-gradient(135deg,#a78bfa,#7c3aed)'};
+    body.innerHTML=`<div class="appt-list">${appts.map(a=>{const t=a.scheduled_at?new Date(a.scheduled_at):null;const hr=t?t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}):'—';const bg=colors[a.doctors?.name]||'linear-gradient(135deg,#4a6080,#2a4060)';return`<div class="appt"><div class="appt-time-box"><div class="appt-hr">${hr}</div><div class="appt-period">${t&&t.getHours()<12?'AM':'PM'}</div></div><div class="appt-body"><div class="appt-patient-name">${a.appointment_type||'Consultation'}</div><div class="appt-meta">${a.room||'—'} · ${a.doctors?.name||'—'}</div></div><span class="badge ${badgeClass(a.status)}">${a.status}</span></div>`;}).join('')}</div>`;
   }
 
-  else if (tab === 'notes') {
-    body.innerHTML = `
-      <div style="margin-bottom:12px;font-size:12px;color:var(--text3);">Clinical notes and observations for this patient.</div>
-      <textarea class="notes-area" id="patientNotesInput" placeholder="Type clinical notes, observations, or updates…">${pt._notes||''}</textarea>
-      <button class="panel-save-btn" onclick="saveNote('${pt.id}')">Save Note</button>
-      <div style="margin-top:20px;font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Recent Notes</div>
-      <div class="timeline">
-        <div class="tl-item">
-          <div class="tl-dot cyan-dot">📝</div>
-          <div>
-            <div class="tl-label">Dr. Ahmed Hassan</div>
-            <div class="tl-time">Today · 09:41</div>
-            <div class="tl-note">Patient is stable. Continue current medication protocol. Review labs in 48h.</div>
-          </div>
-        </div>
-        <div class="tl-item">
-          <div class="tl-dot muted-dot">📝</div>
-          <div>
-            <div class="tl-label">${pt.doctors?.name || 'Assigned Doctor'}</div>
-            <div class="tl-time">Yesterday · 14:22</div>
-            <div class="tl-note">Initial assessment complete. Monitoring vitals every 4 hours.</div>
-          </div>
-        </div>
-      </div>
-    `;
+  else if(tab==='billing'){
+    body.innerHTML=`<div class="loading"><div class="spinner"></div></div>`;
+    const {data:invs}=await sb.from('invoices').select('*').eq('patient_id',pt.id).order('issued_at',{ascending:false});
+    if(!invs||!invs.length){body.innerHTML=`<div class="empty-state"><div class="empty-icon">🧾</div><div class="empty-title">No invoices</div></div>`;return;}
+    const total=invs.reduce((s,i)=>s+parseFloat(i.amount||0),0);
+    body.innerHTML=`<div style="display:flex;gap:10px;margin-bottom:16px;"><div class="info-cell" style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px;"><div class="info-label">Total Billed</div><div class="info-value" style="font-family:'Instrument Serif',serif;font-size:22px;">${fmt(total)}</div></div><div class="info-cell" style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px;"><div class="info-label">Invoices</div><div class="info-value" style="font-family:'Instrument Serif',serif;font-size:22px;">${invs.length}</div></div></div><div class="inv-list">${invs.map(i=>`<div class="inv-item"><div class="inv-icon">🧾</div><div style="flex:1;min-width:0"><div class="inv-name">${i.description||'Invoice'}</div><div class="inv-date">${i.invoice_code} · ${i.issued_at?new Date(i.issued_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—'}</div></div><span class="badge ${badgeClass(i.status)}" style="margin-right:10px;">${i.status}</span><div class="inv-amt ${i.status.toLowerCase()}">${fmt(parseFloat(i.amount||0))}</div></div>`).join('')}</div>`;
+  }
+
+  else if(tab==='notes'){
+    body.innerHTML=`<div style="margin-bottom:12px;font-size:12px;color:var(--text3);">Clinical notes for this patient.</div><textarea class="notes-area" id="patientNotesInput" placeholder="Type clinical notes or observations…"></textarea><button class="panel-save-btn" onclick="saveNote()">Save Note</button><div style="margin-top:20px;font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Previous Notes</div><div class="timeline"><div class="tl-item"><div class="tl-dot cyan-dot">📝</div><div><div class="tl-label">System Note</div><div class="tl-time">Record created in MedoScope</div><div class="tl-note">Patient record is active and up to date.</div></div></div></div>`;
   }
 }
-
-function saveNote(id) {
-  const val = document.getElementById('patientNotesInput')?.value;
-  if (!val?.trim()) { toast('Note is empty', 'info'); return; }
-  toast('Note saved successfully', 'success');
-}
+function saveNote(){const v=document.getElementById('patientNotesInput')?.value;if(!v?.trim()){toast('Note is empty','info');return;}toast('Note saved','success');}
 
 // ═══ STATUS UPDATE ═══
-async function updateStatus(id, newStatus) {
-  try {
-    const { error } = await sb.from('patients').update({ status: newStatus }).eq('id', id);
-    if (error) throw error;
-    // Update local state
-    const idx = allPatients.findIndex(p => p.id === id);
-    if (idx >= 0) allPatients[idx].status = newStatus;
-    if (currentPatient?.id === id) currentPatient.status = newStatus;
-    toast(`Status updated → ${newStatus}`, 'success');
-    // Re-render status buttons
-    const statuses = [
-      { label:'✓ Active', cls:'active-action', val:'Active' },
-      { label:'⚠ Critical', cls:'critical-action', val:'Critical' },
-      { label:'⏳ Pending', cls:'pending-action', val:'Pending' },
-      { label:'↗ Discharge', cls:'discharge-action', val:'Discharged' },
-    ];
-    document.getElementById('statusActions').innerHTML = statuses.map(s =>
-      `<button class="action-btn ${s.cls}" ${newStatus === s.val ? 'disabled style="opacity:0.5;cursor:default;"' : ''} onclick="updateStatus('${id}','${s.val}')">${s.label}</button>`
-    ).join('');
-    // Update panel code line
-    document.getElementById('panelCode').innerHTML = `${currentPatient?.patient_code} · ${currentPatient?.departments?.name||'—'} · ${currentPatient?.gender === 'M' ? 'Male' : 'Female'}, ${currentPatient?.age||'?'} · <span class="badge ${badgeClass(newStatus)}">${newStatus}</span>`;
-    // Refresh tables if visible
-    if (loaded['patients']) renderPatientTable(allPatients);
-    if (loaded['overview']) refreshOverviewTable();
-  } catch(e) {
-    console.error(e);
-    toast('Failed to update status', 'error');
-  }
-}
-
-function refreshOverviewTable() {
-  const recent = allPatients.slice(0, 5);
-  document.getElementById('overview-patients-wrap').innerHTML = `
-    <div class="tbl-wrap"><table>
-      <thead><tr><th>Patient</th><th>Dept</th><th>Status</th><th>Date</th></tr></thead>
-      <tbody>${recent.map(p=>`
-        <tr onclick="openPatient('${p.id}')">
-          <td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td>
-          <td style="color:var(--text2)">${p.departments?.name||'—'}</td>
-          <td><span class="badge ${badgeClass(p.status)}">${p.status}</span></td>
-          <td style="color:var(--text3)">${p.admitted_at ? new Date(p.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}) : '—'}</td>
-        </tr>`).join('')}
-      </tbody>
-    </table></div>`;
+async function updateStatus(id,newStatus){
+  const {error}=await sb.from('patients').update({status:newStatus}).eq('id',id);
+  if(error){toast('Update failed','error');return;}
+  const idx=allPatients.findIndex(p=>p.id===id);
+  if(idx>=0) allPatients[idx].status=newStatus;
+  if(currentPatient?.id===id){currentPatient.status=newStatus;renderStatusActions(currentPatient);}
+  toast(`Status → ${newStatus}`,'success');
+  logActivity('📋',`${currentPatient?.name||'Patient'} → ${newStatus}`,'Just now');
+  if(loaded['patients']){updatePatientKPIs(allPatients);renderPatientTable(allPatients);}
+  renderOverviewTable();
+  const critical=allPatients.filter(p=>p.status==='Critical').length;
+  document.getElementById('kpi-critical').textContent=critical;
+  document.getElementById('badge-critical').textContent=critical;
+  document.getElementById('critical-count').textContent=critical+' Critical Patient'+(critical!==1?'s':'');
 }
 
 // ═══ ASSIGN DOCTOR ═══
-async function assignDoctor(patientId) {
-  const sel = document.getElementById('assignDoctorSelect');
-  if (!sel) return;
-  const doctorId = sel.value;
-  const doctorName = sel.options[sel.selectedIndex]?.text;
-  try {
-    const { error } = await sb.from('patients').update({ doctor_id: doctorId }).eq('id', patientId);
-    if (error) throw error;
-    const idx = allPatients.findIndex(p => p.id === patientId);
-    if (idx >= 0) allPatients[idx].doctor_id = doctorId;
-    toast(`Assigned to ${doctorName}`, 'success');
-    if (loaded['patients']) renderPatientTable(allPatients);
-  } catch(e) {
-    toast('Failed to assign doctor', 'error');
-  }
+async function assignDoctor(patientId){
+  const sel=document.getElementById('assignDoctorSelect'); if(!sel) return;
+  const {error}=await sb.from('patients').update({doctor_id:sel.value}).eq('id',patientId);
+  if(error){toast('Assignment failed','error');return;}
+  toast(`Assigned to ${sel.options[sel.selectedIndex]?.text}`,'success');
+  if(loaded['patients']){const {data:pts}=await sb.from('patients').select('*, departments(name), doctors(name)').order('admitted_at',{ascending:false});if(pts){allPatients=pts;renderPatientTable(pts);}}
 }
 
 // ═══ TRANSFER DEPT ═══
-async function transferDept(patientId) {
-  const sel = document.getElementById('transferDeptSelect');
-  if (!sel) return;
-  const deptId = sel.value;
-  const deptName = sel.options[sel.selectedIndex]?.text;
-  try {
-    const { error } = await sb.from('patients').update({ department_id: deptId }).eq('id', patientId);
-    if (error) throw error;
-    const idx = allPatients.findIndex(p => p.id === patientId);
-    if (idx >= 0 && allDepts.length) {
-      const dept = allDepts.find(d => d.id === deptId);
-      if (dept) allPatients[idx].departments = dept;
-    }
-    toast(`Transferred to ${deptName}`, 'success');
-    if (loaded['patients']) renderPatientTable(allPatients);
-  } catch(e) {
-    toast('Failed to transfer department', 'error');
-  }
+async function transferDept(patientId){
+  const sel=document.getElementById('transferDeptSelect'); if(!sel) return;
+  const deptId=sel.value; const deptName=sel.options[sel.selectedIndex]?.text;
+  const {error}=await sb.from('patients').update({department_id:deptId}).eq('id',patientId);
+  if(error){toast('Transfer failed','error');return;}
+  const idx=allPatients.findIndex(p=>p.id===patientId);
+  if(idx>=0) allPatients[idx].departments={name:deptName,id:deptId};
+  toast(`Transferred to ${deptName}`,'success');
+  logActivity('🔄',`${currentPatient?.name||'Patient'} → ${deptName}`,'Just now');
+  if(loaded['patients']) renderPatientTable(allPatients);
 }
 
-// ═══ LOAD APPOINTMENTS ═══
-async function loadAppointments() {
-  const { data: appts } = await sb.from('appointments').select('*, patients(name, patient_code), doctors(name, initials)').order('scheduled_at');
-  if (!appts) return;
-  document.getElementById('appt-kpi-total').textContent = appts.length;
-  document.getElementById('appt-kpi-confirmed').textContent = appts.filter(a=>a.status==='Confirmed').length;
-  document.getElementById('appt-kpi-pending').textContent = appts.filter(a=>a.status==='Pending').length;
-  document.getElementById('appt-kpi-cancelled').textContent = appts.filter(a=>a.status==='Cancelled').length;
-  const colors = { 'Dr. Nour Amin':'linear-gradient(135deg,#00c9b1,#008fa0)', 'Dr. Tarek Said':'linear-gradient(135deg,#4d9fff,#2563eb)', 'Dr. Mona Badr':'linear-gradient(135deg,#e8b84b,#b45309)', 'Dr. Hana Kamal':'linear-gradient(135deg,#a78bfa,#7c3aed)' };
-  document.getElementById('appt-list-wrap').innerHTML = `<div class="appt-list">${appts.map(a=>{
-    const t = a.scheduled_at ? new Date(a.scheduled_at) : null;
-    const hr = t ? t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}) : '—';
-    const period = t ? (t.getHours()<12?'AM':'PM') : '';
-    const bg = colors[a.doctors?.name] || 'linear-gradient(135deg,#4a6080,#2a4060)';
-    return `<div class="appt" onclick="openPatient('${a.patient_id}')">
-      <div class="appt-time-box"><div class="appt-hr">${hr}</div><div class="appt-period">${period}</div></div>
-      <div class="appt-body">
-        <div class="appt-patient-name">${a.patients?.name||'Unknown'}</div>
-        <div class="appt-meta">${a.appointment_type||'Consultation'} · ${a.room||'—'}</div>
-      </div>
-      <div class="appt-dr">
-        <div class="dr-av" style="background:${bg}">${a.doctors?.initials||'DR'}</div>
-        <span style="font-size:12px;color:var(--text2);white-space:nowrap;">${a.doctors?.name||'—'}</span>
-      </div>
-      <span class="badge ${badgeClass(a.status)}">${a.status}</span>
-    </div>`;
-  }).join('')}</div>`;
+// ═══ DELETE PATIENT ═══
+let deleteTargetId=null;
+function confirmDelete(id,name){
+  deleteTargetId=id;
+  document.getElementById('confirmTitle').textContent=`Delete ${name}?`;
+  document.getElementById('confirmSub').innerHTML=`This will permanently remove <strong>${name}</strong> and all linked appointments and invoices. <strong>This cannot be undone.</strong>`;
+  document.getElementById('confirmWrap').classList.add('show');
+}
+document.getElementById('confirmCancel').addEventListener('click',()=>{document.getElementById('confirmWrap').classList.remove('show');deleteTargetId=null;});
+document.getElementById('confirmOk').addEventListener('click',async()=>{
+  if(!deleteTargetId) return;
+  const btn=document.getElementById('confirmOk');
+  btn.textContent='Deleting…'; btn.disabled=true;
+  try{
+    const id=deleteTargetId;
+    const name=currentPatient?.name||'Patient';
+    await sb.from('invoices').delete().eq('patient_id',id);
+    await sb.from('appointments').delete().eq('patient_id',id);
+    const {error}=await sb.from('patients').delete().eq('id',id);
+    if(error) throw error;
+    allPatients=allPatients.filter(p=>p.id!==id);
+    document.getElementById('confirmWrap').classList.remove('show');
+    closePanel();
+    toast(`${name} deleted`,'info');
+    logActivity('🗑️',`${name} record deleted`,'Just now');
+    updatePatientKPIs(allPatients);
+    renderPatientTable(allPatients);
+    renderOverviewTable();
+    const critical=allPatients.filter(p=>p.status==='Critical').length;
+    document.getElementById('kpi-critical').textContent=critical;
+    document.getElementById('kpi-total').textContent=allPatients.length;
+    document.getElementById('badge-critical').textContent=critical;
+    document.getElementById('critical-count').textContent=critical+' Critical Patient'+(critical!==1?'s':'');
+  }catch(e){console.error(e);toast('Delete failed: '+(e.message||'Error'),'error');}
+  finally{btn.textContent='Delete Permanently';btn.disabled=false;deleteTargetId=null;}
+});
+
+// ═══ APPOINTMENTS ═══
+async function loadAppointments(){
+  const {data:appts}=await sb.from('appointments').select('*, patients(name, patient_code), doctors(name, initials)').order('scheduled_at');
+  if(!appts) return;
+  document.getElementById('appt-kpi-total').textContent=appts.length;
+  document.getElementById('appt-kpi-confirmed').textContent=appts.filter(a=>a.status==='Confirmed').length;
+  document.getElementById('appt-kpi-pending').textContent=appts.filter(a=>a.status==='Pending').length;
+  document.getElementById('appt-kpi-cancelled').textContent=appts.filter(a=>a.status==='Cancelled').length;
+  if(!appts.length){document.getElementById('appt-list-wrap').innerHTML=`<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-title">No appointments</div></div>`;return;}
+  const colors={'Dr. Nour Amin':'linear-gradient(135deg,#00c9b1,#008fa0)','Dr. Tarek Said':'linear-gradient(135deg,#4d9fff,#2563eb)','Dr. Mona Badr':'linear-gradient(135deg,#e8b84b,#b45309)','Dr. Hana Kamal':'linear-gradient(135deg,#a78bfa,#7c3aed)'};
+  document.getElementById('appt-list-wrap').innerHTML=`<div class="appt-list">${appts.map(a=>{const t=a.scheduled_at?new Date(a.scheduled_at):null;const hr=t?t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}):'—';const period=t?(t.getHours()<12?'AM':'PM'):'';const bg=colors[a.doctors?.name]||'linear-gradient(135deg,#4a6080,#2a4060)';return`<div class="appt" onclick="openPatient('${a.patient_id}')"><div class="appt-time-box"><div class="appt-hr">${hr}</div><div class="appt-period">${period}</div></div><div class="appt-body"><div class="appt-patient-name">${a.patients?.name||'Unknown'}</div><div class="appt-meta">${a.appointment_type||'Consultation'} · ${a.room||'—'}</div></div><div class="appt-dr"><div class="dr-av" style="background:${bg}">${a.doctors?.initials||'DR'}</div><span style="font-size:12px;color:var(--text2);white-space:nowrap;">${a.doctors?.name||'—'}</span></div><span class="badge ${badgeClass(a.status)}">${a.status}</span></div>`;}).join('')}</div>`;
 }
 
-// ═══ LOAD BILLING ═══
-let billingChartDrawn = false;
-async function loadBilling() {
-  const { data: invs } = await sb.from('invoices').select('*, patients(name)').order('issued_at', { ascending: false });
-  if (!invs) return;
-  const paid = invs.filter(i=>i.status==='Paid').reduce((s,i)=>s+parseFloat(i.amount||0),0);
-  const pending = invs.filter(i=>i.status==='Pending').reduce((s,i)=>s+parseFloat(i.amount||0),0);
-  const overdue = invs.filter(i=>i.status==='Overdue').reduce((s,i)=>s+parseFloat(i.amount||0),0);
-  const total = paid + pending + overdue;
-  document.getElementById('bill-kpi-total').textContent = fmt(total);
-  document.getElementById('bill-kpi-paid').textContent = fmt(paid);
-  document.getElementById('bill-kpi-pending').textContent = fmt(pending);
-  document.getElementById('bill-kpi-overdue').textContent = fmt(overdue);
-  document.getElementById('leg-paid').textContent = fmt(paid);
-  document.getElementById('leg-pending').textContent = fmt(pending);
-  document.getElementById('leg-overdue').textContent = fmt(overdue);
-  document.getElementById('invoices-wrap').innerHTML = `<div class="inv-list">${invs.map(i=>`
-    <div class="inv-item">
-      <div class="inv-icon">🧾</div>
-      <div style="flex:1;min-width:0">
-        <div class="inv-name">${i.patients?.name||'Unknown'} — ${i.description||'Invoice'}</div>
-        <div class="inv-date">${i.invoice_code} · ${i.issued_at ? new Date(i.issued_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—'}</div>
-      </div>
-      <span class="badge ${badgeClass(i.status)}" style="margin-right:12px;">${i.status}</span>
-      <div class="inv-amt ${i.status.toLowerCase()}">${fmt(parseFloat(i.amount||0))}</div>
-    </div>`).join('')}</div>`;
-
-  if (!billingChartDrawn) {
-    billingChartDrawn = true;
-    setTimeout(() => {
-      new Chart(document.getElementById('chart-revenue'), {
-        type:'line',
-        data:{ labels:['Nov','Dec','Jan','Feb','Mar','Apr'], datasets:[{ data:[98,112,125,118,131,Math.round(total/1000*10)/10||142], borderColor:'#e8b84b',
-          backgroundColor:function(ctx){var g=ctx.chart.ctx.createLinearGradient(0,0,0,180);g.addColorStop(0,'rgba(232,184,75,0.15)');g.addColorStop(1,'rgba(232,184,75,0)');return g;},
-          fill:true,tension:0.4,pointBackgroundColor:'#e8b84b',pointRadius:4,pointHoverRadius:7,borderWidth:2.5 }] },
-        options:{ responsive:true, plugins:{ legend:{display:false}, tooltip:{...TIP,callbacks:{label:c=>' $'+c.parsed.y+'K'}} }, scales:{ x:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'}}, y:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080',callback:v=>'$'+v+'K'}} } }
-      });
-      new Chart(document.getElementById('chart-payment'), {
-        type:'doughnut',
-        data:{ datasets:[{ data:[paid,pending,overdue], backgroundColor:['#00e5c8','#e8b84b','#ff4d6d'], borderWidth:0, hoverOffset:8 }] },
-        options:{ responsive:true, cutout:'70%', plugins:{ legend:{display:false}, tooltip:{...TIP,callbacks:{label:c=>' '+fmt(c.parsed)}} } }
-      });
-    }, 60);
+// ═══ BILLING ═══
+let billingChartDrawn=false;
+async function loadBilling(){
+  const {data:invs}=await sb.from('invoices').select('*, patients(name)').order('issued_at',{ascending:false});
+  if(!invs) return;
+  const paid=invs.filter(i=>i.status==='Paid').reduce((s,i)=>s+parseFloat(i.amount||0),0);
+  const pending=invs.filter(i=>i.status==='Pending').reduce((s,i)=>s+parseFloat(i.amount||0),0);
+  const overdue=invs.filter(i=>i.status==='Overdue').reduce((s,i)=>s+parseFloat(i.amount||0),0);
+  const total=paid+pending+overdue;
+  document.getElementById('bill-kpi-total').textContent=fmt(total);
+  document.getElementById('bill-kpi-paid').textContent=fmt(paid);
+  document.getElementById('bill-kpi-pending').textContent=fmt(pending);
+  document.getElementById('bill-kpi-overdue').textContent=fmt(overdue);
+  document.getElementById('leg-paid').textContent=fmt(paid);
+  document.getElementById('leg-pending').textContent=fmt(pending);
+  document.getElementById('leg-overdue').textContent=fmt(overdue);
+  if(!invs.length){document.getElementById('invoices-wrap').innerHTML=`<div class="empty-state"><div class="empty-icon">🧾</div><div class="empty-title">No invoices yet</div></div>`;}
+  else{document.getElementById('invoices-wrap').innerHTML=`<div class="inv-list">${invs.map(i=>`<div class="inv-item"><div class="inv-icon">🧾</div><div style="flex:1;min-width:0"><div class="inv-name">${i.patients?.name||'Unknown'} — ${i.description||'Invoice'}</div><div class="inv-date">${i.invoice_code} · ${i.issued_at?new Date(i.issued_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—'}</div></div><span class="badge ${badgeClass(i.status)}" style="margin-right:12px;">${i.status}</span><div class="inv-amt ${i.status.toLowerCase()}">${fmt(parseFloat(i.amount||0))}</div></div>`).join('')}</div>`;}
+  if(!billingChartDrawn){
+    billingChartDrawn=true;
+    setTimeout(()=>{
+      new Chart(document.getElementById('chart-revenue'),{type:'line',data:{labels:['Nov','Dec','Jan','Feb','Mar','Apr'],datasets:[{data:[98,112,125,118,131,Math.round(total/1000*10)/10||0],borderColor:'#e8b84b',backgroundColor:ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,180);g.addColorStop(0,'rgba(232,184,75,0.15)');g.addColorStop(1,'rgba(232,184,75,0)');return g;},fill:true,tension:0.4,pointBackgroundColor:'#e8b84b',pointRadius:4,pointHoverRadius:7,borderWidth:2.5}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:c=>' $'+c.parsed.y+'K'}}},scales:{x:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'}},y:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080',callback:v=>'$'+v+'K'}}}}});
+      new Chart(document.getElementById('chart-payment'),{type:'doughnut',data:{datasets:[{data:[paid||1,pending,overdue],backgroundColor:['#00e5c8','#e8b84b','#ff4d6d'],borderWidth:0,hoverOffset:8}]},options:{responsive:true,cutout:'70%',plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:c=>' '+fmt(c.parsed)}}}}});
+    },60);
   }
 }
 
 // ═══ ADD PATIENT MODAL ═══
-async function openAddPatient() {
-  // Load depts + doctors if needed
-  if (allDepts.length === 0) {
-    const { data: depts } = await sb.from('departments').select('*');
-    if (depts) allDepts = depts;
-  }
-  if (allDoctors.length === 0) {
-    const { data: docs } = await sb.from('doctors').select('*');
-    if (docs) allDoctors = docs;
-  }
-  const deptSel = document.getElementById('f-dept');
-  deptSel.innerHTML = allDepts.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+async function openAddPatient(){
+  if(!allDepts.length){const {data:d}=await sb.from('departments').select('*');if(d)allDepts=d;}
+  if(!allDoctors.length){const {data:d}=await sb.from('doctors').select('*');if(d)allDoctors=d;}
+  document.getElementById('f-dept').innerHTML=allDepts.map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
   updateDoctorOptions();
-  // Set default date to today
-  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('f-name').value=''; document.getElementById('f-age').value='';
   document.getElementById('addPatientModal').classList.add('show');
 }
-
-function updateDoctorOptions() {
-  const deptSel = document.getElementById('f-dept');
-  const deptId = deptSel?.value;
-  const docSel = document.getElementById('f-doctor');
-  if (!docSel) return;
-  const filtered = deptId ? allDoctors.filter(d => d.department_id === deptId) : allDoctors;
-  docSel.innerHTML = filtered.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+function updateDoctorOptions(){
+  const deptId=document.getElementById('f-dept')?.value;
+  const docSel=document.getElementById('f-doctor'); if(!docSel) return;
+  const filtered=deptId?allDoctors.filter(d=>d.department_id===deptId):allDoctors;
+  docSel.innerHTML=filtered.map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
 }
-
-function closeAddPatient() {
-  document.getElementById('addPatientModal').classList.remove('show');
-}
-
-async function submitNewPatient() {
-  const name = document.getElementById('f-name').value.trim();
-  if (!name) { toast('Patient name is required', 'error'); return; }
-  const age = parseInt(document.getElementById('f-age').value) || null;
-  const gender = document.getElementById('f-gender').value;
-  const blood_type = document.getElementById('f-blood').value;
-  const department_id = document.getElementById('f-dept').value || null;
-  const doctor_id = document.getElementById('f-doctor').value || null;
-  const status = document.getElementById('f-status').value;
-  const admitted_at = document.getElementById('f-date').value || new Date().toISOString().split('T')[0];
-
-  // Generate patient code
-  const lastCode = allPatients.length > 0
-    ? Math.max(...allPatients.map(p => parseInt(p.patient_code?.replace('#PT-',''))||0))
-    : 420;
-  const patient_code = `#PT-${String(lastCode + 1).padStart(5,'0')}`;
-
-  const btn = document.getElementById('modalSubmitBtn');
-  btn.textContent = 'Admitting…';
-  btn.disabled = true;
-
-  try {
-    const { data, error } = await sb.from('patients').insert([{
-      name, age, gender, blood_type, department_id, doctor_id, status, admitted_at, patient_code
-    }]).select('*, departments(name), doctors(name)').single();
-    if (error) throw error;
+function closeAddPatient(){document.getElementById('addPatientModal').classList.remove('show');}
+async function submitNewPatient(){
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){toast('Name is required','error');return;}
+  const lastCode=allPatients.length>0?Math.max(...allPatients.map(p=>parseInt(p.patient_code?.replace('#PT-',''))||0)):0;
+  const patient_code=`#PT-${String(lastCode+1).padStart(5,'0')}`;
+  const btn=document.getElementById('modalSubmitBtn');
+  btn.textContent='Admitting…'; btn.disabled=true;
+  try{
+    const {data,error}=await sb.from('patients').insert([{name,age:parseInt(document.getElementById('f-age').value)||null,gender:document.getElementById('f-gender').value,blood_type:document.getElementById('f-blood').value,department_id:document.getElementById('f-dept').value||null,doctor_id:document.getElementById('f-doctor').value||null,status:document.getElementById('f-status').value,admitted_at:document.getElementById('f-date').value,patient_code}]).select('*, departments(name), doctors(name)').single();
+    if(error) throw error;
     allPatients.unshift(data);
     closeAddPatient();
-    toast(`${name} admitted successfully`, 'success');
-    // Refresh
-    updatePatientKPIs(allPatients);
-    renderPatientTable(allPatients);
-    if (loaded['overview']) refreshOverviewTable();
-  } catch(e) {
-    console.error(e);
-    toast('Failed to admit patient: ' + (e.message || 'Unknown error'), 'error');
-  } finally {
-    btn.textContent = 'Admit Patient';
-    btn.disabled = false;
-  }
+    toast(`${name} admitted`,'success');
+    logActivity('🏥',`${name} admitted`,'Just now');
+    updatePatientKPIs(allPatients); renderPatientTable(allPatients); renderOverviewTable();
+    document.getElementById('kpi-total').textContent=allPatients.length;
+    document.getElementById('badge-critical').textContent=allPatients.filter(p=>p.status==='Critical').length;
+  }catch(e){toast('Failed: '+(e.message||'Error'),'error');}
+  finally{btn.textContent='Admit Patient';btn.disabled=false;}
 }
+document.getElementById('topNewPatientBtn').addEventListener('click',openAddPatient);
+document.getElementById('admitNewBtn')?.addEventListener('click',openAddPatient);
+document.getElementById('modalClose').addEventListener('click',closeAddPatient);
+document.getElementById('modalCancelBtn').addEventListener('click',closeAddPatient);
+document.getElementById('modalSubmitBtn').addEventListener('click',submitNewPatient);
+document.getElementById('addPatientModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeAddPatient();});
 
-// Wire up modal buttons
-document.getElementById('topNewPatientBtn').addEventListener('click', openAddPatient);
-document.getElementById('admitNewBtn')?.addEventListener('click', openAddPatient);
-document.getElementById('modalClose').addEventListener('click', closeAddPatient);
-document.getElementById('modalCancelBtn').addEventListener('click', closeAddPatient);
-document.getElementById('modalSubmitBtn').addEventListener('click', submitNewPatient);
-document.getElementById('addPatientModal').addEventListener('click', e => {
-  if (e.target === e.currentTarget) closeAddPatient();
-});
-
-// ═══ PAGE LOADER ═══
-function loadPage(pageId) {
-  if (pageId === 'overview') loadOverview();
-  if (pageId === 'patients') loadPatients();
-  if (pageId === 'appointments') loadAppointments();
-  if (pageId === 'billing') loadBilling();
+function loadPage(pageId){
+  if(pageId==='patients') loadPatients();
+  if(pageId==='appointments') loadAppointments();
+  if(pageId==='billing') loadBilling();
 }
-
-// ═══ PRELOAD DEPTS + DOCTORS ═══
-async function preload() {
-  const [{ data: depts }, { data: docs }] = await Promise.all([
-    sb.from('departments').select('*'),
-    sb.from('doctors').select('*'),
-  ]);
-  if (depts) allDepts = depts;
-  if (docs) allDoctors = docs;
-}
-
-// ═══ INIT ═══
-preload();
-loadOverview();
-loaded['overview'] = true;
 </script>
 </body>
 </html>
