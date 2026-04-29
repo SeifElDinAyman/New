@@ -36,10 +36,13 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 .brand-stat-icon{font-size:18px;}
 .brand-stat-label{font-size:12px;color:var(--text3);}
 .brand-stat-val{font-size:14px;font-weight:700;color:var(--text);margin-top:2px;}
-.login-form-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 24px;position:relative;overflow:hidden;}
-.login-form-wrap::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(0,229,200,0.04),transparent 60%);pointer-events:none;}
-.login-card{width:100%;max-width:400px;position:relative;}
-.login-card-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+.login-form-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 24px;position:relative;overflow-y:auto;}
+.login-form-wrap::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(0,229,200,0.04),transparent 60%);pointer-events:none;z-index:0;}
+.login-card{width:100%;max-width:400px;position:relative;z-index:1;}
+/* Hide logo in form when brand panel is visible */
+@media(min-width:801px){.login-card-logo{display:none;}}
+@media(max-width:800px){.login-desk-head{display:none;}}
+.login-card-logo{display:flex;align-items:center;gap:10px;margin-bottom:24px;}
 .login-card-logo-icon{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--cyan),#008fa0);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 16px rgba(0,229,200,0.25);}
 .login-card-logo-name{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);}
 .login-card-logo-name em{color:var(--cyan);font-style:normal;}
@@ -430,10 +433,16 @@ td{padding:12px;vertical-align:middle;}
   <div class="login-form-wrap">
     <div class="login-card">
 
-      <!-- Logo (mobile only, brand panel hidden) -->
+      <!-- Logo (mobile only) -->
       <div class="login-card-logo">
         <div class="login-card-logo-icon">⚕</div>
         <div class="login-card-logo-name">Medo<em>Scope</em></div>
+      </div>
+
+      <!-- Desktop heading -->
+      <div style="margin-bottom:24px;" class="login-desk-head">
+        <div style="font-family:'Instrument Serif',serif;font-size:26px;color:var(--text);margin-bottom:4px;">Welcome back</div>
+        <div style="font-size:13px;color:var(--text3);">Sign in to your <span style="color:var(--cyan);">MedoScope</span> workspace</div>
       </div>
 
       <!-- Tabs -->
@@ -797,7 +806,7 @@ let currentPatient=null, activeTab='overview', patientFilter='All';
 const loaded={};
 
 // ═══ HELPERS ═══
-function fmt(n){ return n>=1000?'$'+(n/1000).toFixed(1)+'K':'$'+n; }
+function fmt(n){ if(n>=1000000) return 'EGP '+(n/1000000).toFixed(1)+'M'; if(n>=1000) return 'EGP '+(n/1000).toFixed(1)+'K'; return 'EGP '+Math.round(n); }
 function badgeClass(s){ const m={Active:'badge-active',Critical:'badge-critical',Pending:'badge-pending',Discharged:'badge-discharged',Confirmed:'badge-active',Urgent:'badge-critical',Cancelled:'badge-discharged'}; return m[s]||'badge-discharged'; }
 function pillClass(b){ const m={'A+':'pill-rose','O-':'pill-muted','B+':'pill-blue','AB+':'pill-cyan','O+':'pill-rose','A-':'pill-muted','B-':'pill-blue'}; return m[b]||'pill-muted'; }
 function initials(name){ if(!name) return '?'; return name.split(' ').filter(w=>w.length>1).slice(0,2).map(w=>w[0].toUpperCase()).join(''); }
@@ -1115,7 +1124,7 @@ async function loadBilling(){
   if(!billingChartDrawn){
     billingChartDrawn=true;
     setTimeout(()=>{
-      new Chart(document.getElementById('chart-revenue'),{type:'line',data:{labels:['Nov','Dec','Jan','Feb','Mar','Apr'],datasets:[{data:[98,112,125,118,131,Math.round(total/1000*10)/10||0],borderColor:'#e8b84b',backgroundColor:ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,180);g.addColorStop(0,'rgba(232,184,75,0.15)');g.addColorStop(1,'rgba(232,184,75,0)');return g;},fill:true,tension:0.4,pointBackgroundColor:'#e8b84b',pointRadius:4,pointHoverRadius:7,borderWidth:2.5}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:c=>' $'+c.parsed.y+'K'}}},scales:{x:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'}},y:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080',callback:v=>'$'+v+'K'}}}}});
+      new Chart(document.getElementById('chart-revenue'),{type:'line',data:{labels:['Nov','Dec','Jan','Feb','Mar','Apr'],datasets:[{data:[98,112,125,118,131,Math.round(total/1000*10)/10||0],borderColor:'#e8b84b',backgroundColor:ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,180);g.addColorStop(0,'rgba(232,184,75,0.15)');g.addColorStop(1,'rgba(232,184,75,0)');return g;},fill:true,tension:0.4,pointBackgroundColor:'#e8b84b',pointRadius:4,pointHoverRadius:7,borderWidth:2.5}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:c=>' EGP '+c.parsed.y+'K'}}},scales:{x:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'}},y:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080',callback:v=>'EGP '+v+'K'}}}}});
       new Chart(document.getElementById('chart-payment'),{type:'doughnut',data:{datasets:[{data:[paid||1,pending,overdue],backgroundColor:['#00e5c8','#e8b84b','#ff4d6d'],borderWidth:0,hoverOffset:8}]},options:{responsive:true,cutout:'70%',plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:c=>' '+fmt(c.parsed)}}}}});
     },60);
   }
