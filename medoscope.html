@@ -36,24 +36,54 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 .brand-stat-icon{font-size:18px;}
 .brand-stat-label{font-size:12px;color:var(--text3);}
 .brand-stat-val{font-size:14px;font-weight:700;color:var(--text);margin-top:2px;}
-.login-form-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 24px;position:relative;overflow:hidden;}
-.login-form-wrap::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(0,229,200,0.04),transparent 60%);pointer-events:none;}
-.login-card{width:100%;max-width:400px;position:relative;}
-.login-card-title{font-family:'Instrument Serif',serif;font-size:28px;color:var(--text);margin-bottom:6px;}
-.login-card-sub{font-size:13px;color:var(--text3);margin-bottom:32px;}
-.login-card-sub span{color:var(--cyan);}
+.login-form-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 24px;position:relative;overflow-y:auto;}
+.login-form-wrap::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(0,229,200,0.04),transparent 60%);pointer-events:none;z-index:0;}
+.login-card{width:100%;max-width:400px;position:relative;z-index:1;}
+/* Hide logo in form when brand panel is visible */
+@media(min-width:801px){.login-card-logo{display:none;}}
+@media(max-width:800px){.login-desk-head{display:none;}}
+.login-card-logo{display:flex;align-items:center;gap:10px;margin-bottom:24px;}
+.login-card-logo-icon{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--cyan),#008fa0);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 16px rgba(0,229,200,0.25);}
+.login-card-logo-name{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);}
+.login-card-logo-name em{color:var(--cyan);font-style:normal;}
+
+/* AUTH TABS */
+.auth-tabs{display:flex;background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:4px;margin-bottom:28px;}
+.auth-tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:600;color:var(--text3);cursor:pointer;border-radius:9px;transition:all 0.2s;}
+.auth-tab.active{background:var(--s1);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.3);}
+
+/* SOCIAL */
+.social-btn{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:13px 16px;border-radius:11px;font-size:14px;font-weight:600;
+  font-family:'Outfit',sans-serif;cursor:pointer;transition:all 0.2s;
+  border:1px solid var(--border2);background:var(--s2);color:var(--text);
+  margin-bottom:10px;
+}
+.social-btn:hover{border-color:var(--border2);background:var(--s3);transform:translateY(-1px);}
+.social-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+.social-icon{width:20px;height:20px;flex-shrink:0;}
+
+/* DIVIDER */
+.auth-divider{display:flex;align-items:center;gap:12px;margin:20px 0;}
+.auth-divider-line{flex:1;height:1px;background:var(--border2);}
+.auth-divider-text{font-size:11px;color:var(--text3);font-weight:600;letter-spacing:1px;text-transform:uppercase;}
+
 .form-field{margin-bottom:16px;}
 .form-field label{display:block;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:7px;}
 .form-field input{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:11px;padding:13px 16px;font-size:14px;color:var(--text);font-family:'Outfit',sans-serif;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
 .form-field input:focus{border-color:var(--cyan-border);box-shadow:0 0 0 3px rgba(0,229,200,0.07);}
 .form-field input::placeholder{color:var(--text3);}
-.login-btn{width:100%;padding:14px;background:var(--cyan);color:var(--bg);border:none;border-radius:11px;font-size:14px;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 24px rgba(0,229,200,0.25);margin-top:8px;}
+.login-btn{width:100%;padding:14px;background:var(--cyan);color:var(--bg);border:none;border-radius:11px;font-size:14px;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 24px rgba(0,229,200,0.25);margin-top:4px;}
 .login-btn:hover:not(:disabled){box-shadow:0 8px 32px rgba(0,229,200,0.4);transform:translateY(-1px);}
 .login-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
 .login-error{background:var(--rose-soft);border:1px solid rgba(255,77,109,0.3);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--rose);margin-bottom:14px;display:none;}
 .login-error.show{display:block;}
-.login-note{margin-top:24px;padding:14px;background:rgba(0,229,200,0.04);border:1px solid var(--cyan-border);border-radius:10px;font-size:12px;color:var(--text3);line-height:1.6;}
-.login-note strong{color:var(--cyan);}
+.login-success{background:rgba(0,229,200,0.07);border:1px solid var(--cyan-border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--cyan);margin-bottom:14px;display:none;}
+.login-success.show{display:block;}
+.auth-switch{margin-top:20px;text-align:center;font-size:13px;color:var(--text3);}
+.auth-switch span{color:var(--cyan);cursor:pointer;font-weight:600;}
+.auth-switch span:hover{text-decoration:underline;}
 
 /* APP WRAP */
 #appWrap{display:none;flex:1;width:100%;}
@@ -366,6 +396,25 @@ td{padding:12px;vertical-align:middle;}
 .toast.error{background:var(--s2);border:1px solid rgba(255,77,109,0.4);color:var(--rose);}
 .toast.info{background:var(--s2);border:1px solid var(--border2);color:var(--text2);}
 
+/* DOCTOR CARD */
+.dr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:20px;}
+.dr-card{background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;transition:border-color 0.2s,transform 0.2s;}
+.dr-card:hover{border-color:var(--cyan-border);transform:translateY(-2px);}
+.dr-card-top{display:flex;align-items:center;gap:12px;}
+.dr-card-av{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--bg);flex-shrink:0;}
+.dr-card-name{font-size:14px;font-weight:700;color:var(--text);}
+.dr-card-dept{font-size:11px;color:var(--text3);margin-top:2px;}
+.dr-card-actions{display:flex;gap:6px;}
+.dr-action-btn{flex:1;padding:6px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--text3);font-family:'Outfit',sans-serif;transition:all 0.18s;text-align:center;}
+.dr-action-btn:hover{border-color:var(--cyan-border);color:var(--cyan);}
+.dr-action-btn.del:hover{background:var(--rose);color:#fff;border-color:var(--rose);}
+/* CHARGE ROWS */
+.charge-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.charge-row:last-child{border-bottom:none;}
+.charge-pt-name{font-size:13px;font-weight:600;color:var(--text);}
+.charge-pt-meta{font-size:11px;color:var(--text3);margin-top:2px;}
+.charge-btn{padding:7px 14px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;background:var(--cyan-soft);color:var(--cyan);border:1px solid var(--cyan-border);font-family:'Outfit',sans-serif;transition:all 0.18s;white-space:nowrap;flex-shrink:0;}
+.charge-btn:hover{background:var(--cyan);color:var(--bg);}
 /* MOBILE BOTTOM NAV */
 .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:1px solid var(--border);padding:8px 0 12px;z-index:50;}
 .bottom-nav-inner{display:flex;justify-content:space-around;}
@@ -402,13 +451,64 @@ td{padding:12px;vertical-align:middle;}
   </div>
   <div class="login-form-wrap">
     <div class="login-card">
-      <div class="login-card-title">Welcome back</div>
-      <div class="login-card-sub">Sign in to your <span>MedoScope</span> workspace</div>
+
+      <!-- Logo (mobile only) -->
+      <div class="login-card-logo">
+        <div class="login-card-logo-icon">⚕</div>
+        <div class="login-card-logo-name">Medo<em>Scope</em></div>
+      </div>
+
+      <!-- Desktop heading -->
+      <div style="margin-bottom:24px;" class="login-desk-head">
+        <div style="font-family:'Instrument Serif',serif;font-size:26px;color:var(--text);margin-bottom:4px;">Welcome back</div>
+        <div style="font-size:13px;color:var(--text3);">Sign in to your <span style="color:var(--cyan);">MedoScope</span> workspace</div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="tabSignIn" onclick="switchTab('signin')">Sign In</div>
+        <div class="auth-tab" id="tabSignUp" onclick="switchTab('signup')">Create Account</div>
+      </div>
+
+      <!-- Error / Success messages -->
       <div class="login-error" id="loginError"></div>
-      <div class="form-field"><label>Email address</label><input type="email" id="loginEmail" placeholder="doctor@hospital.com" autocomplete="email"></div>
-      <div class="form-field"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"></div>
-      <button class="login-btn" id="loginBtn">Sign In</button>
-      <div class="login-note"><strong>First time?</strong> Go to your Supabase dashboard → Authentication → Users → Add user, then sign in here with that email and password.</div>
+      <div class="login-success" id="loginSuccess"></div>
+
+      <!-- Google OAuth -->
+      <button class="social-btn" id="googleBtn" onclick="signInWithGoogle()">
+        <svg class="social-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <!-- Divider -->
+      <div class="auth-divider">
+        <div class="auth-divider-line"></div>
+        <div class="auth-divider-text">or</div>
+        <div class="auth-divider-line"></div>
+      </div>
+
+      <!-- Sign In form -->
+      <div id="formSignIn">
+        <div class="form-field"><label>Email address</label><input type="email" id="loginEmail" placeholder="doctor@hospital.com" autocomplete="email"></div>
+        <div class="form-field"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"></div>
+        <button class="login-btn" id="loginBtn">Sign In</button>
+        <div class="auth-switch">Don't have an account? <span onclick="switchTab('signup')">Create one</span></div>
+      </div>
+
+      <!-- Sign Up form -->
+      <div id="formSignUp" style="display:none;">
+        <div class="form-field"><label>Full Name</label><input type="text" id="signupName" placeholder="Dr. Ahmed Hassan" autocomplete="name"></div>
+        <div class="form-field"><label>Email address</label><input type="email" id="signupEmail" placeholder="doctor@hospital.com" autocomplete="email"></div>
+        <div class="form-field"><label>Password</label><input type="password" id="signupPassword" placeholder="Min. 6 characters" autocomplete="new-password"></div>
+        <button class="login-btn" id="signupBtn">Create Account</button>
+        <div class="auth-switch">Already have an account? <span onclick="switchTab('signin')">Sign in</span></div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -451,6 +551,43 @@ td{padding:12px;vertical-align:middle;}
     </div>
   </div>
 
+  <!-- ADD DOCTOR MODAL -->
+  <div class="modal-wrap" id="addDoctorModal">
+    <div class="modal">
+      <div class="modal-hd"><div class="modal-title">Add Doctor</div><div class="modal-close" onclick="closeAddDoctor()">✕</div></div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group full"><div class="form-label">Full Name</div><input class="form-input" id="dr-name" placeholder="Dr. Full Name…" type="text"></div>
+          <div class="form-group"><div class="form-label">Initials</div><input class="form-input" id="dr-initials" placeholder="e.g. NA" maxlength="3"></div>
+          <div class="form-group"><div class="form-label">Department</div><select class="form-select" id="dr-dept"></select></div>
+          <div class="form-group full"><div class="form-label">Specialization</div><input class="form-input" id="dr-spec" placeholder="e.g. Interventional Cardiology…"></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-outline" onclick="closeAddDoctor()">Cancel</button><button class="btn btn-primary" id="drSubmitBtn" onclick="submitNewDoctor()">Add Doctor</button></div>
+    </div>
+  </div>
+
+  <!-- NEW INVOICE MODAL -->
+  <div class="modal-wrap" id="newInvoiceModal">
+    <div class="modal">
+      <div class="modal-hd"><div class="modal-title" id="invoiceModalTitle">New Invoice</div><div class="modal-close" onclick="closeNewInvoice()">✕</div></div>
+      <div class="modal-body">
+        <div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:16px;">
+          <div style="font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Patient</div>
+          <div style="font-size:15px;font-weight:700;color:var(--text);" id="inv-patient-name">—</div>
+          <div style="font-size:11px;color:var(--text3);" id="inv-patient-meta">—</div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group full"><div class="form-label">Description / Service</div><input class="form-input" id="inv-desc" placeholder="e.g. Cardiology Consultation, ICU Day 1…"></div>
+          <div class="form-group"><div class="form-label">Amount (EGP)</div><input class="form-input" id="inv-amount" type="number" min="0" placeholder="0"></div>
+          <div class="form-group"><div class="form-label">Status</div><select class="form-select" id="inv-status"><option>Pending</option><option>Paid</option><option>Overdue</option></select></div>
+          <div class="form-group full"><div class="form-label">Invoice Date</div><input class="form-input" id="inv-date" type="date"></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-outline" onclick="closeNewInvoice()">Cancel</button><button class="btn btn-primary" id="invSubmitBtn" onclick="submitNewInvoice()">Create Invoice</button></div>
+    </div>
+  </div>
+
   <!-- ADD PATIENT MODAL -->
   <div class="modal-wrap" id="addPatientModal">
     <div class="modal">
@@ -485,6 +622,7 @@ td{padding:12px;vertical-align:middle;}
       <div class="nav-item active" data-page="overview"><div class="nav-icon">◈</div><span class="nav-label-text">Overview</span></div>
       <div class="nav-item" data-page="patients"><div class="nav-icon">👤</div><span class="nav-label-text">Patients</span><span class="nav-badge" id="badge-critical">—</span></div>
       <div class="nav-item" data-page="appointments"><div class="nav-icon">📅</div><span class="nav-label-text">Appointments</span><span class="nav-badge amber" id="badge-appt">—</span></div>
+      <div class="nav-item" data-page="doctors"><div class="nav-icon">🩺</div><span class="nav-label-text">Doctors</span></div>
     </div>
     <div class="nav-section">
       <div class="nav-section-label">Finance</div>
@@ -550,8 +688,14 @@ td{padding:12px;vertical-align:middle;}
             <div style="padding:18px 0 0;"><div class="sec-hdr"><div class="sec-title">Recent Patients</div><button class="btn btn-outline" style="font-size:12px;padding:6px 12px;" id="btn-all-patients">View All →</button></div></div>
             <div id="overview-patients-wrap"><div class="loading"><div class="spinner"></div></div></div>
           </div>
-          <div class="card">
+        <div class="card">
             <div class="card-hd"><div><div class="card-title">Activity Feed</div><div class="card-sub">System log</div></div></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+              <button class="btn btn-outline" style="font-size:12px;padding:6px 12px;" onclick="goTo('patients')">👤 Patients</button>
+              <button class="btn btn-outline" style="font-size:12px;padding:6px 12px;" onclick="goTo('doctors')">🩺 Doctors</button>
+              <button class="btn btn-outline" style="font-size:12px;padding:6px 12px;" onclick="goTo('billing')">💳 Billing</button>
+              <button class="btn btn-outline" style="font-size:12px;padding:6px 12px;" onclick="goTo('appointments')">📅 Schedule</button>
+            </div>
             <div class="activity" id="activityFeed">
               <div class="act-item"><div class="act-dot">◈</div><div><div class="act-action">MedoScope connected</div><div class="act-time">Live database ready</div></div></div>
             </div>
@@ -590,6 +734,21 @@ td{padding:12px;vertical-align:middle;}
         <div id="appt-list-wrap"><div class="loading"><div class="spinner"></div></div></div>
       </div>
 
+      <!-- DOCTORS -->
+      <div class="page" id="page-doctors">
+        <div class="kpi-grid">
+          <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🩺</div><div class="kpi-trend nt">Live</div></div><div class="kpi-val" id="dr-kpi-total">—</div><div class="kpi-lbl">Total Doctors</div></div>
+          <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🫀</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="dr-kpi-cardiology">—</div><div class="kpi-lbl">Cardiology</div></div>
+          <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🧠</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="dr-kpi-neurology">—</div><div class="kpi-lbl">Neurology</div></div>
+          <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🦴</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="dr-kpi-other">—</div><div class="kpi-lbl">Other Depts</div></div>
+        </div>
+        <div class="sec-hdr">
+          <div class="sec-title">Medical Staff</div>
+          <button class="btn btn-primary" style="font-size:12px;padding:7px 14px;" onclick="openAddDoctor()">+ Add Doctor</button>
+        </div>
+        <div id="dr-grid-wrap"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+
       <!-- BILLING -->
       <div class="page" id="page-billing">
         <div class="kpi-grid">
@@ -602,7 +761,12 @@ td{padding:12px;vertical-align:middle;}
           <div class="card"><div class="card-hd"><div><div class="card-title">Revenue Trend</div><div class="card-sub">Monthly</div></div><span class="pill pill-gold">Monthly</span></div><canvas id="chart-revenue" height="140"></canvas></div>
           <div class="card"><div class="card-hd"><div><div class="card-title">Collection Rate</div></div></div><canvas id="chart-payment" height="120"></canvas><div class="legend" style="margin-top:14px;"><div class="leg-item"><div class="leg-dot" style="background:var(--cyan)"></div><span class="leg-lbl">Paid</span><span class="leg-val" id="leg-paid">—</span></div><div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div><span class="leg-lbl">Outstanding</span><span class="leg-val" id="leg-pending">—</span></div><div class="leg-item"><div class="leg-dot" style="background:var(--rose)"></div><span class="leg-lbl">Overdue</span><span class="leg-val" id="leg-overdue">—</span></div></div></div>
         </div>
-        <div class="sec-hdr"><div class="sec-title">Invoices</div><button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">+ New Invoice</button></div>
+        <!-- CHARGE ADMITTED PATIENTS -->
+        <div class="sec-hdr" style="margin-bottom:8px;"><div class="sec-title">Charge Admitted Patients</div></div>
+        <div class="card" style="margin-bottom:20px;padding:0 20px 4px;">
+          <div id="charge-patients-wrap"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+        <div class="sec-hdr"><div class="sec-title">Invoices</div></div>
         <div class="card" id="invoices-wrap"><div class="loading"><div class="spinner"></div></div></div>
       </div>
 
@@ -614,6 +778,7 @@ td{padding:12px;vertical-align:middle;}
       <div class="bn-item active" data-page="overview"><div class="bn-icon">◈</div>Overview</div>
       <div class="bn-item" data-page="patients"><div class="bn-icon">👤</div>Patients</div>
       <div class="bn-item" data-page="appointments"><div class="bn-icon">📅</div>Schedule</div>
+      <div class="bn-item" data-page="doctors"><div class="bn-icon">🩺</div>Doctors</div>
       <div class="bn-item" data-page="billing"><div class="bn-icon">💳</div>Billing</div>
     </div>
   </div>
@@ -627,19 +792,26 @@ const sb = createClient(
 );
 
 // ═══ AUTH ═══
-sb.auth.onAuthStateChange((event, session) => {
-  if (session) showApp(session.user);
-  else showLogin();
-});
+// AUTH BYPASSED FOR PREVIEW
+showApp({ email: 'preview@medoscope.app', user_metadata: { full_name: 'Dr. Ahmed Hassan' } });
+// sb.auth.onAuthStateChange((event, session) => {
+//   if (session) showApp(session.user);
+//   else showLogin();
+// });
 
 function showApp(user) {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('appWrap').classList.add('ready');
   const email = user.email || '';
+  const name = user.user_metadata?.full_name || user.user_metadata?.name || '';
   document.getElementById('sidebarEmail').textContent = email;
-  document.getElementById('sidebarInitials').textContent = email.slice(0,2).toUpperCase();
+  document.getElementById('sidebarInitials').textContent = name
+    ? name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()
+    : email.slice(0,2).toUpperCase();
   const h = new Date().getHours();
-  document.getElementById('heading').textContent = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  const greet = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  const firstName = name.split(' ')[0] || '';
+  document.getElementById('heading').textContent = firstName ? `${greet}, ${firstName}` : greet;
   if (!loaded['overview']) { loadOverview(); loaded['overview'] = true; }
 }
 function showLogin() {
@@ -647,22 +819,71 @@ function showLogin() {
   document.getElementById('appWrap').classList.remove('ready');
 }
 
+// Tab switcher
+let currentTab = 'signin';
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tabSignIn').classList.toggle('active', tab==='signin');
+  document.getElementById('tabSignUp').classList.toggle('active', tab==='signup');
+  document.getElementById('formSignIn').style.display = tab==='signin' ? 'block' : 'none';
+  document.getElementById('formSignUp').style.display = tab==='signup' ? 'block' : 'none';
+  clearAuthMessages();
+}
+function clearAuthMessages() {
+  const err = document.getElementById('loginError');
+  const suc = document.getElementById('loginSuccess');
+  err.classList.remove('show'); err.textContent = '';
+  suc.classList.remove('show'); suc.textContent = '';
+}
+function showError(msg) { const el=document.getElementById('loginError'); el.textContent=msg; el.classList.add('show'); }
+function showSuccess(msg) { const el=document.getElementById('loginSuccess'); el.textContent=msg; el.classList.add('show'); }
+
+// Google OAuth
+async function signInWithGoogle() {
+  const btn = document.getElementById('googleBtn');
+  btn.disabled = true; btn.textContent = 'Redirecting…';
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.href }
+  });
+  if (error) { showError(error.message); btn.disabled=false; btn.innerHTML=`<svg class="social-icon" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>Continue with Google`; }
+}
+
+// Sign In
 document.getElementById('loginBtn').addEventListener('click', doLogin);
 document.getElementById('loginPassword').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 document.getElementById('loginEmail').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('loginPassword').focus(); });
-
 async function doLogin() {
-  const email = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPassword').value;
-  const errEl = document.getElementById('loginError');
-  const btn = document.getElementById('loginBtn');
-  errEl.classList.remove('show');
-  if (!email||!password) { errEl.textContent='Please enter your email and password.'; errEl.classList.add('show'); return; }
+  const email=document.getElementById('loginEmail').value.trim();
+  const password=document.getElementById('loginPassword').value;
+  clearAuthMessages();
+  if(!email||!password){showError('Please enter your email and password.');return;}
+  const btn=document.getElementById('loginBtn');
   btn.textContent='Signing in…'; btn.disabled=true;
-  const { error } = await sb.auth.signInWithPassword({ email, password });
+  const {error}=await sb.auth.signInWithPassword({email,password});
   btn.textContent='Sign In'; btn.disabled=false;
-  if (error) { errEl.textContent=error.message; errEl.classList.add('show'); }
+  if(error) showError(error.message);
 }
+
+// Sign Up
+document.getElementById('signupBtn').addEventListener('click', doSignUp);
+document.getElementById('signupPassword').addEventListener('keydown', e => { if(e.key==='Enter') doSignUp(); });
+async function doSignUp() {
+  const name=document.getElementById('signupName').value.trim();
+  const email=document.getElementById('signupEmail').value.trim();
+  const password=document.getElementById('signupPassword').value;
+  clearAuthMessages();
+  if(!email||!password){showError('Email and password are required.');return;}
+  if(password.length<6){showError('Password must be at least 6 characters.');return;}
+  const btn=document.getElementById('signupBtn');
+  btn.textContent='Creating account…'; btn.disabled=true;
+  const {error}=await sb.auth.signUp({email,password,options:{data:{full_name:name}}});
+  btn.textContent='Create Account'; btn.disabled=false;
+  if(error){showError(error.message);}
+  else{showSuccess('Account created! Check your email to confirm, then sign in.');}
+}
+
+// Logout
 document.getElementById('logoutBtn').addEventListener('click', () => sb.auth.signOut());
 
 // ═══ STATE ═══
@@ -671,7 +892,7 @@ let currentPatient=null, activeTab='overview', patientFilter='All';
 const loaded={};
 
 // ═══ HELPERS ═══
-function fmt(n){ return n>=1000?'$'+(n/1000).toFixed(1)+'K':'$'+n; }
+function fmt(n){ if(n>=1000000) return 'EGP '+(n/1000000).toFixed(1)+'M'; if(n>=1000) return 'EGP '+(n/1000).toFixed(1)+'K'; return 'EGP '+Math.round(n); }
 function badgeClass(s){ const m={Active:'badge-active',Critical:'badge-critical',Pending:'badge-pending',Discharged:'badge-discharged',Confirmed:'badge-active',Urgent:'badge-critical',Cancelled:'badge-discharged'}; return m[s]||'badge-discharged'; }
 function pillClass(b){ const m={'A+':'pill-rose','O-':'pill-muted','B+':'pill-blue','AB+':'pill-cyan','O+':'pill-rose','A-':'pill-muted','B-':'pill-blue'}; return m[b]||'pill-muted'; }
 function initials(name){ if(!name) return '?'; return name.split(' ').filter(w=>w.length>1).slice(0,2).map(w=>w[0].toUpperCase()).join(''); }
@@ -691,7 +912,7 @@ function logActivity(icon,action,detail){
 }
 
 // ═══ NAV ═══
-const META={overview:{eyebrow:'Dashboard',heading:null},patients:{eyebrow:'Patient Management',heading:'Patient Records'},appointments:{eyebrow:'Schedule',heading:'Appointments'},billing:{eyebrow:'Finance',heading:'Billing & Revenue'}};
+const META={overview:{eyebrow:'Dashboard',heading:null},patients:{eyebrow:'Patient Management',heading:'Patient Records'},appointments:{eyebrow:'Schedule',heading:'Appointments'},billing:{eyebrow:'Finance',heading:'Billing & Revenue'},doctors:{eyebrow:'Medical Staff',heading:'Doctors'}};
 function goTo(pageId){
   if(!pageId||!META[pageId]) return;
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -934,10 +1155,13 @@ document.getElementById('confirmOk').addEventListener('click',async()=>{
   try{
     const id=deleteTargetId;
     const name=currentPatient?.name||'Patient';
-    await sb.from('invoices').delete().eq('patient_id',id);
-    await sb.from('appointments').delete().eq('patient_id',id);
-    const {error}=await sb.from('patients').delete().eq('id',id);
-    if(error) throw error;
+    // Delete child records first
+    const r1=await sb.from('invoices').delete().eq('patient_id',id);
+    if(r1.error) throw new Error('Invoices: '+r1.error.message);
+    const r2=await sb.from('appointments').delete().eq('patient_id',id);
+    if(r2.error) throw new Error('Appointments: '+r2.error.message);
+    const r3=await sb.from('patients').delete().eq('id',id);
+    if(r3.error) throw new Error('Patient: '+r3.error.message);
     allPatients=allPatients.filter(p=>p.id!==id);
     document.getElementById('confirmWrap').classList.remove('show');
     closePanel();
@@ -951,9 +1175,161 @@ document.getElementById('confirmOk').addEventListener('click',async()=>{
     document.getElementById('kpi-total').textContent=allPatients.length;
     document.getElementById('badge-critical').textContent=critical;
     document.getElementById('critical-count').textContent=critical+' Critical Patient'+(critical!==1?'s':'');
-  }catch(e){console.error(e);toast('Delete failed: '+(e.message||'Error'),'error');}
+    // Refresh billing charge list if open
+    if(loaded['billing']) renderChargePatients();
+  }catch(e){
+    console.error(e);
+    let msg=e.message||'Unknown error';
+    if(msg.includes('violates') || msg.includes('policy') || msg.includes('permission') || msg.toLowerCase().includes('not found')){
+      msg='Delete policies missing. Run this SQL in Supabase:\ncreate policy \"public delete patients\" on patients for delete using (true);\ncreate policy \"public delete invoices\" on invoices for delete using (true);\ncreate policy \"public delete appointments\" on appointments for delete using (true);';
+    }
+    // Show detailed error in a modal-style alert so user can read and copy SQL
+    const errBox=document.createElement('div');
+    errBox.style.cssText='position:fixed;bottom:24px;left:24px;right:24px;max-width:560px;margin:0 auto;background:#0c1422;border:1px solid rgba(255,77,109,0.4);border-radius:14px;padding:18px 20px;z-index:600;font-size:12px;color:var(--rose);line-height:1.7;white-space:pre-wrap;word-break:break-all;';
+    errBox.innerHTML='<strong style=\"font-size:14px;\">Delete Failed</strong>\n'+msg+'\n\n<span onclick=\"this.parentNode.remove()\" style=\"cursor:pointer;color:var(--text3);font-size:11px;\">✕ Dismiss</span>';
+    document.body.appendChild(errBox);
+    setTimeout(()=>errBox.remove(),15000);
+    toast('Delete failed — check permissions','error');
+  }
   finally{btn.textContent='Delete Permanently';btn.disabled=false;deleteTargetId=null;}
 });
+
+// ═══ DOCTORS PAGE ═══
+const DR_COLORS=['linear-gradient(135deg,#00c9b1,#008fa0)','linear-gradient(135deg,#4d9fff,#2563eb)','linear-gradient(135deg,#e8b84b,#b45309)','linear-gradient(135deg,#a78bfa,#7c3aed)','linear-gradient(135deg,#ff4d6d,#be123c)','linear-gradient(135deg,#00e5c8,#0891b2)'];
+
+async function loadDoctors(){
+  const [{data:docs},{data:depts}]=await Promise.all([
+    sb.from('doctors').select('*, departments(name)').order('name'),
+    sb.from('departments').select('*')
+  ]);
+  if(depts) allDepts=depts;
+  if(docs) allDoctors=docs;
+  if(!docs){document.getElementById('dr-grid-wrap').innerHTML=`<div class="empty-state"><div class="empty-icon">🩺</div><div class="empty-title">No doctors yet</div></div>`;return;}
+
+  // KPIs
+  document.getElementById('dr-kpi-total').textContent=docs.length;
+  const cardio=docs.filter(d=>d.departments?.name==='Cardiology').length;
+  const neuro=docs.filter(d=>d.departments?.name==='Neurology').length;
+  const other=docs.length-cardio-neuro;
+  document.getElementById('dr-kpi-cardiology').textContent=cardio;
+  document.getElementById('dr-kpi-neurology').textContent=neuro;
+  document.getElementById('dr-kpi-other').textContent=other;
+
+  if(!docs.length){document.getElementById('dr-grid-wrap').innerHTML=`<div class="empty-state"><div class="empty-icon">🩺</div><div class="empty-title">No doctors yet</div><div class="empty-sub">Add your first doctor to get started.</div></div>`;return;}
+
+  document.getElementById('dr-grid-wrap').innerHTML=`<div class="dr-grid">${docs.map((d,i)=>`
+    <div class="dr-card">
+      <div class="dr-card-top">
+        <div class="dr-card-av" style="background:${DR_COLORS[i%DR_COLORS.length]}">${d.initials||initials(d.name)}</div>
+        <div><div class="dr-card-name">${d.name}</div><div class="dr-card-dept">${d.departments?.name||'—'}</div></div>
+      </div>
+      ${d.specialization?`<div style="font-size:11px;color:var(--text3);">${d.specialization}</div>`:''}
+      <div class="dr-card-actions">
+        <button class="dr-action-btn del" onclick="deleteDoctor('${d.id}','${d.name.replace(/'/g,"\\'")}')">Delete</button>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+function openAddDoctor(){
+  if(!allDepts.length){sb.from('departments').select('*').then(({data:d})=>{if(d){allDepts=d;populateDrDeptSelect();}});}
+  else populateDrDeptSelect();
+  document.getElementById('dr-name').value='';
+  document.getElementById('dr-initials').value='';
+  document.getElementById('dr-spec').value='';
+  document.getElementById('addDoctorModal').classList.add('show');
+}
+function populateDrDeptSelect(){
+  document.getElementById('dr-dept').innerHTML=allDepts.map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
+}
+function closeAddDoctor(){document.getElementById('addDoctorModal').classList.remove('show');}
+async function submitNewDoctor(){
+  const name=document.getElementById('dr-name').value.trim();
+  if(!name){toast('Name is required','error');return;}
+  const inits=(document.getElementById('dr-initials').value.trim()||initials(name)).toUpperCase();
+  const dept=document.getElementById('dr-dept').value||null;
+  const spec=document.getElementById('dr-spec').value.trim()||null;
+  const btn=document.getElementById('drSubmitBtn');
+  btn.textContent='Adding…'; btn.disabled=true;
+  try{
+    const {data,error}=await sb.from('doctors').insert([{name,initials:inits,department_id:dept,specialization:spec}]).select('*, departments(name)').single();
+    if(error) throw error;
+    allDoctors.push(data);
+    closeAddDoctor();
+    toast(`${name} added`,'success');
+    logActivity('🩺',`${name} joined the team`,'Just now');
+    loaded['doctors']=false; loadDoctors(); loaded['doctors']=true;
+  }catch(e){toast('Failed: '+(e.message||'Error'),'error');}
+  finally{btn.textContent='Add Doctor';btn.disabled=false;}
+}
+async function deleteDoctor(id,name){
+  if(!confirm(`Remove ${name} from the system?`)) return;
+  const {error}=await sb.from('doctors').delete().eq('id',id);
+  if(error){toast('Delete failed — check Supabase delete policy for doctors table','error');return;}
+  allDoctors=allDoctors.filter(d=>d.id!==id);
+  toast(`${name} removed`,'info');
+  loaded['doctors']=false; loadDoctors(); loaded['doctors']=true;
+}
+
+// ═══ CHARGE PATIENTS (Billing) ═══
+async function renderChargePatients(){
+  const wrap=document.getElementById('charge-patients-wrap'); if(!wrap) return;
+  // Always fetch fresh so this works independently of patients page
+  wrap.innerHTML=`<div class="loading"><div class="spinner"></div></div>`;
+  const {data:freshPts}=await sb.from('patients').select('*, departments(name)').in('status',['Active','Critical','Pending']).order('admitted_at',{ascending:false});
+  const admitted=freshPts||[];
+  if(!admitted.length){wrap.innerHTML=`<div class="empty-state" style="padding:24px;"><div class="empty-icon">🏥</div><div class="empty-title">No admitted patients</div><div class="empty-sub">Admit patients first, then charge them here.</div></div>`;return;}
+  wrap.innerHTML=`<div>${admitted.map(p=>`
+    <div class="charge-row">
+      <div style="flex:1;min-width:0;">
+        <div class="charge-pt-name">${p.name} <span class="badge ${badgeClass(p.status)}" style="margin-left:6px;">${p.status}</span></div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px;">${p.patient_code} · ${p.departments?.name||'—'} · Admitted ${p.admitted_at?new Date(p.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—'}</div>
+      </div>
+      <button class="charge-btn" onclick="openNewInvoice('${p.id}','${p.name.replace(/'/g,"\\'")}','${p.patient_code}','${p.departments?.name||''}')">+ Charge</button>
+    </div>`).join('')}</div>`;
+}
+
+// ═══ NEW INVOICE MODAL ═══
+let invoicePatientId=null;
+function openNewInvoice(patientId,name,code,dept){
+  invoicePatientId=patientId;
+  document.getElementById('inv-patient-name').textContent=name;
+  document.getElementById('inv-patient-meta').textContent=`${code} · ${dept}`;
+  document.getElementById('inv-desc').value='';
+  document.getElementById('inv-amount').value='';
+  document.getElementById('inv-status').value='Pending';
+  document.getElementById('inv-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('newInvoiceModal').classList.add('show');
+}
+function closeNewInvoice(){document.getElementById('newInvoiceModal').classList.remove('show');invoicePatientId=null;}
+async function submitNewInvoice(){
+  const desc=document.getElementById('inv-desc').value.trim();
+  const amount=parseFloat(document.getElementById('inv-amount').value)||0;
+  if(!desc){toast('Description is required','error');return;}
+  if(!invoicePatientId){toast('No patient selected','error');return;}
+  // Generate invoice code
+  const {data:lastInv}=await sb.from('invoices').select('invoice_code').order('created_at',{ascending:false}).limit(1).single();
+  const lastNum=lastInv?parseInt(lastInv.invoice_code?.split('-').pop())||0:0;
+  const invoice_code=`INV-${new Date().getFullYear()}-${String(lastNum+1).padStart(4,'0')}`;
+  const btn=document.getElementById('invSubmitBtn');
+  btn.textContent='Creating…'; btn.disabled=true;
+  try{
+    const {error}=await sb.from('invoices').insert([{
+      invoice_code,
+      patient_id:invoicePatientId,
+      description:desc,
+      amount,
+      status:document.getElementById('inv-status').value,
+      issued_at:document.getElementById('inv-date').value
+    }]);
+    if(error) throw error;
+    closeNewInvoice();
+    toast(`Invoice created — ${fmt(amount)}`,'success');
+    logActivity('🧾',`Invoice ${invoice_code} created`,'Just now');
+    // Reload billing data
+    loaded['billing']=false; loadBilling(); loaded['billing']=true;
+  }catch(e){toast('Failed: '+(e.message||'Error'),'error');}
+  finally{btn.textContent='Create Invoice';btn.disabled=false;}
+}
 
 // ═══ APPOINTMENTS ═══
 async function loadAppointments(){
@@ -971,6 +1347,7 @@ async function loadAppointments(){
 // ═══ BILLING ═══
 let billingChartDrawn=false;
 async function loadBilling(){
+  renderChargePatients();
   const {data:invs}=await sb.from('invoices').select('*, patients(name)').order('issued_at',{ascending:false});
   if(!invs) return;
   const paid=invs.filter(i=>i.status==='Paid').reduce((s,i)=>s+parseFloat(i.amount||0),0);
@@ -984,12 +1361,12 @@ async function loadBilling(){
   document.getElementById('leg-paid').textContent=fmt(paid);
   document.getElementById('leg-pending').textContent=fmt(pending);
   document.getElementById('leg-overdue').textContent=fmt(overdue);
-  if(!invs.length){document.getElementById('invoices-wrap').innerHTML=`<div class="empty-state"><div class="empty-icon">🧾</div><div class="empty-title">No invoices yet</div></div>`;}
+  if(!invs.length){document.getElementById('invoices-wrap').innerHTML=`<div class="empty-state"><div class="empty-icon">🧾</div><div class="empty-title">No invoices yet</div><div class="empty-sub">Use the Charge button above to bill a patient.</div></div>`;}
   else{document.getElementById('invoices-wrap').innerHTML=`<div class="inv-list">${invs.map(i=>`<div class="inv-item"><div class="inv-icon">🧾</div><div style="flex:1;min-width:0"><div class="inv-name">${i.patients?.name||'Unknown'} — ${i.description||'Invoice'}</div><div class="inv-date">${i.invoice_code} · ${i.issued_at?new Date(i.issued_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—'}</div></div><span class="badge ${badgeClass(i.status)}" style="margin-right:12px;">${i.status}</span><div class="inv-amt ${i.status.toLowerCase()}">${fmt(parseFloat(i.amount||0))}</div></div>`).join('')}</div>`;}
   if(!billingChartDrawn){
     billingChartDrawn=true;
     setTimeout(()=>{
-      new Chart(document.getElementById('chart-revenue'),{type:'line',data:{labels:['Nov','Dec','Jan','Feb','Mar','Apr'],datasets:[{data:[98,112,125,118,131,Math.round(total/1000*10)/10||0],borderColor:'#e8b84b',backgroundColor:ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,180);g.addColorStop(0,'rgba(232,184,75,0.15)');g.addColorStop(1,'rgba(232,184,75,0)');return g;},fill:true,tension:0.4,pointBackgroundColor:'#e8b84b',pointRadius:4,pointHoverRadius:7,borderWidth:2.5}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:c=>' $'+c.parsed.y+'K'}}},scales:{x:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'}},y:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080',callback:v=>'$'+v+'K'}}}}});
+      new Chart(document.getElementById('chart-revenue'),{type:'line',data:{labels:['Nov','Dec','Jan','Feb','Mar','Apr'],datasets:[{data:[98,112,125,118,131,Math.round(total/1000*10)/10||0],borderColor:'#e8b84b',backgroundColor:ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,180);g.addColorStop(0,'rgba(232,184,75,0.15)');g.addColorStop(1,'rgba(232,184,75,0)');return g;},fill:true,tension:0.4,pointBackgroundColor:'#e8b84b',pointRadius:4,pointHoverRadius:7,borderWidth:2.5}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:c=>' EGP '+c.parsed.y+'K'}}},scales:{x:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'}},y:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080',callback:v=>'EGP '+v+'K'}}}}});
       new Chart(document.getElementById('chart-payment'),{type:'doughnut',data:{datasets:[{data:[paid||1,pending,overdue],backgroundColor:['#00e5c8','#e8b84b','#ff4d6d'],borderWidth:0,hoverOffset:8}]},options:{responsive:true,cutout:'70%',plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:c=>' '+fmt(c.parsed)}}}}});
     },60);
   }
@@ -1043,6 +1420,7 @@ function loadPage(pageId){
   if(pageId==='patients') loadPatients();
   if(pageId==='appointments') loadAppointments();
   if(pageId==='billing') loadBilling();
+  if(pageId==='doctors') loadDoctors();
 }
 </script>
 </body>
