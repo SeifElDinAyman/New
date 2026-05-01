@@ -22,138 +22,144 @@
 html,body{height:100%;overflow:hidden;}
 body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);display:flex;}
 
-/* LOGIN */
-#loginScreen{position:fixed;inset:0;z-index:1000;display:flex;background:var(--bg);}
+/* ─── LOGIN ─────────────────────────────── */
+#loginScreen{position:fixed;inset:0;z-index:1000;display:none;background:var(--bg);}
+#loginScreen.visible{display:flex;}
 .login-brand{width:420px;flex-shrink:0;background:linear-gradient(160deg,#050c18,#08142a);border-right:1px solid var(--border2);display:flex;flex-direction:column;justify-content:space-between;padding:48px 44px;position:relative;overflow:hidden;}
 @media(max-width:800px){.login-brand{display:none;}}
 .login-brand::before{content:'';position:absolute;top:-120px;left:-120px;width:400px;height:400px;background:radial-gradient(circle,rgba(0,229,200,0.08),transparent 65%);pointer-events:none;}
-.login-brand::after{content:'';position:absolute;bottom:-80px;right:-80px;width:300px;height:300px;background:radial-gradient(circle,rgba(77,159,255,0.06),transparent 65%);pointer-events:none;}
-.brand-headline{font-family:'Instrument Serif',serif;font-size:36px;line-height:1.15;color:var(--text);margin-bottom:16px;}
-.brand-headline span{color:var(--cyan);}
-.brand-sub{font-size:14px;color:var(--text3);line-height:1.65;max-width:300px;}
+.brand-hl{font-family:'Instrument Serif',serif;font-size:36px;line-height:1.15;color:var(--text);margin-bottom:16px;}
+.brand-hl span{color:var(--cyan);}
+.brand-sub{font-size:14px;color:var(--text3);line-height:1.65;}
 .brand-stats{display:flex;flex-direction:column;gap:10px;margin-top:36px;}
 .brand-stat{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:12px 14px;}
 .brand-stat-icon{font-size:18px;}
-.brand-stat-label{font-size:12px;color:var(--text3);}
 .brand-stat-val{font-size:14px;font-weight:700;color:var(--text);margin-top:2px;}
-.login-form-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 24px;position:relative;overflow:hidden;}
-.login-form-wrap::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(0,229,200,0.04),transparent 60%);pointer-events:none;}
-.login-card{width:100%;max-width:400px;position:relative;}
-.login-card-title{font-family:'Instrument Serif',serif;font-size:28px;color:var(--text);margin-bottom:6px;}
-.login-card-sub{font-size:13px;color:var(--text3);margin-bottom:32px;}
-.login-card-sub span{color:var(--cyan);}
-.form-field{margin-bottom:16px;}
-.form-field label{display:block;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:7px;}
-.form-field input{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:11px;padding:13px 16px;font-size:14px;color:var(--text);font-family:'Outfit',sans-serif;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
-.form-field input:focus{border-color:var(--cyan-border);box-shadow:0 0 0 3px rgba(0,229,200,0.07);}
-.form-field input::placeholder{color:var(--text3);}
-.login-btn{width:100%;padding:14px;background:var(--cyan);color:var(--bg);border:none;border-radius:11px;font-size:14px;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 24px rgba(0,229,200,0.25);margin-top:8px;}
-.login-btn:hover:not(:disabled){box-shadow:0 8px 32px rgba(0,229,200,0.4);transform:translateY(-1px);}
-.login-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
-.login-error{background:var(--rose-soft);border:1px solid rgba(255,77,109,0.3);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--rose);margin-bottom:14px;display:none;}
-.login-error.show{display:block;}
-.login-note{margin-top:24px;padding:14px;background:rgba(0,229,200,0.04);border:1px solid var(--cyan-border);border-radius:10px;font-size:12px;color:var(--text3);line-height:1.6;}
-.login-note strong{color:var(--cyan);}
+.brand-stat-lbl{font-size:12px;color:var(--text3);}
+.login-right{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 24px;overflow-y:auto;}
+.login-card{width:100%;max-width:400px;}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:24px;}
+.login-logo-icon{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--cyan),#008fa0);display:flex;align-items:center;justify-content:center;font-size:18px;}
+.login-logo-name{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);}
+.login-logo-name em{color:var(--cyan);font-style:normal;}
+@media(min-width:801px){.login-logo{display:none;}}
+.login-heading{font-family:'Instrument Serif',serif;font-size:26px;color:var(--text);margin-bottom:4px;}
+.login-sub{font-size:13px;color:var(--text3);margin-bottom:24px;}
+.login-sub em{color:var(--cyan);font-style:normal;}
+.auth-tabs{display:flex;background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:4px;margin-bottom:24px;}
+.auth-tab{flex:1;padding:10px;text-align:center;font-size:13px;font-weight:600;color:var(--text3);cursor:pointer;border-radius:9px;transition:all 0.2s;}
+.auth-tab.on{background:var(--s1);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.3);}
+.social-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:13px 16px;border-radius:11px;font-size:14px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;transition:all 0.2s;border:1px solid var(--border2);background:var(--s2);color:var(--text);margin-bottom:10px;}
+.social-btn:hover{background:var(--s3);transform:translateY(-1px);}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:18px 0;}
+.auth-divider-line{flex:1;height:1px;background:var(--border2);}
+.auth-divider-text{font-size:11px;color:var(--text3);font-weight:600;letter-spacing:1px;text-transform:uppercase;}
+.f-label{display:block;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:7px;}
+.f-input{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:11px;padding:13px 16px;font-size:14px;color:var(--text);font-family:'Outfit',sans-serif;outline:none;transition:border-color 0.2s;display:block;margin-bottom:14px;}
+.f-input:focus{border-color:var(--cyan-border);}
+.f-input::placeholder{color:var(--text3);}
+.auth-btn{width:100%;padding:14px;background:var(--cyan);color:var(--bg);border:none;border-radius:11px;font-size:14px;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 24px rgba(0,229,200,0.25);margin-top:4px;}
+.auth-btn:hover:not(:disabled){box-shadow:0 8px 32px rgba(0,229,200,0.4);transform:translateY(-1px);}
+.auth-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.auth-msg{border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none;}
+.auth-msg.show{display:block;}
+.auth-msg.err{background:var(--rose-soft);border:1px solid rgba(255,77,109,0.3);color:var(--rose);}
+.auth-msg.ok{background:rgba(0,229,200,0.07);border:1px solid var(--cyan-border);color:var(--cyan);}
+.auth-switch{margin-top:18px;text-align:center;font-size:13px;color:var(--text3);}
+.auth-switch b{color:var(--cyan);cursor:pointer;font-weight:600;}
 
-/* APP WRAP */
-#appWrap{display:none;flex:1;width:100%;}
-#appWrap.ready{display:flex;}
+/* ─── APP ────────────────────────────────── */
+#app{display:none;flex:1;width:100%;overflow:hidden;}
+#app.on{display:flex;}
 
-/* OVERLAY */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99;backdrop-filter:blur(2px);}
-.overlay.show{display:block;}
+/* overlay */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99;backdrop-filter:blur(2px);}
+.ov.on{display:block;}
 
-/* SIDEBAR */
-.sidebar{width:var(--sidebar);flex-shrink:0;background:linear-gradient(180deg,var(--s1),var(--s2));border-right:1px solid var(--border);display:flex;flex-direction:column;position:relative;z-index:100;overflow:hidden;transition:transform 0.3s cubic-bezier(.16,1,.3,1),width 0.3s cubic-bezier(.16,1,.3,1);}
-.sidebar::before{content:'';position:absolute;top:-80px;left:-80px;width:260px;height:260px;background:radial-gradient(circle,rgba(0,229,200,0.06),transparent 70%);pointer-events:none;}
-.sidebar.collapsed{width:68px;}
-.sidebar.collapsed .logo-name,.sidebar.collapsed .logo-tag,.sidebar.collapsed .nav-label-text,.sidebar.collapsed .nav-section-label,.sidebar.collapsed .nav-badge,.sidebar.collapsed .doc-info,.sidebar.collapsed .status-dot,.sidebar.collapsed .user-email{display:none;}
-.sidebar.collapsed .logo-area{padding:20px 16px;justify-content:center;}
-.sidebar.collapsed .nav-item{padding:10px;justify-content:center;}
-.sidebar.collapsed .nav-icon{margin:0;}
-.sidebar.collapsed .doc-card{padding:10px;justify-content:center;}
-.sidebar.collapsed .doc-avatar{margin:0;}
-.sidebar.collapsed .nav-section{padding:12px 8px 4px;}
+/* ─── SIDEBAR ────────────────────────────── */
+.sb{width:var(--sidebar);flex-shrink:0;background:linear-gradient(180deg,var(--s1),var(--s2));border-right:1px solid var(--border);display:flex;flex-direction:column;position:relative;z-index:100;overflow:hidden;transition:width 0.3s cubic-bezier(.16,1,.3,1);}
+.sb::before{content:'';position:absolute;top:-80px;left:-80px;width:260px;height:260px;background:radial-gradient(circle,rgba(0,229,200,0.06),transparent 70%);pointer-events:none;}
+.sb.col{width:68px;}
+.sb.col .hide-col{display:none;}
+.sb.col .logo-area{padding:20px 16px;justify-content:center;}
+.sb.col .nav-item{padding:10px;justify-content:center;}
+.sb.col .nav-icon{margin:0;}
+.sb.col .doc-card{padding:10px;justify-content:center;}
+.sb.col .nav-section{padding:12px 8px 4px;}
 @media(max-width:768px){
-  .sidebar{position:fixed;top:0;left:0;height:100%;transform:translateX(-100%);width:var(--sidebar)!important;}
-  .sidebar.mobile-open{transform:translateX(0);}
-  .sidebar.collapsed .logo-name,.sidebar.collapsed .logo-tag,.sidebar.collapsed .nav-label-text,.sidebar.collapsed .nav-section-label,.sidebar.collapsed .nav-badge,.sidebar.collapsed .doc-info,.sidebar.collapsed .status-dot{display:block;}
-  .sidebar.collapsed .logo-area{padding:28px 24px 22px;justify-content:flex-start;}
-  .sidebar.collapsed .nav-item{padding:10px 14px;justify-content:flex-start;}
-  .sidebar.collapsed .nav-section{padding:20px 14px 6px;}
-  .sidebar.collapsed .doc-card{padding:10px 12px;justify-content:flex-start;}
+  .sb{position:fixed;top:0;left:0;height:100%;transform:translateX(-100%);width:var(--sidebar)!important;transition:transform 0.3s cubic-bezier(.16,1,.3,1);}
+  .sb.mob-on{transform:translateX(0);}
+  .sb.col .hide-col{display:block;}
+  .sb.col .logo-area{padding:24px 20px 20px;justify-content:flex-start;}
+  .sb.col .nav-item{padding:10px 12px;justify-content:flex-start;}
+  .sb.col .nav-section{padding:16px 10px 4px;}
+  .sb.col .doc-card{padding:10px;justify-content:flex-start;}
 }
 .logo-area{padding:24px 20px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;overflow:hidden;}
 .logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--cyan),#008fa0);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;box-shadow:0 4px 16px rgba(0,229,200,0.25);}
-.logo-name{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);line-height:1;white-space:nowrap;}
+.logo-name{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);white-space:nowrap;}
 .logo-name em{color:var(--cyan);font-style:normal;}
 .logo-tag{font-size:9px;color:var(--text3);letter-spacing:2.5px;text-transform:uppercase;margin-top:3px;white-space:nowrap;}
 .nav-section{padding:16px 10px 4px;overflow:hidden;}
-.nav-section-label{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);padding:0 8px 8px;white-space:nowrap;}
+.nav-sec-lbl{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);padding:0 8px 8px;white-space:nowrap;}
 .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:all 0.18s;font-size:13.5px;font-weight:500;color:var(--text2);border:1px solid transparent;margin-bottom:2px;position:relative;user-select:none;overflow:hidden;}
 .nav-item:hover{background:var(--s3);color:var(--text);}
-.nav-item.active{background:var(--cyan-soft);color:var(--cyan);border-color:var(--cyan-border);}
-.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--cyan);border-radius:0 3px 3px 0;}
-.nav-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:rgba(255,255,255,0.04);transition:background 0.18s;}
-.nav-item.active .nav-icon{background:var(--cyan-glow);}
-.nav-label-text{flex:1;white-space:nowrap;}
+.nav-item.on{background:var(--cyan-soft);color:var(--cyan);border-color:var(--cyan-border);}
+.nav-item.on::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--cyan);border-radius:0 3px 3px 0;}
+.nav-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:rgba(255,255,255,0.04);}
+.nav-item.on .nav-icon{background:var(--cyan-glow);}
+.nav-lbl{flex:1;white-space:nowrap;}
 .nav-badge{background:var(--rose);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap;}
-.nav-badge.amber{background:var(--gold);color:#000;}
-.sidebar-bottom{margin-top:auto;border-top:1px solid var(--border);}
+.nav-badge.gold{background:var(--gold);color:#000;}
+.sb-bottom{margin-top:auto;border-top:1px solid var(--border);}
 .doc-card{display:flex;align-items:center;gap:10px;padding:14px 12px;overflow:hidden;}
-.doc-avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--cyan),var(--blue));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--bg);}
+.doc-av{width:34px;height:34px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--cyan),var(--blue));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--bg);}
 .doc-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;}
-.user-email{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
-.logout-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;transition:background 0.18s;color:var(--text3);font-size:13px;font-weight:500;border-top:1px solid var(--border);}
-.logout-btn:hover{background:var(--rose-soft);color:var(--rose);}
-.logout-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;background:rgba(255,255,255,0.03);}
-.toggle-btn{position:absolute;top:50%;right:-14px;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--s2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:var(--text2);transition:all 0.2s;z-index:10;}
-.toggle-btn:hover{background:var(--cyan);color:var(--bg);border-color:var(--cyan);}
-@media(max-width:768px){.toggle-btn{display:none;}}
+.doc-email{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
+.logout-row{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;color:var(--text3);font-size:13px;font-weight:500;border-top:1px solid var(--border);transition:all 0.18s;}
+.logout-row:hover{background:var(--rose-soft);color:var(--rose);}
+.sb-toggle{position:absolute;top:50%;right:-14px;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--s2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:var(--text2);transition:all 0.2s;z-index:10;}
+.sb-toggle:hover{background:var(--cyan);color:var(--bg);}
+@media(max-width:768px){.sb-toggle{display:none;}}
 
-/* MAIN */
+/* ─── TOPBAR ─────────────────────────────── */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
 .topbar{display:flex;align-items:center;gap:12px;padding:14px 24px;background:var(--s1);border-bottom:1px solid var(--border);flex-shrink:0;}
 .hamburger{display:none;width:38px;height:38px;border-radius:10px;background:var(--s2);border:1px solid var(--border2);align-items:center;justify-content:center;cursor:pointer;font-size:16px;flex-shrink:0;}
-.hamburger:hover{border-color:var(--cyan-border);}
 @media(max-width:768px){.hamburger{display:flex;}}
-.topbar-left{flex:1;min-width:0;}
-.page-eyebrow{font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;}
-.page-heading{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.topbar-actions{display:flex;align-items:center;gap:8px;}
-.search{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--border2);border-radius:10px;padding:9px 14px;font-size:13px;color:var(--text3);width:220px;cursor:text;transition:border-color 0.2s;}
-.search:hover{border-color:var(--cyan-border);}
-@media(max-width:900px){.search{display:none;}}
-.btn{padding:9px 16px;border-radius:10px;font-size:13px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;border:none;transition:all 0.18s;white-space:nowrap;}
-.btn-primary{background:var(--cyan);color:var(--bg);box-shadow:0 4px 20px rgba(0,229,200,0.2);}
-.btn-primary:hover{box-shadow:0 6px 28px rgba(0,229,200,0.35);transform:translateY(-1px);}
-.btn-outline{background:transparent;color:var(--text2);border:1px solid var(--border2);}
-.btn-outline:hover{border-color:var(--cyan-border);color:var(--cyan);}
-.btn-danger{background:var(--rose-soft);color:var(--rose);border:1px solid rgba(255,77,109,0.3);}
-.btn-danger:hover{background:var(--rose);color:#fff;border-color:var(--rose);}
-.btn-gold{background:var(--gold-soft);color:var(--gold);border:1px solid rgba(232,184,75,0.3);}
-.btn-gold:hover{background:var(--gold);color:#000;}
-.notif-btn{width:38px;height:38px;border-radius:10px;background:var(--s2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;position:relative;transition:border-color 0.2s;flex-shrink:0;}
-.notif-btn:hover{border-color:var(--cyan-border);}
-.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--rose);border:1.5px solid var(--s1);}
-.db-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);padding:6px 12px;background:var(--s2);border:1px solid var(--border);border-radius:20px;white-space:nowrap;}
+.tb-left{flex:1;min-width:0;}
+.tb-eyebrow{font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;}
+.tb-heading{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.db-pill{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);padding:6px 12px;background:var(--s2);border:1px solid var(--border);border-radius:20px;white-space:nowrap;}
 .db-dot{width:6px;height:6px;border-radius:50%;background:var(--text3);}
-.db-dot.connected{background:var(--cyan);box-shadow:0 0 5px var(--cyan);}
-@media(max-width:500px){.db-status{display:none;}}
+.db-dot.live{background:var(--cyan);box-shadow:0 0 5px var(--cyan);}
+@media(max-width:500px){.db-pill{display:none;}}
 
-/* CONTENT */
+/* ─── BUTTONS ────────────────────────────── */
+.btn{padding:9px 16px;border-radius:10px;font-size:13px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;border:none;transition:all 0.18s;white-space:nowrap;}
+.btn-c{background:var(--cyan);color:var(--bg);box-shadow:0 4px 20px rgba(0,229,200,0.2);}
+.btn-c:hover{box-shadow:0 6px 28px rgba(0,229,200,0.35);transform:translateY(-1px);}
+.btn-o{background:transparent;color:var(--text2);border:1px solid var(--border2);}
+.btn-o:hover{border-color:var(--cyan-border);color:var(--cyan);}
+.btn-r{background:var(--rose-soft);color:var(--rose);border:1px solid rgba(255,77,109,0.3);}
+.btn-r:hover{background:var(--rose);color:#fff;}
+.btn-g{background:var(--gold-soft);color:var(--gold);border:1px solid rgba(232,184,75,0.3);}
+.btn-g:hover{background:var(--gold);color:#000;}
+
+/* ─── CONTENT ────────────────────────────── */
 .content{flex:1;overflow-y:auto;padding:24px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
-@media(max-width:600px){.content{padding:16px;}}
+@media(max-width:600px){.content{padding:16px 12px;}}
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
 .page{display:none;}
-.page.active{display:block;animation:rise 0.3s cubic-bezier(.16,1,.3,1);}
+.page.on{display:block;animation:rise 0.3s cubic-bezier(.16,1,.3,1);}
 @keyframes rise{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 
-/* KPI */
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
-@media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr);}}
-.kpi{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:border-color 0.2s,transform 0.2s;}
+/* ─── KPI ────────────────────────────────── */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+@media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr);}}
+.kpi{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;transition:transform 0.2s;}
 .kpi:hover{transform:translateY(-2px);}
 .kpi.c{border-color:var(--cyan-border);}
 .kpi.b{border-color:rgba(77,159,255,0.2);}
@@ -177,76 +183,100 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);disp
 .kpi-val{font-family:'Instrument Serif',serif;font-size:28px;line-height:1;color:var(--text);margin-bottom:4px;}
 .kpi-lbl{font-size:11px;color:var(--text3);font-weight:500;}
 
-/* GRIDS / CARDS */
-.grid-2-1{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:20px;}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
-@media(max-width:900px){.grid-2-1,.grid-2{grid-template-columns:1fr;}}
+/* ─── GRID / CARD ────────────────────────── */
+.g2-1{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:20px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+@media(max-width:900px){.g2-1,.g2{grid-template-columns:1fr;}}
 .card{background:var(--s1);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
 .card-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;}
 .card-title{font-family:'Instrument Serif',serif;font-size:16px;color:var(--text);}
 .card-sub{font-size:11px;color:var(--text3);margin-top:2px;}
 .pill{font-size:10.5px;font-weight:600;padding:4px 10px;border-radius:20px;}
-.pill-cyan{background:var(--cyan-soft);color:var(--cyan);}
-.pill-gold{background:var(--gold-soft);color:var(--gold);}
-.pill-rose{background:var(--rose-soft);color:var(--rose);}
-.pill-blue{background:var(--blue-soft);color:var(--blue);}
-.pill-muted{background:rgba(255,255,255,0.04);color:var(--text3);}
+.pill-c{background:var(--cyan-soft);color:var(--cyan);}
+.pill-g{background:var(--gold-soft);color:var(--gold);}
+.pill-r{background:var(--rose-soft);color:var(--rose);}
+.pill-b{background:var(--blue-soft);color:var(--blue);}
+.pill-n{background:rgba(255,255,255,0.04);color:var(--text3);}
 
-/* TABLE */
+/* ─── TABLE ──────────────────────────────── */
 .tbl-wrap{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:13px;}
 thead th{text-align:left;padding:9px 12px;color:var(--text3);font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;border-bottom:1px solid var(--border);}
 tbody tr{border-bottom:1px solid rgba(22,32,53,0.8);transition:background 0.15s;cursor:pointer;}
 tbody tr:last-child{border-bottom:none;}
 tbody tr:hover{background:rgba(0,229,200,0.04);}
-td{padding:12px;vertical-align:middle;}
+td{padding:11px 12px;vertical-align:middle;}
 .pt-name{font-weight:600;color:var(--text);font-size:13px;}
 .pt-id{font-size:11px;color:var(--text3);margin-top:2px;}
 .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
 .badge::before{content:'';width:5px;height:5px;border-radius:50%;}
 .badge-active{background:var(--cyan-soft);color:var(--cyan);}
-.badge-active::before{background:var(--cyan);box-shadow:0 0 5px var(--cyan);}
+.badge-active::before{background:var(--cyan);}
 .badge-critical{background:var(--rose-soft);color:var(--rose);}
 .badge-critical::before{background:var(--rose);}
 .badge-pending{background:var(--gold-soft);color:var(--gold);}
 .badge-pending::before{background:var(--gold);}
 .badge-discharged{background:rgba(255,255,255,0.04);color:var(--text3);}
 .badge-discharged::before{background:var(--text3);}
+.badge-confirmed{background:var(--cyan-soft);color:var(--cyan);}
+.badge-confirmed::before{background:var(--cyan);}
+.badge-cancelled{background:rgba(255,255,255,0.04);color:var(--text3);}
+.badge-cancelled::before{background:var(--text3);}
+.badge-paid{background:var(--cyan-soft);color:var(--cyan);}
+.badge-paid::before{background:var(--cyan);}
+.badge-overdue{background:var(--rose-soft);color:var(--rose);}
+.badge-overdue::before{background:var(--rose);}
 
-/* MISC */
+/* ─── MISC UI ────────────────────────────── */
 .loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--text3);font-size:13px;gap:10px;}
 .spinner{width:18px;height:18px;border:2px solid var(--border2);border-top-color:var(--cyan);border-radius:50%;animation:spin 0.7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.alert-banner{display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,rgba(255,77,109,0.08),transparent);border:1px solid rgba(255,77,109,0.2);border-radius:var(--radius);padding:12px 16px;margin-bottom:18px;}
-.alert-text{flex:1;font-size:13px;}
-.alert-text strong{color:var(--rose);}
-.alert-action{font-size:12px;font-weight:600;color:var(--rose);background:var(--rose-soft);border:none;padding:6px 12px;border-radius:8px;cursor:pointer;white-space:nowrap;transition:background 0.2s;}
-.alert-action:hover{background:rgba(255,77,109,0.2);}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;gap:10px;}
+.empty-icon{font-size:36px;opacity:0.4;}
+.empty-title{font-size:15px;font-weight:600;color:var(--text2);}
+.empty-sub{font-size:12px;color:var(--text3);}
+.alert-bar{display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,rgba(255,77,109,0.08),transparent);border:1px solid rgba(255,77,109,0.2);border-radius:var(--radius);padding:12px 16px;margin-bottom:18px;}
+.alert-bar-text{flex:1;font-size:13px;}
+.alert-bar-text strong{color:var(--rose);}
+.alert-bar-btn{font-size:12px;font-weight:600;color:var(--rose);background:var(--rose-soft);border:none;padding:6px 12px;border-radius:8px;cursor:pointer;}
 .sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .sec-title{font-family:'Instrument Serif',serif;font-size:16px;color:var(--text);}
-.legend{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
+.leg{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
 .leg-item{display:flex;align-items:center;gap:10px;font-size:12px;}
 .leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
 .leg-lbl{flex:1;color:var(--text2);}
 .leg-val{font-weight:700;color:var(--text);}
-.filter-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
-.filter-chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border2);color:var(--text3);background:transparent;font-family:'Outfit',sans-serif;transition:all 0.18s;}
-.filter-chip:hover{border-color:var(--cyan-border);color:var(--text);}
-.filter-chip.active-chip{background:var(--cyan-soft);color:var(--cyan);border-color:var(--cyan-border);}
+.filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border2);color:var(--text3);background:transparent;font-family:'Outfit',sans-serif;transition:all 0.18s;}
+.chip:hover{border-color:var(--cyan-border);color:var(--text);}
+.chip.on{background:var(--cyan-soft);color:var(--cyan);border-color:var(--cyan-border);}
+
+/* ─── ACTIVITY ───────────────────────────── */
+.activity{display:flex;flex-direction:column;}
+.act-item{display:flex;gap:12px;padding-bottom:16px;position:relative;}
+.act-item::before{content:'';position:absolute;left:14px;top:28px;bottom:0;width:1px;background:var(--border);}
+.act-item:last-child::before{display:none;}
+.act-dot{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;background:var(--s2);border:1px solid var(--border);z-index:1;}
+.act-lbl{font-size:13px;color:var(--text);font-weight:500;}
+.act-time{font-size:11px;color:var(--text3);margin-top:2px;}
+
+/* ─── APPOINTMENTS ───────────────────────── */
 .appt-list{display:flex;flex-direction:column;gap:8px;}
 .appt{display:flex;align-items:center;gap:12px;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:12px 16px;transition:border-color 0.2s;cursor:pointer;}
 .appt:hover{border-color:var(--cyan-border);}
-.appt-time-box{min-width:58px;text-align:center;background:var(--s1);border:1px solid var(--border);border-radius:9px;padding:6px;}
+.appt-time{min-width:58px;text-align:center;background:var(--s1);border:1px solid var(--border);border-radius:9px;padding:6px;}
 .appt-hr{font-family:'Instrument Serif',serif;font-size:18px;color:var(--cyan);line-height:1;}
-.appt-period{font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;}
+.appt-am{font-size:9px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;}
 .appt-body{flex:1;min-width:0;}
-.appt-patient-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.appt-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .appt-meta{font-size:11px;color:var(--text3);margin-top:2px;}
 .appt-dr{display:flex;align-items:center;gap:8px;}
 .dr-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;}
 @media(max-width:600px){.appt-dr{display:none;}}
+
+/* ─── BILLING ────────────────────────────── */
 .inv-list{display:flex;flex-direction:column;}
-.inv-item{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--border);}
+.inv-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
 .inv-item:last-child{border-bottom:none;}
 .inv-icon{width:36px;height:36px;border-radius:10px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
 .inv-name{font-size:13px;font-weight:600;color:var(--text);}
@@ -255,305 +285,374 @@ td{padding:12px;vertical-align:middle;}
 .inv-amt.paid{color:var(--cyan);}
 .inv-amt.pending{color:var(--gold);}
 .inv-amt.overdue{color:var(--rose);}
-.activity{display:flex;flex-direction:column;}
-.act-item{display:flex;gap:12px;padding-bottom:16px;position:relative;}
-.act-item::before{content:'';position:absolute;left:14px;top:28px;bottom:0;width:1px;background:var(--border);}
-.act-item:last-child::before{display:none;}
-.act-dot{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;background:var(--s2);border:1px solid var(--border);z-index:1;}
-.act-action{font-size:13px;color:var(--text);font-weight:500;}
-.act-time{font-size:11px;color:var(--text3);margin-top:2px;}
-.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;gap:10px;}
-.empty-icon{font-size:36px;opacity:0.4;}
-.empty-title{font-size:15px;font-weight:600;color:var(--text2);}
-.empty-sub{font-size:12px;color:var(--text3);}
+.charge-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.charge-row:last-child{border-bottom:none;}
+.charge-pt-name{font-size:13px;font-weight:600;color:var(--text);}
+.charge-btn{padding:7px 14px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;background:var(--cyan-soft);color:var(--cyan);border:1px solid var(--cyan-border);font-family:'Outfit',sans-serif;transition:all 0.18s;white-space:nowrap;flex-shrink:0;}
+.charge-btn:hover{background:var(--cyan);color:var(--bg);}
 
-/* PATIENT 360 PANEL */
-.patient-panel{position:fixed;top:0;right:0;bottom:0;width:500px;background:var(--s1);border-left:1px solid var(--border2);z-index:200;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.35s cubic-bezier(.16,1,.3,1);overflow:hidden;}
-.patient-panel.open{transform:translateX(0);}
-@media(max-width:600px){.patient-panel{width:100%;}}
-.panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199;display:none;backdrop-filter:blur(2px);}
-.panel-overlay.show{display:block;}
-.panel-header{padding:20px 24px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,var(--s2),var(--s1));flex-shrink:0;position:relative;}
-.panel-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;background:var(--s3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--text3);transition:all 0.18s;}
-.panel-close:hover{background:var(--rose-soft);color:var(--rose);}
-.panel-pt-meta{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
-.panel-avatar{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--cyan),var(--blue));display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:20px;color:var(--bg);flex-shrink:0;}
-.panel-name{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);}
-.panel-code{font-size:11px;color:var(--text3);margin-top:2px;}
-.action-group{display:flex;gap:6px;flex-wrap:wrap;}
-.action-btn{display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid transparent;font-family:'Outfit',sans-serif;transition:all 0.18s;}
-.action-btn:disabled{opacity:0.45;cursor:not-allowed;}
-.action-btn.active-action{background:var(--cyan-soft);color:var(--cyan);border-color:var(--cyan-border);}
-.action-btn.active-action:hover:not(:disabled){background:var(--cyan);color:var(--bg);}
-.action-btn.critical-action{background:var(--rose-soft);color:var(--rose);border-color:rgba(255,77,109,0.3);}
-.action-btn.critical-action:hover:not(:disabled){background:var(--rose);color:#fff;}
-.action-btn.pending-action{background:var(--gold-soft);color:var(--gold);border-color:rgba(232,184,75,0.3);}
-.action-btn.pending-action:hover:not(:disabled){background:var(--gold);color:#000;}
-.action-btn.discharge-action{background:rgba(255,255,255,0.04);color:var(--text3);border-color:var(--border2);}
-.action-btn.discharge-action:hover:not(:disabled){background:var(--s3);color:var(--text);}
+/* ─── DOCTORS ────────────────────────────── */
+.dr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:20px;}
+.dr-card{background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;transition:border-color 0.2s,transform 0.2s;}
+.dr-card:hover{border-color:var(--cyan-border);transform:translateY(-2px);}
+.dr-card-top{display:flex;align-items:center;gap:12px;}
+.dr-card-av{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;}
+.dr-card-name{font-size:14px;font-weight:700;color:var(--text);}
+.dr-card-dept{font-size:11px;color:var(--text3);margin-top:2px;}
+.dr-del-btn{padding:6px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;background:var(--rose-soft);color:var(--rose);border:1px solid rgba(255,77,109,0.3);font-family:'Outfit',sans-serif;transition:all 0.18s;margin-top:4px;width:100%;}
+.dr-del-btn:hover{background:var(--rose);color:#fff;}
+
+/* ─── PATIENT PANEL ──────────────────────── */
+.panel{position:fixed;top:0;right:0;bottom:0;width:500px;background:var(--s1);border-left:1px solid var(--border2);z-index:200;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.35s cubic-bezier(.16,1,.3,1);overflow:hidden;}
+.panel.on{transform:translateX(0);}
+@media(max-width:600px){.panel{width:100%;}}
+.panel-ov{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199;display:none;backdrop-filter:blur(2px);}
+.panel-ov.on{display:block;}
+.panel-hd{padding:20px 24px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,var(--s2),var(--s1));flex-shrink:0;position:relative;}
+.panel-x{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:8px;background:var(--s3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--text3);transition:all 0.18s;}
+.panel-x:hover{background:var(--rose-soft);color:var(--rose);}
+.panel-pt-row{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+.panel-av{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--cyan),var(--blue));display:flex;align-items:center;justify-content:center;font-family:'Instrument Serif',serif;font-size:20px;color:var(--bg);flex-shrink:0;}
+.panel-pt-name{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);}
+.panel-pt-code{font-size:11px;color:var(--text3);margin-top:2px;}
+.action-row{display:flex;gap:6px;flex-wrap:wrap;}
+.act-btn{display:flex;align-items:center;gap:6px;padding:7px 13px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid transparent;font-family:'Outfit',sans-serif;transition:all 0.18s;}
+.act-btn:disabled{opacity:0.45;cursor:not-allowed;}
+.act-btn.a{background:var(--cyan-soft);color:var(--cyan);border-color:var(--cyan-border);}
+.act-btn.a:hover:not(:disabled){background:var(--cyan);color:var(--bg);}
+.act-btn.cr{background:var(--rose-soft);color:var(--rose);border-color:rgba(255,77,109,0.3);}
+.act-btn.cr:hover:not(:disabled){background:var(--rose);color:#fff;}
+.act-btn.pe{background:var(--gold-soft);color:var(--gold);border-color:rgba(232,184,75,0.3);}
+.act-btn.pe:hover:not(:disabled){background:var(--gold);color:#000;}
+.act-btn.di{background:rgba(255,255,255,0.04);color:var(--text3);border-color:var(--border2);}
+.act-btn.di:hover:not(:disabled){background:var(--s3);color:var(--text);}
 .panel-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;}
-.panel-tab{flex:1;padding:13px;text-align:center;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.18s;}
-.panel-tab:hover{color:var(--text2);}
-.panel-tab.active-tab{color:var(--cyan);border-bottom-color:var(--cyan);}
+.ptab{flex:1;padding:13px;text-align:center;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.18s;}
+.ptab:hover{color:var(--text2);}
+.ptab.on{color:var(--cyan);border-bottom-color:var(--cyan);}
 .panel-body{flex:1;overflow-y:auto;padding:20px 24px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent;}
 .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
 .info-cell{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px;}
-.info-label{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
-.info-value{font-size:14px;font-weight:600;color:var(--text);}
-.assign-section{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;}
-.assign-title{font-size:12px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;}
+.info-lbl{font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
+.info-val{font-size:14px;font-weight:600;color:var(--text);}
+.assign-box{background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;}
+.assign-lbl{font-size:12px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;}
 .assign-row{display:flex;gap:8px;align-items:center;}
-.panel-select{flex:1;background:var(--s1);border:1px solid var(--border2);border-radius:9px;padding:8px 12px;font-size:13px;color:var(--text);font-family:'Outfit',sans-serif;cursor:pointer;outline:none;transition:border-color 0.2s;}
-.panel-select:focus{border-color:var(--cyan-border);}
-.panel-select option{background:var(--s2);}
-.timeline{display:flex;flex-direction:column;}
+.p-select{flex:1;background:var(--s1);border:1px solid var(--border2);border-radius:9px;padding:8px 12px;font-size:13px;color:var(--text);font-family:'Outfit',sans-serif;outline:none;transition:border-color 0.2s;}
+.p-select:focus{border-color:var(--cyan-border);}
+.p-select option{background:var(--s2);}
+.danger-zone{margin-top:20px;border:1px dashed rgba(255,77,109,0.3);border-radius:12px;padding:16px;background:rgba(255,77,109,0.03);}
+.danger-lbl{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--rose);margin-bottom:6px;}
+.danger-sub{font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.6;}
+.tl{display:flex;flex-direction:column;}
 .tl-item{display:flex;gap:14px;padding-bottom:20px;position:relative;}
 .tl-item::before{content:'';position:absolute;left:15px;top:30px;bottom:0;width:1px;background:linear-gradient(180deg,var(--border2),transparent);}
 .tl-item:last-child::before{display:none;}
 .tl-dot{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;z-index:1;border:2px solid var(--border);}
-.tl-dot.cyan-dot{background:var(--cyan-soft);border-color:var(--cyan-border);}
-.tl-dot.rose-dot{background:var(--rose-soft);border-color:rgba(255,77,109,0.3);}
-.tl-dot.gold-dot{background:var(--gold-soft);border-color:rgba(232,184,75,0.3);}
-.tl-dot.muted-dot{background:var(--s3);border-color:var(--border);}
-.tl-label{font-size:13px;font-weight:600;color:var(--text);}
+.tl-dot.c{background:var(--cyan-soft);border-color:var(--cyan-border);}
+.tl-dot.r{background:var(--rose-soft);border-color:rgba(255,77,109,0.3);}
+.tl-dot.g{background:var(--gold-soft);border-color:rgba(232,184,75,0.3);}
+.tl-dot.n{background:var(--s3);}
+.tl-lbl{font-size:13px;font-weight:600;color:var(--text);}
 .tl-time{font-size:11px;color:var(--text3);margin-top:3px;}
 .tl-note{font-size:12px;color:var(--text2);margin-top:6px;background:var(--s2);border-radius:8px;padding:8px 10px;border-left:2px solid var(--border2);}
-.notes-area{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:10px;padding:12px;font-size:13px;color:var(--text);font-family:'Outfit',sans-serif;resize:vertical;min-height:100px;outline:none;transition:border-color 0.2s;}
-.notes-area:focus{border-color:var(--cyan-border);}
-.panel-save-btn{margin-top:8px;padding:8px 16px;background:var(--cyan);color:var(--bg);border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.18s;}
-.panel-save-btn:hover{box-shadow:0 4px 16px rgba(0,229,200,0.3);}
+.notes-ta{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:10px;padding:12px;font-size:13px;color:var(--text);font-family:'Outfit',sans-serif;resize:vertical;min-height:100px;outline:none;transition:border-color 0.2s;}
+.notes-ta:focus{border-color:var(--cyan-border);}
+.save-note-btn{margin-top:8px;padding:8px 16px;background:var(--cyan);color:var(--bg);border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;}
 
-/* DELETE ZONE */
-.delete-zone{margin-top:20px;border:1px dashed rgba(255,77,109,0.3);border-radius:12px;padding:16px;background:rgba(255,77,109,0.03);}
-.delete-zone-title{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--rose);margin-bottom:6px;}
-.delete-zone-sub{font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.6;}
-
-/* CONFIRM DIALOG */
-.confirm-wrap{position:fixed;inset:0;z-index:400;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);}
-.confirm-wrap.show{display:flex;}
-.confirm-box{background:var(--s1);border:1px solid rgba(255,77,109,0.35);border-radius:18px;padding:32px;max-width:380px;width:100%;animation:modalIn 0.25s cubic-bezier(.16,1,.3,1);text-align:center;}
-@keyframes modalIn{from{opacity:0;transform:scale(0.94);}to{opacity:1;transform:scale(1);}}
-.confirm-icon{font-size:40px;margin-bottom:12px;}
-.confirm-title{font-family:'Instrument Serif',serif;font-size:22px;color:var(--text);margin-bottom:8px;}
-.confirm-sub{font-size:13px;color:var(--text3);line-height:1.65;margin-bottom:24px;}
-.confirm-sub strong{color:var(--rose);}
-.confirm-actions{display:flex;gap:10px;justify-content:center;}
-
-/* ADD PATIENT MODAL */
-.modal-wrap{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);}
-.modal-wrap.show{display:flex;}
-.modal{background:var(--s1);border:1px solid var(--border2);border-radius:20px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;animation:modalIn 0.3s cubic-bezier(.16,1,.3,1);}
-.modal-hd{padding:24px 24px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+/* ─── MODALS ─────────────────────────────── */
+.modal-bg{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);}
+.modal-bg.on{display:flex;}
+.modal{background:var(--s1);border:1px solid var(--border2);border-radius:20px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;animation:pop 0.3s cubic-bezier(.16,1,.3,1);}
+.modal.sm{max-width:380px;text-align:center;}
+@keyframes pop{from{opacity:0;transform:scale(0.95) translateY(12px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.modal-hd{padding:22px 24px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .modal-title{font-family:'Instrument Serif',serif;font-size:20px;color:var(--text);}
-.modal-close{width:32px;height:32px;border-radius:8px;background:var(--s3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:14px;transition:all 0.18s;}
-.modal-close:hover{background:var(--rose-soft);color:var(--rose);}
-.modal-body{padding:24px;}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.modal-x{width:32px;height:32px;border-radius:8px;background:var(--s3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:14px;transition:all 0.18s;}
+.modal-x:hover{background:var(--rose-soft);color:var(--rose);}
+.modal-body{padding:22px 24px;}
+.modal-foot{padding:14px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;}
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.fg-lbl{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase;}
+.fg-input,.fg-select{background:var(--s2);border:1px solid var(--border2);border-radius:9px;padding:10px 13px;font-size:13px;color:var(--text);font-family:'Outfit',sans-serif;outline:none;transition:border-color 0.2s;width:100%;}
+.fg-input:focus,.fg-select:focus{border-color:var(--cyan-border);}
+.fg-select option{background:var(--s2);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px;}
 @media(max-width:460px){.form-grid{grid-template-columns:1fr;}}
-.form-group{display:flex;flex-direction:column;gap:6px;}
-.form-group.full{grid-column:1/-1;}
-.form-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase;}
-.form-input,.form-select{background:var(--s2);border:1px solid var(--border2);border-radius:9px;padding:10px 13px;font-size:13px;color:var(--text);font-family:'Outfit',sans-serif;outline:none;transition:border-color 0.2s;}
-.form-input:focus,.form-select:focus{border-color:var(--cyan-border);}
-.form-select option{background:var(--s2);}
-.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;}
+.full{grid-column:1/-1;}
 
-/* TOAST */
-.toast-container{position:fixed;bottom:24px;right:24px;z-index:500;display:flex;flex-direction:column;gap:8px;}
-.toast{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:500;animation:toastIn 0.3s cubic-bezier(.16,1,.3,1);min-width:240px;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,0.4);}
-@keyframes toastIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
-.toast.success{background:var(--s2);border:1px solid var(--cyan-border);color:var(--cyan);}
-.toast.error{background:var(--s2);border:1px solid rgba(255,77,109,0.4);color:var(--rose);}
-.toast.info{background:var(--s2);border:1px solid var(--border2);color:var(--text2);}
+/* ─── TOAST ──────────────────────────────── */
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:500;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;font-size:13px;font-weight:500;animation:slide-in 0.3s cubic-bezier(.16,1,.3,1);min-width:220px;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,0.4);pointer-events:all;}
+@keyframes slide-in{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
+.toast.s{background:var(--s2);border:1px solid var(--cyan-border);color:var(--cyan);}
+.toast.e{background:var(--s2);border:1px solid rgba(255,77,109,0.4);color:var(--rose);}
+.toast.i{background:var(--s2);border:1px solid var(--border2);color:var(--text2);}
 
-/* MOBILE BOTTOM NAV */
-.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:1px solid var(--border);padding:8px 0 12px;z-index:50;}
-.bottom-nav-inner{display:flex;justify-content:space-around;}
-.bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 12px;border-radius:10px;transition:all 0.2s;color:var(--text3);font-size:10px;font-weight:500;}
-.bn-item.active{color:var(--cyan);}
+/* ─── MOBILE NAV ─────────────────────────── */
+.bot-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:1px solid var(--border);padding:6px 0 10px;z-index:50;}
+.bot-nav-inner{display:flex;justify-content:space-around;}
+.bn{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 8px;color:var(--text3);font-size:9px;font-weight:600;transition:color 0.2s;}
+.bn.on{color:var(--cyan);}
 .bn-icon{font-size:20px;}
-@media(max-width:768px){.bottom-nav{display:block;}.content{padding-bottom:80px;}}
+@media(max-width:768px){.bot-nav{display:block;}.content{padding-bottom:80px;}}
 </style>
 </head>
 <body>
 
-<div class="toast-container" id="toastContainer"></div>
+<!-- TOAST -->
+<div class="toast-wrap" id="toastWrap"></div>
 
-<!-- LOGIN SCREEN -->
+<!-- LOGIN (disabled for preview) -->
 <div id="loginScreen">
   <div class="login-brand">
     <div style="display:flex;align-items:center;gap:14px;">
-      <div style="width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,var(--cyan),#008fa0);display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 6px 24px rgba(0,229,200,0.3);">⚕</div>
+      <div style="width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,var(--cyan),#008fa0);display:flex;align-items:center;justify-content:center;font-size:22px;">⚕</div>
       <div>
-        <div style="font-family:'Instrument Serif',serif;font-size:22px;">Medo<em style="color:var(--cyan);font-style:normal;">Scope</em></div>
+        <div style="font-family:'Instrument Serif',serif;font-size:22px;color:var(--text);">Medo<em style="color:var(--cyan);font-style:normal;">Scope</em></div>
         <div style="font-size:9px;color:var(--text3);letter-spacing:2.5px;text-transform:uppercase;margin-top:2px;">Healthcare Intelligence</div>
       </div>
     </div>
     <div>
-      <div class="brand-headline">Your clinic,<br><span>fully in view.</span></div>
+      <div class="brand-hl">Your clinic,<br><span>fully in view.</span></div>
       <div class="brand-sub">Patient records, appointments, billing and clinical actions — one real-time system for modern healthcare teams.</div>
       <div class="brand-stats">
-        <div class="brand-stat"><div class="brand-stat-icon">🏥</div><div><div class="brand-stat-label">Patient Management</div><div class="brand-stat-val">Admit, discharge &amp; transfer</div></div></div>
-        <div class="brand-stat"><div class="brand-stat-icon">📅</div><div><div class="brand-stat-label">Scheduling</div><div class="brand-stat-val">Full appointment control</div></div></div>
-        <div class="brand-stat"><div class="brand-stat-icon">💳</div><div><div class="brand-stat-label">Billing</div><div class="brand-stat-val">Track invoices live</div></div></div>
+        <div class="brand-stat"><div class="brand-stat-icon">🏥</div><div><div class="brand-stat-lbl">Patient Management</div><div class="brand-stat-val">Admit, discharge &amp; transfer</div></div></div>
+        <div class="brand-stat"><div class="brand-stat-icon">📅</div><div><div class="brand-stat-lbl">Scheduling</div><div class="brand-stat-val">Full appointment control</div></div></div>
+        <div class="brand-stat"><div class="brand-stat-icon">💳</div><div><div class="brand-stat-lbl">Billing</div><div class="brand-stat-val">EGP invoicing live</div></div></div>
       </div>
     </div>
-    <div style="font-size:11px;color:var(--text3);">© 2026 MedoScope · Secure Healthcare Platform</div>
+    <div style="font-size:11px;color:var(--text3);">© 2026 MedoScope</div>
   </div>
-  <div class="login-form-wrap">
+  <div class="login-right">
     <div class="login-card">
-      <div class="login-card-title">Welcome back</div>
-      <div class="login-card-sub">Sign in to your <span>MedoScope</span> workspace</div>
-      <div class="login-error" id="loginError"></div>
-      <div class="form-field"><label>Email address</label><input type="email" id="loginEmail" placeholder="doctor@hospital.com" autocomplete="email"></div>
-      <div class="form-field"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password"></div>
-      <button class="login-btn" id="loginBtn">Sign In</button>
-      <div class="login-note"><strong>First time?</strong> Go to your Supabase dashboard → Authentication → Users → Add user, then sign in here with that email and password.</div>
+      <div class="login-logo"><div class="login-logo-icon">⚕</div><div class="login-logo-name">Medo<em>Scope</em></div></div>
+      <div class="login-heading">Welcome back</div>
+      <div class="login-sub">Sign in to your <em>MedoScope</em> workspace</div>
+      <div class="auth-tabs">
+        <div class="auth-tab on" id="tabIn" onclick="switchTab('in')">Sign In</div>
+        <div class="auth-tab" id="tabUp" onclick="switchTab('up')">Create Account</div>
+      </div>
+      <div class="auth-msg err" id="authErr"></div>
+      <div class="auth-msg ok" id="authOk"></div>
+      <button class="social-btn" onclick="signInGoogle()">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Continue with Google
+      </button>
+      <div class="auth-divider"><div class="auth-divider-line"></div><div class="auth-divider-text">or</div><div class="auth-divider-line"></div></div>
+      <div id="formIn">
+        <label class="f-label">Email</label><input class="f-input" id="inEmail" type="email" placeholder="doctor@hospital.com">
+        <label class="f-label">Password</label><input class="f-input" id="inPwd" type="password" placeholder="••••••••">
+        <button class="auth-btn" id="inBtn">Sign In</button>
+        <div class="auth-switch">No account? <b onclick="switchTab('up')">Create one</b></div>
+      </div>
+      <div id="formUp" style="display:none;">
+        <label class="f-label">Full Name</label><input class="f-input" id="upName" type="text" placeholder="Dr. Ahmed Hassan">
+        <label class="f-label">Email</label><input class="f-input" id="upEmail" type="email" placeholder="doctor@hospital.com">
+        <label class="f-label">Password</label><input class="f-input" id="upPwd" type="password" placeholder="Min. 6 characters">
+        <button class="auth-btn" id="upBtn">Create Account</button>
+        <div class="auth-switch">Already signed up? <b onclick="switchTab('in')">Sign in</b></div>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- APP -->
-<div id="appWrap">
+<div id="app" class="on">
 
-  <div class="panel-overlay" id="panelOverlay"></div>
+  <!-- Panel overlay -->
+  <div class="panel-ov" id="panelOv"></div>
 
-  <!-- PATIENT PANEL -->
-  <div class="patient-panel" id="patientPanel">
-    <div class="panel-header">
-      <div class="panel-close" id="panelClose">✕</div>
-      <div class="panel-pt-meta">
-        <div class="panel-avatar" id="panelAvatar">—</div>
-        <div><div class="panel-name" id="panelName">—</div><div class="panel-code" id="panelCode">—</div></div>
+  <!-- Patient 360 panel -->
+  <div class="panel" id="panel">
+    <div class="panel-hd">
+      <div class="panel-x" id="panelX">✕</div>
+      <div class="panel-pt-row">
+        <div class="panel-av" id="panelAv">—</div>
+        <div><div class="panel-pt-name" id="panelName">—</div><div class="panel-pt-code" id="panelCode">—</div></div>
       </div>
-      <div class="action-group" id="statusActions"></div>
+      <div class="action-row" id="actionRow"></div>
     </div>
-    <div class="panel-tabs">
-      <div class="panel-tab active-tab" data-tab="overview">Overview</div>
-      <div class="panel-tab" data-tab="timeline">Timeline</div>
-      <div class="panel-tab" data-tab="appointments">Appts</div>
-      <div class="panel-tab" data-tab="billing">Billing</div>
-      <div class="panel-tab" data-tab="notes">Notes</div>
+    <div class="panel-tabs" id="panelTabs">
+      <div class="ptab on" data-tab="overview">Overview</div>
+      <div class="ptab" data-tab="timeline">Timeline</div>
+      <div class="ptab" data-tab="appts">Appts</div>
+      <div class="ptab" data-tab="billing">Billing</div>
+      <div class="ptab" data-tab="notes">Notes</div>
     </div>
     <div class="panel-body" id="panelBody"><div class="loading"><div class="spinner"></div></div></div>
   </div>
 
-  <!-- CONFIRM DELETE -->
-  <div class="confirm-wrap" id="confirmWrap">
-    <div class="confirm-box">
-      <div class="confirm-icon">🗑️</div>
-      <div class="confirm-title" id="confirmTitle">Delete Patient?</div>
-      <div class="confirm-sub" id="confirmSub">This will permanently remove the patient and all linked records. <strong>This cannot be undone.</strong></div>
-      <div class="confirm-actions">
-        <button class="btn btn-outline" id="confirmCancel">Cancel</button>
-        <button class="btn btn-danger" id="confirmOk">Delete Permanently</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ADD PATIENT MODAL -->
-  <div class="modal-wrap" id="addPatientModal">
-    <div class="modal">
-      <div class="modal-hd"><div class="modal-title">Admit New Patient</div><div class="modal-close" id="modalClose">✕</div></div>
-      <div class="modal-body">
-        <div class="form-grid">
-          <div class="form-group full"><div class="form-label">Full Name</div><input class="form-input" id="f-name" placeholder="Patient full name…" type="text"></div>
-          <div class="form-group"><div class="form-label">Age</div><input class="form-input" id="f-age" placeholder="—" type="number" min="0" max="150"></div>
-          <div class="form-group"><div class="form-label">Gender</div><select class="form-select" id="f-gender"><option value="M">Male</option><option value="F">Female</option></select></div>
-          <div class="form-group"><div class="form-label">Blood Type</div><select class="form-select" id="f-blood"><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
-          <div class="form-group"><div class="form-label">Department</div><select class="form-select" id="f-dept" onchange="updateDoctorOptions()"></select></div>
-          <div class="form-group full"><div class="form-label">Assigned Doctor</div><select class="form-select" id="f-doctor"></select></div>
-          <div class="form-group"><div class="form-label">Initial Status</div><select class="form-select" id="f-status"><option>Active</option><option>Pending</option><option>Critical</option></select></div>
-          <div class="form-group"><div class="form-label">Admission Date</div><input class="form-input" id="f-date" type="date"></div>
+  <!-- Confirm delete modal -->
+  <div class="modal-bg" id="confirmModal">
+    <div class="modal sm">
+      <div style="padding:32px 28px 28px;text-align:center;">
+        <div style="font-size:40px;margin-bottom:12px;">🗑️</div>
+        <div class="modal-title" id="confirmTitle" style="margin-bottom:8px;font-size:22px;">Delete?</div>
+        <div id="confirmSub" style="font-size:13px;color:var(--text3);line-height:1.65;margin-bottom:24px;"></div>
+        <div style="display:flex;gap:10px;justify-content:center;">
+          <button class="btn btn-o" id="confirmNo">Cancel</button>
+          <button class="btn btn-r" id="confirmYes">Delete Permanently</button>
         </div>
       </div>
-      <div class="modal-footer"><button class="btn btn-outline" id="modalCancelBtn">Cancel</button><button class="btn btn-primary" id="modalSubmitBtn">Admit Patient</button></div>
     </div>
   </div>
 
-  <div class="overlay" id="overlay"></div>
+  <!-- Add patient modal -->
+  <div class="modal-bg" id="admitModal">
+    <div class="modal">
+      <div class="modal-hd"><div class="modal-title">Admit New Patient</div><div class="modal-x" id="admitX">✕</div></div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="fg full"><div class="fg-lbl">Full Name</div><input class="fg-input" id="ptName" placeholder="Patient full name…" type="text"></div>
+          <div class="fg"><div class="fg-lbl">Age</div><input class="fg-input" id="ptAge" placeholder="—" type="number"></div>
+          <div class="fg"><div class="fg-lbl">Gender</div><select class="fg-select" id="ptGender"><option value="M">Male</option><option value="F">Female</option></select></div>
+          <div class="fg"><div class="fg-lbl">Blood Type</div><select class="fg-select" id="ptBlood"><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+          <div class="fg"><div class="fg-lbl">Department</div><select class="fg-select" id="ptDept"></select></div>
+          <div class="fg full"><div class="fg-lbl">Assigned Doctor</div><select class="fg-select" id="ptDoctor"></select></div>
+          <div class="fg"><div class="fg-lbl">Status</div><select class="fg-select" id="ptStatus"><option>Active</option><option>Pending</option><option>Critical</option></select></div>
+          <div class="fg"><div class="fg-lbl">Admission Date</div><input class="fg-input" id="ptDate" type="date"></div>
+        </div>
+      </div>
+      <div class="modal-foot"><button class="btn btn-o" id="admitCancelBtn">Cancel</button><button class="btn btn-c" id="admitSubmitBtn">Admit Patient</button></div>
+    </div>
+  </div>
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar" id="sidebar">
-    <div class="toggle-btn" id="toggleBtn">‹</div>
+  <!-- Add doctor modal -->
+  <div class="modal-bg" id="drModal">
+    <div class="modal">
+      <div class="modal-hd"><div class="modal-title">Add Doctor</div><div class="modal-x" id="drX">✕</div></div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="fg full"><div class="fg-lbl">Full Name</div><input class="fg-input" id="drName" placeholder="Dr. Ahmed Hassan…" type="text"></div>
+          <div class="fg"><div class="fg-lbl">Initials</div><input class="fg-input" id="drInitials" placeholder="AH" type="text" maxlength="3"></div>
+          <div class="fg"><div class="fg-lbl">Department</div><select class="fg-select" id="drDept"></select></div>
+          <div class="fg full"><div class="fg-lbl">Specialization (optional)</div><input class="fg-input" id="drSpec" placeholder="e.g. Cardiac Surgery" type="text"></div>
+        </div>
+      </div>
+      <div class="modal-foot"><button class="btn btn-o" id="drCancelBtn">Cancel</button><button class="btn btn-c" id="drSubmitBtn">Add Doctor</button></div>
+    </div>
+  </div>
+
+  <!-- New invoice modal -->
+  <div class="modal-bg" id="invModal">
+    <div class="modal">
+      <div class="modal-hd"><div class="modal-title">New Invoice</div><div class="modal-x" id="invX">✕</div></div>
+      <div class="modal-body">
+        <div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:16px;">
+          <div id="invPtName" style="font-size:14px;font-weight:700;color:var(--text);"></div>
+          <div id="invPtMeta" style="font-size:11px;color:var(--text3);margin-top:2px;"></div>
+        </div>
+        <div class="form-grid">
+          <div class="fg full"><div class="fg-lbl">Description</div><input class="fg-input" id="invDesc" placeholder="e.g. Cardiology Consultation" type="text"></div>
+          <div class="fg"><div class="fg-lbl">Amount (EGP)</div><input class="fg-input" id="invAmt" placeholder="0.00" type="number" min="0"></div>
+          <div class="fg"><div class="fg-lbl">Status</div><select class="fg-select" id="invStatus"><option>Pending</option><option>Paid</option><option>Overdue</option></select></div>
+          <div class="fg full"><div class="fg-lbl">Issue Date</div><input class="fg-input" id="invDate" type="date"></div>
+        </div>
+      </div>
+      <div class="modal-foot"><button class="btn btn-o" id="invCancelBtn">Cancel</button><button class="btn btn-c" id="invSubmitBtn">Create Invoice</button></div>
+    </div>
+  </div>
+
+  <!-- Overlay -->
+  <div class="ov" id="ov"></div>
+
+  <!-- Sidebar -->
+  <aside class="sb" id="sb">
+    <div class="sb-toggle" id="sbToggle">‹</div>
     <div class="logo-area">
       <div class="logo-icon">⚕</div>
-      <div><div class="logo-name">Medo<em>Scope</em></div><div class="logo-tag">Healthcare Intelligence</div></div>
-    </div>
-    <div class="nav-section">
-      <div class="nav-section-label">Core</div>
-      <div class="nav-item active" data-page="overview"><div class="nav-icon">◈</div><span class="nav-label-text">Overview</span></div>
-      <div class="nav-item" data-page="patients"><div class="nav-icon">👤</div><span class="nav-label-text">Patients</span><span class="nav-badge" id="badge-critical">—</span></div>
-      <div class="nav-item" data-page="appointments"><div class="nav-icon">📅</div><span class="nav-label-text">Appointments</span><span class="nav-badge amber" id="badge-appt">—</span></div>
-    </div>
-    <div class="nav-section">
-      <div class="nav-section-label">Finance</div>
-      <div class="nav-item" data-page="billing"><div class="nav-icon">💳</div><span class="nav-label-text">Billing</span></div>
-    </div>
-    <div class="sidebar-bottom">
-      <div class="doc-card">
-        <div class="doc-avatar" id="sidebarInitials">—</div>
-        <div class="doc-info"><div class="doc-name">Administrator</div><div class="user-email" id="sidebarEmail">—</div></div>
+      <div class="hide-col">
+        <div class="logo-name">Medo<em>Scope</em></div>
+        <div class="logo-tag">Healthcare Intelligence</div>
       </div>
-      <div class="logout-btn" id="logoutBtn"><div class="logout-icon">↩</div><span class="nav-label-text">Sign Out</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-sec-lbl hide-col">Core</div>
+      <div class="nav-item on" data-page="overview"><div class="nav-icon">◈</div><span class="nav-lbl hide-col">Overview</span></div>
+      <div class="nav-item" data-page="patients"><div class="nav-icon">👤</div><span class="nav-lbl hide-col">Patients</span><span class="nav-badge hide-col" id="badgeCritical">—</span></div>
+      <div class="nav-item" data-page="appointments"><div class="nav-icon">📅</div><span class="nav-lbl hide-col">Appointments</span><span class="nav-badge gold hide-col" id="badgeAppt">—</span></div>
+      <div class="nav-item" data-page="doctors"><div class="nav-icon">🩺</div><span class="nav-lbl hide-col">Doctors</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-sec-lbl hide-col">Finance</div>
+      <div class="nav-item" data-page="billing"><div class="nav-icon">💳</div><span class="nav-lbl hide-col">Billing</span></div>
+    </div>
+    <div class="sb-bottom">
+      <div class="doc-card">
+        <div class="doc-av" id="sbAv">—</div>
+        <div class="hide-col">
+          <div class="doc-name">Administrator</div>
+          <div class="doc-email" id="sbEmail">—</div>
+        </div>
+      </div>
+      <div class="logout-row hide-col" id="logoutBtn">
+        <span style="font-size:16px;">↩</span>
+        <span>Sign Out</span>
+      </div>
     </div>
   </aside>
 
-  <!-- MAIN -->
+  <!-- Main -->
   <div class="main">
     <div class="topbar">
       <div class="hamburger" id="hamburger">☰</div>
-      <div class="topbar-left">
-        <div class="page-eyebrow" id="eyebrow">Dashboard</div>
-        <div class="page-heading" id="heading">Good morning</div>
+      <div class="tb-left">
+        <div class="tb-eyebrow" id="tbEyebrow">Dashboard</div>
+        <div class="tb-heading" id="tbHeading">Good morning</div>
       </div>
-      <div class="topbar-actions">
-        <div class="search">🔍&nbsp; Search patients…</div>
-        <div class="db-status"><div class="db-dot" id="dbDot"></div><span id="dbLabel">Connecting…</span></div>
-        <div class="notif-btn">🔔<div class="notif-dot"></div></div>
-        <button class="btn btn-primary" id="topNewPatientBtn">+ Admit</button>
+      <div class="tb-right">
+        <div class="db-pill"><div class="db-dot" id="dbDot"></div><span id="dbLbl">Connecting…</span></div>
+        <button class="btn btn-c" id="topAdmitBtn">+ Admit</button>
       </div>
     </div>
     <div class="content">
 
       <!-- OVERVIEW -->
-      <div class="page active" id="page-overview">
-        <div class="alert-banner" id="criticalBanner">
+      <div class="page on" id="page-overview">
+        <div class="alert-bar" id="critBar">
           <div style="font-size:18px;">⚠️</div>
-          <div class="alert-text"><strong id="critical-count">0 Critical Patients</strong> require immediate review.</div>
-          <button class="alert-action" id="viewCasesBtn">View Cases →</button>
+          <div class="alert-bar-text"><strong id="critCount">0 Critical Patients</strong> require immediate physician review.</div>
+          <button class="alert-bar-btn" id="viewCritBtn">View →</button>
         </div>
-        <div class="kpi-grid">
-          <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🏥</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="kpi-total">—</div><div class="kpi-lbl">Total Patients</div></div>
-          <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">📅</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="kpi-appt">—</div><div class="kpi-lbl">Appointments</div></div>
-          <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">💰</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="kpi-revenue">—</div><div class="kpi-lbl">Total Billed</div></div>
-          <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🚨</div><div class="kpi-trend dn">Urgent</div></div><div class="kpi-val" id="kpi-critical">—</div><div class="kpi-lbl">Critical Cases</div></div>
+        <div class="kpi-row">
+          <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🏥</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="kpiTotal">—</div><div class="kpi-lbl">Total Patients</div></div>
+          <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">📅</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="kpiAppt">—</div><div class="kpi-lbl">Appointments</div></div>
+          <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">💰</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="kpiRev">—</div><div class="kpi-lbl">Total Billed</div></div>
+          <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🚨</div><div class="kpi-trend dn">Urgent</div></div><div class="kpi-val" id="kpiCrit">—</div><div class="kpi-lbl">Critical Cases</div></div>
         </div>
-        <div class="grid-2-1">
+        <div class="g2-1">
           <div class="card">
-            <div class="card-hd"><div><div class="card-title">Patient Admissions</div><div class="card-sub">Historical trend</div></div><span class="pill pill-cyan">Monthly</span></div>
-            <canvas id="chart-admissions" height="120"></canvas>
+            <div class="card-hd"><div><div class="card-title">Patient Admissions</div><div class="card-sub">Historical trend</div></div><span class="pill pill-c">Monthly</span></div>
+            <canvas id="chartAdmissions" height="120"></canvas>
           </div>
           <div class="card">
             <div class="card-hd"><div><div class="card-title">Department Load</div><div class="card-sub">Current</div></div></div>
-            <canvas id="chart-dept" height="130"></canvas>
-            <div class="legend">
-              <div class="leg-item"><div class="leg-dot" style="background:var(--cyan)"></div><span class="leg-lbl">Cardiology</span><span class="leg-val" id="dept-cardiology">0</span></div>
-              <div class="leg-item"><div class="leg-dot" style="background:var(--blue)"></div><span class="leg-lbl">Orthopedics</span><span class="leg-val" id="dept-orthopedics">0</span></div>
-              <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div><span class="leg-lbl">Neurology</span><span class="leg-val" id="dept-neurology">0</span></div>
-              <div class="leg-item"><div class="leg-dot" style="background:var(--rose)"></div><span class="leg-lbl">General</span><span class="leg-val" id="dept-general">0</span></div>
+            <canvas id="chartDept" height="130"></canvas>
+            <div class="leg">
+              <div class="leg-item"><div class="leg-dot" style="background:var(--cyan)"></div><span class="leg-lbl">Cardiology</span><span class="leg-val" id="deptCardiology">0</span></div>
+              <div class="leg-item"><div class="leg-dot" style="background:var(--blue)"></div><span class="leg-lbl">Orthopedics</span><span class="leg-val" id="deptOrthopedics">0</span></div>
+              <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div><span class="leg-lbl">Neurology</span><span class="leg-val" id="deptNeurology">0</span></div>
+              <div class="leg-item"><div class="leg-dot" style="background:var(--rose)"></div><span class="leg-lbl">General</span><span class="leg-val" id="deptGeneral">0</span></div>
             </div>
           </div>
         </div>
-        <div class="grid-2-1">
+        <div class="g2-1">
           <div class="card" style="padding:0 20px;">
-            <div style="padding:18px 0 0;"><div class="sec-hdr"><div class="sec-title">Recent Patients</div><button class="btn btn-outline" style="font-size:12px;padding:6px 12px;" id="btn-all-patients">View All →</button></div></div>
-            <div id="overview-patients-wrap"><div class="loading"><div class="spinner"></div></div></div>
+            <div style="padding:18px 0 0;"><div class="sec-hdr"><div class="sec-title">Recent Patients</div><button class="btn btn-o" style="font-size:12px;padding:6px 12px;" onclick="goTo('patients')">View All →</button></div></div>
+            <div id="ovPatientsWrap"><div class="loading"><div class="spinner"></div></div></div>
           </div>
           <div class="card">
-            <div class="card-hd"><div><div class="card-title">Activity Feed</div><div class="card-sub">System log</div></div></div>
-            <div class="activity" id="activityFeed">
-              <div class="act-item"><div class="act-dot">◈</div><div><div class="act-action">MedoScope connected</div><div class="act-time">Live database ready</div></div></div>
+            <div class="card-hd"><div><div class="card-title">Quick Access</div></div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+              <button class="btn btn-o" style="font-size:12px;" onclick="goTo('patients')">👤 Patients</button>
+              <button class="btn btn-o" style="font-size:12px;" onclick="goTo('doctors')">🩺 Doctors</button>
+              <button class="btn btn-o" style="font-size:12px;" onclick="goTo('billing')">💳 Billing</button>
+              <button class="btn btn-o" style="font-size:12px;" onclick="goTo('appointments')">📅 Schedule</button>
+            </div>
+            <div class="card-title" style="font-size:14px;margin-bottom:12px;">Activity</div>
+            <div class="activity" id="actFeed">
+              <div class="act-item"><div class="act-dot">◈</div><div><div class="act-lbl">MedoScope connected</div><div class="act-time">Live database ready</div></div></div>
             </div>
           </div>
         </div>
@@ -561,489 +660,816 @@ td{padding:12px;vertical-align:middle;}
 
       <!-- PATIENTS -->
       <div class="page" id="page-patients">
-        <div class="kpi-grid">
-          <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">👤</div><div class="kpi-trend nt">Live</div></div><div class="kpi-val" id="pt-kpi-total">—</div><div class="kpi-lbl">Registered</div></div>
-          <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">✅</div><div class="kpi-trend nt">Live</div></div><div class="kpi-val" id="pt-kpi-active">—</div><div class="kpi-lbl">Active</div></div>
-          <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">⏳</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="pt-kpi-pending">—</div><div class="kpi-lbl">Pending</div></div>
-          <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🚨</div><div class="kpi-trend dn">Urgent</div></div><div class="kpi-val" id="pt-kpi-critical">—</div><div class="kpi-lbl">Critical</div></div>
+        <div class="kpi-row">
+          <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">👤</div><div class="kpi-trend nt">Live</div></div><div class="kpi-val" id="ptKpiTotal">—</div><div class="kpi-lbl">Registered</div></div>
+          <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">✅</div><div class="kpi-trend nt">Live</div></div><div class="kpi-val" id="ptKpiActive">—</div><div class="kpi-lbl">Active</div></div>
+          <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">⏳</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="ptKpiPending">—</div><div class="kpi-lbl">Pending</div></div>
+          <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🚨</div><div class="kpi-trend dn">Urgent</div></div><div class="kpi-val" id="ptKpiCrit">—</div><div class="kpi-lbl">Critical</div></div>
         </div>
-        <div class="sec-hdr"><div class="sec-title">Patient Registry</div><button class="btn btn-primary" style="font-size:12px;padding:7px 14px;" id="admitNewBtn">+ Admit Patient</button></div>
-        <div class="filter-bar" id="patientFilters">
-          <button class="filter-chip active-chip" data-filter="All">All</button>
-          <button class="filter-chip" data-filter="Active">Active</button>
-          <button class="filter-chip" data-filter="Critical">⚠ Critical</button>
-          <button class="filter-chip" data-filter="Pending">Pending</button>
-          <button class="filter-chip" data-filter="Discharged">Discharged</button>
+        <div class="sec-hdr"><div class="sec-title">Patient Registry</div><button class="btn btn-c" style="font-size:12px;padding:7px 14px;" id="ptAdmitBtn">+ Admit Patient</button></div>
+        <div class="filters" id="ptFilters">
+          <button class="chip on" data-f="All">All</button>
+          <button class="chip" data-f="Active">Active</button>
+          <button class="chip" data-f="Critical">⚠ Critical</button>
+          <button class="chip" data-f="Pending">Pending</button>
+          <button class="chip" data-f="Discharged">Discharged</button>
         </div>
-        <div class="card" style="padding:0 20px;"><div id="patients-table-wrap"><div class="loading"><div class="spinner"></div></div></div></div>
+        <div class="card" style="padding:0 20px;"><div id="ptTableWrap"><div class="loading"><div class="spinner"></div></div></div></div>
       </div>
 
       <!-- APPOINTMENTS -->
       <div class="page" id="page-appointments">
-        <div class="kpi-grid">
-          <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">📅</div><div class="kpi-trend nt">Total</div></div><div class="kpi-val" id="appt-kpi-total">—</div><div class="kpi-lbl">Total</div></div>
-          <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">✅</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="appt-kpi-confirmed">—</div><div class="kpi-lbl">Confirmed</div></div>
-          <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">⏳</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="appt-kpi-pending">—</div><div class="kpi-lbl">Pending</div></div>
-          <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">❌</div><div class="kpi-trend dn">—</div></div><div class="kpi-val" id="appt-kpi-cancelled">—</div><div class="kpi-lbl">Cancelled</div></div>
+        <div class="kpi-row">
+          <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">📅</div><div class="kpi-trend nt">Total</div></div><div class="kpi-val" id="apptKpiTotal">—</div><div class="kpi-lbl">Total</div></div>
+          <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">✅</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="apptKpiConf">—</div><div class="kpi-lbl">Confirmed</div></div>
+          <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">⏳</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="apptKpiPend">—</div><div class="kpi-lbl">Pending</div></div>
+          <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">❌</div><div class="kpi-trend dn">—</div></div><div class="kpi-val" id="apptKpiCanc">—</div><div class="kpi-lbl">Cancelled</div></div>
         </div>
-        <div class="sec-hdr"><div class="sec-title">Schedule</div><button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">+ Book</button></div>
-        <div id="appt-list-wrap"><div class="loading"><div class="spinner"></div></div></div>
+        <div class="sec-hdr"><div class="sec-title">Schedule</div><button class="btn btn-c" style="font-size:12px;padding:7px 14px;">+ Book</button></div>
+        <div id="apptListWrap"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+
+      <!-- DOCTORS -->
+      <div class="page" id="page-doctors">
+        <div class="kpi-row">
+          <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🩺</div><div class="kpi-trend nt">Live</div></div><div class="kpi-val" id="drKpiTotal">—</div><div class="kpi-lbl">Total Doctors</div></div>
+          <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🫀</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="drKpiCardio">—</div><div class="kpi-lbl">Cardiology</div></div>
+          <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🧠</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="drKpiNeuro">—</div><div class="kpi-lbl">Neurology</div></div>
+          <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🏥</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="drKpiOther">—</div><div class="kpi-lbl">Other</div></div>
+        </div>
+        <div class="sec-hdr"><div class="sec-title">Medical Staff</div><button class="btn btn-c" style="font-size:12px;padding:7px 14px;" id="addDrBtn">+ Add Doctor</button></div>
+        <div id="drGridWrap"><div class="loading"><div class="spinner"></div></div></div>
       </div>
 
       <!-- BILLING -->
       <div class="page" id="page-billing">
-        <div class="kpi-grid">
-          <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">💰</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="bill-kpi-total">—</div><div class="kpi-lbl">Total Billed</div></div>
-          <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">✅</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="bill-kpi-paid">—</div><div class="kpi-lbl">Collected</div></div>
-          <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">⏳</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="bill-kpi-pending">—</div><div class="kpi-lbl">Outstanding</div></div>
-          <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🚫</div><div class="kpi-trend dn">—</div></div><div class="kpi-val" id="bill-kpi-overdue">—</div><div class="kpi-lbl">Overdue</div></div>
+        <div class="kpi-row">
+          <div class="kpi c"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">💰</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="billKpiTotal">—</div><div class="kpi-lbl">Total Billed</div></div>
+          <div class="kpi b"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">✅</div><div class="kpi-trend up">Live</div></div><div class="kpi-val" id="billKpiPaid">—</div><div class="kpi-lbl">Collected</div></div>
+          <div class="kpi g"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">⏳</div><div class="kpi-trend nt">—</div></div><div class="kpi-val" id="billKpiPend">—</div><div class="kpi-lbl">Outstanding</div></div>
+          <div class="kpi r"><div class="kpi-glow"></div><div class="kpi-top"><div class="kpi-icon">🚫</div><div class="kpi-trend dn">—</div></div><div class="kpi-val" id="billKpiOver">—</div><div class="kpi-lbl">Overdue</div></div>
         </div>
-        <div class="grid-2">
-          <div class="card"><div class="card-hd"><div><div class="card-title">Revenue Trend</div><div class="card-sub">Monthly</div></div><span class="pill pill-gold">Monthly</span></div><canvas id="chart-revenue" height="140"></canvas></div>
-          <div class="card"><div class="card-hd"><div><div class="card-title">Collection Rate</div></div></div><canvas id="chart-payment" height="120"></canvas><div class="legend" style="margin-top:14px;"><div class="leg-item"><div class="leg-dot" style="background:var(--cyan)"></div><span class="leg-lbl">Paid</span><span class="leg-val" id="leg-paid">—</span></div><div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div><span class="leg-lbl">Outstanding</span><span class="leg-val" id="leg-pending">—</span></div><div class="leg-item"><div class="leg-dot" style="background:var(--rose)"></div><span class="leg-lbl">Overdue</span><span class="leg-val" id="leg-overdue">—</span></div></div></div>
+        <div class="g2">
+          <div class="card"><div class="card-hd"><div><div class="card-title">Revenue Trend</div></div><span class="pill pill-g">Monthly</span></div><canvas id="chartRev" height="140"></canvas></div>
+          <div class="card"><div class="card-hd"><div><div class="card-title">Collection Rate</div></div></div><canvas id="chartPay" height="120"></canvas>
+            <div class="leg" style="margin-top:14px;">
+              <div class="leg-item"><div class="leg-dot" style="background:var(--cyan)"></div><span class="leg-lbl">Paid</span><span class="leg-val" id="legPaid">—</span></div>
+              <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div><span class="leg-lbl">Outstanding</span><span class="leg-val" id="legPend">—</span></div>
+              <div class="leg-item"><div class="leg-dot" style="background:var(--rose)"></div><span class="leg-lbl">Overdue</span><span class="leg-val" id="legOver">—</span></div>
+            </div>
+          </div>
         </div>
-        <div class="sec-hdr"><div class="sec-title">Invoices</div><button class="btn btn-primary" style="font-size:12px;padding:7px 14px;">+ New Invoice</button></div>
-        <div class="card" id="invoices-wrap"><div class="loading"><div class="spinner"></div></div></div>
+        <div class="sec-hdr" style="margin-bottom:8px;"><div class="sec-title">Charge Admitted Patients</div></div>
+        <div class="card" style="margin-bottom:20px;padding:0 20px 4px;"><div id="chargeWrap"><div class="loading"><div class="spinner"></div></div></div></div>
+        <div class="sec-hdr"><div class="sec-title">Invoices</div></div>
+        <div class="card" id="invListWrap"><div class="loading"><div class="spinner"></div></div></div>
       </div>
 
+    </div><!-- /content -->
+  </div><!-- /main -->
+
+  <!-- Mobile bottom nav -->
+  <div class="bot-nav">
+    <div class="bot-nav-inner">
+      <div class="bn on" data-page="overview"><div class="bn-icon">◈</div>Overview</div>
+      <div class="bn" data-page="patients"><div class="bn-icon">👤</div>Patients</div>
+      <div class="bn" data-page="appointments"><div class="bn-icon">📅</div>Schedule</div>
+      <div class="bn" data-page="doctors"><div class="bn-icon">🩺</div>Doctors</div>
+      <div class="bn" data-page="billing"><div class="bn-icon">💳</div>Billing</div>
     </div>
   </div>
 
-  <div class="bottom-nav">
-    <div class="bottom-nav-inner">
-      <div class="bn-item active" data-page="overview"><div class="bn-icon">◈</div>Overview</div>
-      <div class="bn-item" data-page="patients"><div class="bn-icon">👤</div>Patients</div>
-      <div class="bn-item" data-page="appointments"><div class="bn-icon">📅</div>Schedule</div>
-      <div class="bn-item" data-page="billing"><div class="bn-icon">💳</div>Billing</div>
-    </div>
-  </div>
-</div>
+</div><!-- /app -->
 
 <script>
+'use strict';
+// ─── SUPABASE ───────────────────────────────────────────────────────────────
 const { createClient } = supabase;
 const sb = createClient(
   'https://ixiajdnykewavnxbgmvo.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4aWFqZG55a2V3YXZueGJnbXZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMzA5MTQsImV4cCI6MjA5MjkwNjkxNH0.wKyCZyXEF8wqlJSW3wbJMscPazuSA-7648QnawprqYI'
 );
 
-// ═══ AUTH ═══
-sb.auth.onAuthStateChange((event, session) => {
-  if (session) showApp(session.user);
-  else showLogin();
-});
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let allPts = [], allDepts = [], allDrs = [];
+let curPt = null, curTab = 'overview', ptFilter = 'All';
+let invPatientId = null, delTarget = null;
+const loaded = {};
 
-function showApp(user) {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('appWrap').classList.add('ready');
-  const email = user.email || '';
-  document.getElementById('sidebarEmail').textContent = email;
-  document.getElementById('sidebarInitials').textContent = email.slice(0,2).toUpperCase();
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function fmt(n) {
+  if (n >= 1000000) return 'EGP ' + (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return 'EGP ' + (n/1000).toFixed(1) + 'K';
+  return 'EGP ' + Math.round(n);
+}
+function bc(s) {
+  const m = {Active:'badge-active',Critical:'badge-critical',Pending:'badge-pending',Discharged:'badge-discharged',
+             Confirmed:'badge-confirmed',Urgent:'badge-critical',Cancelled:'badge-cancelled',
+             Paid:'badge-paid',Overdue:'badge-overdue'};
+  return m[s] || 'badge-discharged';
+}
+function pc(b) {
+  const m = {'A+':'pill-r','O-':'pill-n','B+':'pill-b','AB+':'pill-c','O+':'pill-r','A-':'pill-n','B-':'pill-b'};
+  return m[b] || 'pill-n';
+}
+function inits(name) {
+  if (!name) return '?';
+  return name.split(' ').filter(w=>w.length>1).slice(0,2).map(w=>w[0].toUpperCase()).join('');
+}
+function toast(msg, type='s') {
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.innerHTML = `<span>${{s:'✓',e:'✕',i:'ℹ'}[type]||'✓'}</span><span>${msg}</span>`;
+  document.getElementById('toastWrap').appendChild(el);
+  setTimeout(() => el.remove(), 3200);
+}
+function log(icon, lbl, time='Just now') {
+  const feed = document.getElementById('actFeed');
+  if (!feed) return;
+  const el = document.createElement('div');
+  el.className = 'act-item';
+  el.innerHTML = `<div class="act-dot">${icon}</div><div><div class="act-lbl">${lbl}</div><div class="act-time">${time}</div></div>`;
+  feed.prepend(el);
+  while (feed.children.length > 6) feed.removeChild(feed.lastChild);
+}
+
+// ─── AUTH (LOGIN DISABLED FOR PREVIEW) ──────────────────────────────────────
+// To re-enable: remove next line, uncomment the sb.auth.onAuthStateChange block
+function initApp() {
+  document.getElementById('sbAv').textContent = 'AH';
+  document.getElementById('sbEmail').textContent = 'preview@medoscope.app';
   const h = new Date().getHours();
-  document.getElementById('heading').textContent = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
-  if (!loaded['overview']) { loadOverview(); loaded['overview'] = true; }
-}
-function showLogin() {
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('appWrap').classList.remove('ready');
+  document.getElementById('tbHeading').textContent = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  goTo('overview');
 }
 
-document.getElementById('loginBtn').addEventListener('click', doLogin);
-document.getElementById('loginPassword').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
-document.getElementById('loginEmail').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('loginPassword').focus(); });
-
-async function doLogin() {
-  const email = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPassword').value;
-  const errEl = document.getElementById('loginError');
-  const btn = document.getElementById('loginBtn');
-  errEl.classList.remove('show');
-  if (!email||!password) { errEl.textContent='Please enter your email and password.'; errEl.classList.add('show'); return; }
-  btn.textContent='Signing in…'; btn.disabled=true;
-  const { error } = await sb.auth.signInWithPassword({ email, password });
-  btn.textContent='Sign In'; btn.disabled=false;
-  if (error) { errEl.textContent=error.message; errEl.classList.add('show'); }
+// ─── AUTH UI (wired but login screen hidden) ─────────────────────────────────
+function switchTab(t) {
+  document.getElementById('tabIn').classList.toggle('on', t==='in');
+  document.getElementById('tabUp').classList.toggle('on', t==='up');
+  document.getElementById('formIn').style.display = t==='in' ? 'block':'none';
+  document.getElementById('formUp').style.display = t==='up' ? 'block':'none';
+  ['authErr','authOk'].forEach(id => { const el=document.getElementById(id); el.classList.remove('show'); el.textContent=''; });
+}
+function signInGoogle() {
+  sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: window.location.href } });
+}
+document.getElementById('inBtn').addEventListener('click', async () => {
+  const email = document.getElementById('inEmail').value.trim();
+  const pwd = document.getElementById('inPwd').value;
+  if (!email||!pwd) { showAuthMsg('err','Enter email and password.'); return; }
+  document.getElementById('inBtn').textContent = 'Signing in…';
+  const { error } = await sb.auth.signInWithPassword({ email, password:pwd });
+  document.getElementById('inBtn').textContent = 'Sign In';
+  if (error) showAuthMsg('err', error.message);
+});
+document.getElementById('upBtn').addEventListener('click', async () => {
+  const name = document.getElementById('upName').value.trim();
+  const email = document.getElementById('upEmail').value.trim();
+  const pwd = document.getElementById('upPwd').value;
+  if (!email||!pwd) { showAuthMsg('err','Email and password required.'); return; }
+  if (pwd.length < 6) { showAuthMsg('err','Password must be 6+ chars.'); return; }
+  document.getElementById('upBtn').textContent = 'Creating…';
+  const { error } = await sb.auth.signUp({ email, password:pwd, options:{ data:{ full_name:name } } });
+  document.getElementById('upBtn').textContent = 'Create Account';
+  if (error) showAuthMsg('err', error.message);
+  else showAuthMsg('ok', 'Account created! Check your email to confirm.');
+});
+function showAuthMsg(type, msg) {
+  const id = type==='err' ? 'authErr':'authOk';
+  const el = document.getElementById(id);
+  el.textContent = msg; el.classList.add('show');
 }
 document.getElementById('logoutBtn').addEventListener('click', () => sb.auth.signOut());
 
-// ═══ STATE ═══
-let allPatients=[], allDepts=[], allDoctors=[];
-let currentPatient=null, activeTab='overview', patientFilter='All';
-const loaded={};
+// ─── NAVIGATION ──────────────────────────────────────────────────────────────
+const META = {
+  overview:     { eyebrow:'Dashboard',          heading:null },
+  patients:     { eyebrow:'Patient Management', heading:'Patient Records' },
+  appointments: { eyebrow:'Schedule',           heading:'Appointments' },
+  doctors:      { eyebrow:'Medical Staff',      heading:'Doctors' },
+  billing:      { eyebrow:'Finance',            heading:'Billing & Revenue' },
+};
 
-// ═══ HELPERS ═══
-function fmt(n){ return n>=1000?'$'+(n/1000).toFixed(1)+'K':'$'+n; }
-function badgeClass(s){ const m={Active:'badge-active',Critical:'badge-critical',Pending:'badge-pending',Discharged:'badge-discharged',Confirmed:'badge-active',Urgent:'badge-critical',Cancelled:'badge-discharged'}; return m[s]||'badge-discharged'; }
-function pillClass(b){ const m={'A+':'pill-rose','O-':'pill-muted','B+':'pill-blue','AB+':'pill-cyan','O+':'pill-rose','A-':'pill-muted','B-':'pill-blue'}; return m[b]||'pill-muted'; }
-function initials(name){ if(!name) return '?'; return name.split(' ').filter(w=>w.length>1).slice(0,2).map(w=>w[0].toUpperCase()).join(''); }
-function toast(msg, type='success'){
-  const el=document.createElement('div'); el.className=`toast ${type}`;
-  const icon={success:'✓',error:'✕',info:'ℹ'}[type]||'✓';
-  el.innerHTML=`<span style="font-size:16px;">${icon}</span><span>${msg}</span>`;
-  document.getElementById('toastContainer').appendChild(el);
-  setTimeout(()=>el.remove(),3200);
-}
-function logActivity(icon,action,detail){
-  const feed=document.getElementById('activityFeed'); if(!feed) return;
-  const item=document.createElement('div'); item.className='act-item';
-  item.innerHTML=`<div class="act-dot">${icon}</div><div><div class="act-action">${action}</div><div class="act-time">${detail}</div></div>`;
-  feed.prepend(item);
-  while(feed.children.length>6) feed.removeChild(feed.lastChild);
+function goTo(pageId) {
+  if (!pageId || !META[pageId]) return;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.nav-item, .bn').forEach(n => n.classList.remove('on'));
+  document.getElementById('page-' + pageId).classList.add('on');
+  document.querySelectorAll('[data-page="' + pageId + '"]').forEach(el => el.classList.add('on'));
+  document.getElementById('tbEyebrow').textContent = META[pageId].eyebrow;
+  if (META[pageId].heading) document.getElementById('tbHeading').textContent = META[pageId].heading;
+  closeMobile();
+  if (!loaded[pageId]) { loaded[pageId] = true; loadPage(pageId); }
 }
 
-// ═══ NAV ═══
-const META={overview:{eyebrow:'Dashboard',heading:null},patients:{eyebrow:'Patient Management',heading:'Patient Records'},appointments:{eyebrow:'Schedule',heading:'Appointments'},billing:{eyebrow:'Finance',heading:'Billing & Revenue'}};
-function goTo(pageId){
-  if(!pageId||!META[pageId]) return;
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item, .bn-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+pageId).classList.add('active');
-  document.querySelectorAll(`[data-page="${pageId}"]`).forEach(el=>el.classList.add('active'));
-  document.getElementById('eyebrow').textContent=META[pageId].eyebrow;
-  if(META[pageId].heading) document.getElementById('heading').textContent=META[pageId].heading;
-  closeMobileSidebar();
-  if(!loaded[pageId]){loaded[pageId]=true;loadPage(pageId);}
-}
-document.querySelectorAll('[data-page]').forEach(el=>el.addEventListener('click',()=>goTo(el.dataset.page)));
-document.getElementById('btn-all-patients').addEventListener('click',()=>goTo('patients'));
-document.getElementById('viewCasesBtn').addEventListener('click',()=>{goTo('patients');setTimeout(()=>applyFilter('Critical'),150);});
+document.querySelectorAll('[data-page]').forEach(el => {
+  el.addEventListener('click', () => goTo(el.dataset.page));
+});
 
-// ═══ SIDEBAR ═══
-const sidebar=document.getElementById('sidebar');
-let collapsed=false;
-document.getElementById('toggleBtn').addEventListener('click',()=>{collapsed=!collapsed;sidebar.classList.toggle('collapsed',collapsed);document.getElementById('toggleBtn').textContent=collapsed?'›':'‹';});
-function openMobileSidebar(){sidebar.classList.add('mobile-open');document.getElementById('overlay').classList.add('show');}
-function closeMobileSidebar(){sidebar.classList.remove('mobile-open');document.getElementById('overlay').classList.remove('show');}
-document.getElementById('hamburger').addEventListener('click',openMobileSidebar);
-document.getElementById('overlay').addEventListener('click',closeMobileSidebar);
+// ─── SIDEBAR ─────────────────────────────────────────────────────────────────
+let sbCollapsed = false;
+document.getElementById('sbToggle').addEventListener('click', () => {
+  sbCollapsed = !sbCollapsed;
+  document.getElementById('sb').classList.toggle('col', sbCollapsed);
+  document.getElementById('sbToggle').textContent = sbCollapsed ? '›' : '‹';
+});
+function openMobile() { document.getElementById('sb').classList.add('mob-on'); document.getElementById('ov').classList.add('on'); }
+function closeMobile() { document.getElementById('sb').classList.remove('mob-on'); document.getElementById('ov').classList.remove('on'); }
+document.getElementById('hamburger').addEventListener('click', openMobile);
+document.getElementById('ov').addEventListener('click', closeMobile);
 
-// ═══ CHARTS ═══
-Chart.defaults.color='#4a6080'; Chart.defaults.borderColor='#162035'; Chart.defaults.font.family='Outfit';
-const TIP={backgroundColor:'#0c1422',borderColor:'#1e2f48',borderWidth:1,titleColor:'#dce8f5',bodyColor:'#8ea8c8',padding:10};
-new Chart(document.getElementById('chart-admissions'),{type:'line',data:{labels:['Oct','Nov','Dec','Jan','Feb','Mar','Apr'],datasets:[{data:[210,245,198,280,310,295,340],borderColor:'#00e5c8',backgroundColor:ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,180);g.addColorStop(0,'rgba(0,229,200,0.18)');g.addColorStop(1,'rgba(0,229,200,0)');return g;},fill:true,tension:0.45,pointBackgroundColor:'#00e5c8',pointRadius:4,pointHoverRadius:7,borderWidth:2.5}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:TIP},scales:{x:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'}},y:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'},beginAtZero:false}}}});
-let deptChart=new Chart(document.getElementById('chart-dept'),{type:'doughnut',data:{datasets:[{data:[1,1,1,1],backgroundColor:['#00e5c8','#4d9fff','#e8b84b','#ff4d6d'],borderWidth:0,hoverOffset:8}]},options:{responsive:true,cutout:'72%',plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:c=>' '+c.parsed}}}}});
+// ─── CHARTS ──────────────────────────────────────────────────────────────────
+Chart.defaults.color = '#4a6080';
+Chart.defaults.borderColor = '#162035';
+Chart.defaults.font.family = 'Outfit';
+const TIP = { backgroundColor:'#0c1422', borderColor:'#1e2f48', borderWidth:1, titleColor:'#dce8f5', bodyColor:'#8ea8c8', padding:10 };
 
-// ═══ OVERVIEW ═══
-async function loadOverview(){
-  try{
-    const [{data:pts},{data:appts},{data:invs}]=await Promise.all([sb.from('patients').select('*, departments(name)'),sb.from('appointments').select('*'),sb.from('invoices').select('amount, status')]);
-    if(pts) allPatients=pts;
-    const critical=pts?pts.filter(p=>p.status==='Critical').length:0;
-    const totalRev=invs?invs.reduce((s,i)=>s+parseFloat(i.amount||0),0):0;
-    document.getElementById('kpi-total').textContent=pts?.length??'—';
-    document.getElementById('kpi-appt').textContent=appts?.length??'—';
-    document.getElementById('kpi-revenue').textContent=fmt(totalRev);
-    document.getElementById('kpi-critical').textContent=critical;
-    document.getElementById('critical-count').textContent=critical+' Critical Patient'+(critical!==1?'s':'');
-    document.getElementById('badge-critical').textContent=critical;
-    if(appts) document.getElementById('badge-appt').textContent=appts.length;
-    if(pts){const dc={};pts.forEach(p=>{const d=p.departments?.name||'Other';dc[d]=(dc[d]||0)+1;});const names=['Cardiology','Orthopedics','Neurology','General'];deptChart.data.datasets[0].data=names.map(n=>dc[n]||0);deptChart.update();names.forEach(n=>{const el=document.getElementById('dept-'+n.toLowerCase());if(el)el.textContent=dc[n]||0;});}
-    renderOverviewTable();
-    document.getElementById('dbDot').classList.add('connected');
-    document.getElementById('dbLabel').textContent='Live DB';
-  }catch(e){console.error(e);document.getElementById('dbLabel').textContent='DB Error';}
+const chartAdm = new Chart(document.getElementById('chartAdmissions'), {
+  type:'line',
+  data:{ labels:['Oct','Nov','Dec','Jan','Feb','Mar','Apr'], datasets:[{
+    data:[210,245,198,280,310,295,340], borderColor:'#00e5c8',
+    backgroundColor: ctx => { const g=ctx.chart.ctx.createLinearGradient(0,0,0,180); g.addColorStop(0,'rgba(0,229,200,0.18)'); g.addColorStop(1,'rgba(0,229,200,0)'); return g; },
+    fill:true, tension:0.45, pointBackgroundColor:'#00e5c8', pointRadius:4, pointHoverRadius:7, borderWidth:2.5
+  }]},
+  options:{ responsive:true, plugins:{ legend:{display:false}, tooltip:TIP }, scales:{ x:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'}}, y:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'},beginAtZero:false} } }
+});
+
+const chartDept = new Chart(document.getElementById('chartDept'), {
+  type:'doughnut',
+  data:{ datasets:[{ data:[1,1,1,1], backgroundColor:['#00e5c8','#4d9fff','#e8b84b','#ff4d6d'], borderWidth:0, hoverOffset:8 }] },
+  options:{ responsive:true, cutout:'72%', plugins:{ legend:{display:false}, tooltip:{ ...TIP, callbacks:{ label: c => ' ' + c.parsed } } } }
+});
+
+let billingChartDone = false;
+
+// ─── OVERVIEW ────────────────────────────────────────────────────────────────
+async function loadOverview() {
+  try {
+    const [{ data:pts }, { data:appts }, { data:invs }] = await Promise.all([
+      sb.from('patients').select('*, departments(name)'),
+      sb.from('appointments').select('id'),
+      sb.from('invoices').select('amount, status'),
+    ]);
+    if (pts) allPts = pts;
+    const crit = pts ? pts.filter(p=>p.status==='Critical').length : 0;
+    const rev = invs ? invs.reduce((s,i)=>s+parseFloat(i.amount||0), 0) : 0;
+    document.getElementById('kpiTotal').textContent = pts?.length ?? '—';
+    document.getElementById('kpiAppt').textContent = appts?.length ?? '—';
+    document.getElementById('kpiRev').textContent = fmt(rev);
+    document.getElementById('kpiCrit').textContent = crit;
+    document.getElementById('critCount').textContent = crit + ' Critical Patient' + (crit!==1?'s':'');
+    document.getElementById('badgeCritical').textContent = crit;
+    document.getElementById('badgeAppt').textContent = appts?.length ?? '—';
+    if (pts) {
+      const dc = {};
+      pts.forEach(p => { const d=p.departments?.name||'Other'; dc[d]=(dc[d]||0)+1; });
+      const names = ['Cardiology','Orthopedics','Neurology','General'];
+      chartDept.data.datasets[0].data = names.map(n => dc[n]||0);
+      chartDept.update();
+      names.forEach(n => { const el=document.getElementById('dept'+n); if(el) el.textContent=dc[n]||0; });
+    }
+    renderOvTable();
+    document.getElementById('dbDot').classList.add('live');
+    document.getElementById('dbLbl').textContent = 'Live DB';
+  } catch(e) {
+    console.error(e);
+    document.getElementById('dbLbl').textContent = 'DB Error';
+    toast('DB connection error', 'e');
+  }
 }
 
-function renderOverviewTable(){
-  const recent=allPatients.slice(0,5);
-  const wrap=document.getElementById('overview-patients-wrap'); if(!wrap) return;
-  if(!recent.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">🏥</div><div class="empty-title">No patients yet</div><div class="empty-sub">Admit your first patient to get started.</div></div>`;return;}
-  wrap.innerHTML=`<div class="tbl-wrap"><table><thead><tr><th>Patient</th><th>Dept</th><th>Status</th><th>Date</th></tr></thead><tbody>${recent.map(p=>`<tr onclick="openPatient('${p.id}')"><td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td><td style="color:var(--text2)">${p.departments?.name||'—'}</td><td><span class="badge ${badgeClass(p.status)}">${p.status}</span></td><td style="color:var(--text3)">${p.admitted_at?new Date(p.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—'}</td></tr>`).join('')}</tbody></table></div>`;
+function renderOvTable() {
+  const wrap = document.getElementById('ovPatientsWrap');
+  if (!wrap) return;
+  const recent = allPts.slice(0, 5);
+  if (!recent.length) { wrap.innerHTML = '<div class="empty"><div class="empty-icon">🏥</div><div class="empty-title">No patients yet</div><div class="empty-sub">Admit your first patient to get started.</div></div>'; return; }
+  wrap.innerHTML = '<div class="tbl-wrap"><table><thead><tr><th>Patient</th><th>Dept</th><th>Status</th><th>Date</th></tr></thead><tbody>' +
+    recent.map(p => `<tr onclick="openPt('${p.id}')">
+      <td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td>
+      <td style="color:var(--text2)">${p.departments?.name||'—'}</td>
+      <td><span class="badge ${bc(p.status)}">${p.status}</span></td>
+      <td style="color:var(--text3)">${p.admitted_at?new Date(p.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—'}</td>
+    </tr>`).join('') + '</tbody></table></div>';
 }
 
-// ═══ PATIENTS ═══
-async function loadPatients(){
-  const {data:pts}=await sb.from('patients').select('*, departments(name), doctors(name)').order('admitted_at',{ascending:false});
-  if(!pts) return;
-  allPatients=pts; updatePatientKPIs(pts); renderPatientTable(pts);
+// ─── PATIENTS ────────────────────────────────────────────────────────────────
+async function loadPatients() {
+  const { data:pts } = await sb.from('patients').select('*, departments(name), doctors(name)').order('admitted_at',{ascending:false});
+  if (!pts) return;
+  allPts = pts;
+  refreshPtKpis(pts);
+  renderPtTable(pts);
 }
-function updatePatientKPIs(pts){
-  document.getElementById('pt-kpi-total').textContent=pts.length;
-  document.getElementById('pt-kpi-active').textContent=pts.filter(p=>p.status==='Active').length;
-  document.getElementById('pt-kpi-pending').textContent=pts.filter(p=>p.status==='Pending').length;
-  document.getElementById('pt-kpi-critical').textContent=pts.filter(p=>p.status==='Critical').length;
+function refreshPtKpis(pts) {
+  document.getElementById('ptKpiTotal').textContent = pts.length;
+  document.getElementById('ptKpiActive').textContent = pts.filter(p=>p.status==='Active').length;
+  document.getElementById('ptKpiPending').textContent = pts.filter(p=>p.status==='Pending').length;
+  document.getElementById('ptKpiCrit').textContent = pts.filter(p=>p.status==='Critical').length;
 }
-function renderPatientTable(pts){
-  const filtered=patientFilter==='All'?pts:pts.filter(p=>p.status===patientFilter);
-  const wrap=document.getElementById('patients-table-wrap');
-  if(!filtered.length){wrap.innerHTML=`<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">No patients found</div><div class="empty-sub">No ${patientFilter==='All'?'':patientFilter.toLowerCase()+' '}patients in registry.</div></div>`;return;}
-  wrap.innerHTML=`<div class="tbl-wrap"><table><thead><tr><th>Patient</th><th>Age</th><th>Dept</th><th>Doctor</th><th>Blood</th><th>Status</th><th>Admitted</th></tr></thead><tbody>${filtered.map(p=>`<tr onclick="openPatient('${p.id}')"><td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td><td style="color:var(--text2)">${p.age||'—'}</td><td style="color:var(--text2)">${p.departments?.name||'—'}</td><td style="color:var(--text2);font-size:12px">${p.doctors?.name||'—'}</td><td><span class="pill ${pillClass(p.blood_type)}">${p.blood_type||'—'}</span></td><td><span class="badge ${badgeClass(p.status)}">${p.status}</span></td><td style="color:var(--text3)">${p.admitted_at?new Date(p.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—'}</td></tr>`).join('')}</tbody></table></div>`;
+function renderPtTable(pts) {
+  const list = ptFilter==='All' ? pts : pts.filter(p=>p.status===ptFilter);
+  const wrap = document.getElementById('ptTableWrap');
+  if (!list.length) { wrap.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">No patients found</div></div>'; return; }
+  wrap.innerHTML = '<div class="tbl-wrap"><table><thead><tr><th>Patient</th><th>Age</th><th>Dept</th><th>Doctor</th><th>Blood</th><th>Status</th><th>Admitted</th></tr></thead><tbody>' +
+    list.map(p => `<tr onclick="openPt('${p.id}')">
+      <td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td>
+      <td style="color:var(--text2)">${p.age||'—'}</td>
+      <td style="color:var(--text2)">${p.departments?.name||'—'}</td>
+      <td style="color:var(--text2);font-size:12px">${p.doctors?.name||'—'}</td>
+      <td><span class="pill ${pc(p.blood_type)}">${p.blood_type||'—'}</span></td>
+      <td><span class="badge ${bc(p.status)}">${p.status}</span></td>
+      <td style="color:var(--text3)">${p.admitted_at?new Date(p.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—'}</td>
+    </tr>`).join('') + '</tbody></table></div>';
 }
-function applyFilter(f){
-  patientFilter=f;
-  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.toggle('active-chip',c.dataset.filter===f));
-  if(allPatients.length) renderPatientTable(allPatients);
+function setFilter(f) {
+  ptFilter = f;
+  document.querySelectorAll('#ptFilters .chip').forEach(c => c.classList.toggle('on', c.dataset.f === f));
+  if (allPts.length) renderPtTable(allPts);
 }
-document.getElementById('patientFilters').addEventListener('click',e=>{const chip=e.target.closest('.filter-chip');if(chip) applyFilter(chip.dataset.filter);});
+document.getElementById('ptFilters').addEventListener('click', e => {
+  const chip = e.target.closest('.chip');
+  if (chip) setFilter(chip.dataset.f);
+});
 
-// ═══ PATIENT 360 PANEL ═══
-const panelEl=document.getElementById('patientPanel');
-const panelOverlay=document.getElementById('panelOverlay');
-document.getElementById('panelClose').addEventListener('click',closePanel);
-panelOverlay.addEventListener('click',closePanel);
-function closePanel(){panelEl.classList.remove('open');panelOverlay.classList.remove('show');currentPatient=null;}
+// ─── PATIENT 360 PANEL ───────────────────────────────────────────────────────
+document.getElementById('panelX').addEventListener('click', closePanel);
+document.getElementById('panelOv').addEventListener('click', closePanel);
+function closePanel() {
+  document.getElementById('panel').classList.remove('on');
+  document.getElementById('panelOv').classList.remove('on');
+  curPt = null;
+}
 
-async function openPatient(id){
-  let pt=allPatients.find(p=>p.id===id);
-  if(!pt){const {data}=await sb.from('patients').select('*, departments(name,id), doctors(name,id)').eq('id',id).single();pt=data;}
-  if(!pt){toast('Patient not found','error');return;}
-  currentPatient=pt; activeTab='overview';
-  document.getElementById('panelAvatar').textContent=initials(pt.name);
-  document.getElementById('panelName').textContent=pt.name;
-  document.getElementById('panelCode').textContent=`${pt.patient_code} · ${pt.departments?.name||'—'} · ${pt.gender==='M'?'Male':'Female'}, ${pt.age||'?'}y`;
-  renderStatusActions(pt);
-  document.querySelectorAll('.panel-tab').forEach(t=>t.classList.toggle('active-tab',t.dataset.tab==='overview'));
-  panelEl.classList.add('open'); panelOverlay.classList.add('show');
+async function openPt(id) {
+  let pt = allPts.find(p=>p.id===id);
+  if (!pt) {
+    const { data } = await sb.from('patients').select('*, departments(name,id), doctors(name,id)').eq('id',id).single();
+    pt = data;
+  }
+  if (!pt) { toast('Patient not found','e'); return; }
+  curPt = pt;
+  curTab = 'overview';
+  document.getElementById('panelAv').textContent = inits(pt.name);
+  document.getElementById('panelName').textContent = pt.name;
+  document.getElementById('panelCode').textContent = `${pt.patient_code} · ${pt.departments?.name||'—'} · ${pt.gender==='M'?'Male':'Female'}, ${pt.age||'?'}y`;
+  renderStatusBtns(pt);
+  document.querySelectorAll('.ptab').forEach(t => t.classList.toggle('on', t.dataset.tab==='overview'));
+  document.getElementById('panel').classList.add('on');
+  document.getElementById('panelOv').classList.add('on');
   renderPanelTab('overview');
 }
 
-function renderStatusActions(pt){
-  const statuses=[{label:'✓ Active',cls:'active-action',val:'Active'},{label:'⚠ Critical',cls:'critical-action',val:'Critical'},{label:'⏳ Pending',cls:'pending-action',val:'Pending'},{label:'↗ Discharge',cls:'discharge-action',val:'Discharged'}];
-  document.getElementById('statusActions').innerHTML=statuses.map(s=>`<button class="action-btn ${s.cls}" ${pt.status===s.val?'disabled style="opacity:0.45;cursor:default;"':''} onclick="updateStatus('${pt.id}','${s.val}')">${s.label}</button>`).join('');
+function renderStatusBtns(pt) {
+  const btns = [
+    {lbl:'✓ Active', cls:'a', val:'Active'},
+    {lbl:'⚠ Critical', cls:'cr', val:'Critical'},
+    {lbl:'⏳ Pending', cls:'pe', val:'Pending'},
+    {lbl:'↗ Discharge', cls:'di', val:'Discharged'},
+  ];
+  document.getElementById('actionRow').innerHTML = btns.map(b =>
+    `<button class="act-btn ${b.cls}" ${pt.status===b.val?'disabled':''}
+     onclick="setStatus('${pt.id}','${b.val}')">${b.lbl}</button>`
+  ).join('');
 }
 
-document.querySelectorAll('.panel-tab').forEach(tab=>{
-  tab.addEventListener('click',()=>{
-    document.querySelectorAll('.panel-tab').forEach(t=>t.classList.remove('active-tab'));
-    tab.classList.add('active-tab'); activeTab=tab.dataset.tab; renderPanelTab(activeTab);
-  });
+document.getElementById('panelTabs').addEventListener('click', e => {
+  const tab = e.target.closest('.ptab');
+  if (!tab) return;
+  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('on'));
+  tab.classList.add('on');
+  curTab = tab.dataset.tab;
+  renderPanelTab(curTab);
 });
 
-async function renderPanelTab(tab){
-  const body=document.getElementById('panelBody');
-  const pt=currentPatient; if(!pt) return;
+async function renderPanelTab(tab) {
+  const body = document.getElementById('panelBody');
+  const pt = curPt;
+  if (!pt) return;
 
-  if(tab==='overview'){
-    if(!allDepts.length){const {data:d}=await sb.from('departments').select('*');if(d)allDepts=d;}
-    if(!allDoctors.length){const {data:d}=await sb.from('doctors').select('*');if(d)allDoctors=d;}
-    const {data:fullPt}=await sb.from('patients').select('*, departments(name,id), doctors(name,id)').eq('id',pt.id).single();
-    const p=fullPt||pt;
-    body.innerHTML=`
+  if (tab === 'overview') {
+    if (!allDepts.length) { const {data} = await sb.from('departments').select('*'); if(data) allDepts=data; }
+    if (!allDrs.length) { const {data} = await sb.from('doctors').select('*'); if(data) allDrs=data; }
+    const { data:p } = await sb.from('patients').select('*, departments(name,id), doctors(name,id)').eq('id',pt.id).single();
+    const pat = p || pt;
+    body.innerHTML = `
       <div class="info-grid">
-        <div class="info-cell"><div class="info-label">Age</div><div class="info-value">${p.age||'—'} yrs</div></div>
-        <div class="info-cell"><div class="info-label">Gender</div><div class="info-value">${p.gender==='M'?'Male':'Female'}</div></div>
-        <div class="info-cell"><div class="info-label">Blood Type</div><div class="info-value" style="color:var(--rose)">${p.blood_type||'—'}</div></div>
-        <div class="info-cell"><div class="info-label">Admitted</div><div class="info-value">${p.admitted_at?new Date(p.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—'}</div></div>
-        <div class="info-cell"><div class="info-label">Department</div><div class="info-value">${p.departments?.name||'—'}</div></div>
-        <div class="info-cell"><div class="info-label">Status</div><div class="info-value"><span class="badge ${badgeClass(p.status)}">${p.status}</span></div></div>
+        <div class="info-cell"><div class="info-lbl">Age</div><div class="info-val">${pat.age||'—'} yrs</div></div>
+        <div class="info-cell"><div class="info-lbl">Gender</div><div class="info-val">${pat.gender==='M'?'Male':'Female'}</div></div>
+        <div class="info-cell"><div class="info-lbl">Blood Type</div><div class="info-val" style="color:var(--rose)">${pat.blood_type||'—'}</div></div>
+        <div class="info-cell"><div class="info-lbl">Admitted</div><div class="info-val">${pat.admitted_at?new Date(pat.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—'}</div></div>
+        <div class="info-cell"><div class="info-lbl">Department</div><div class="info-val">${pat.departments?.name||'—'}</div></div>
+        <div class="info-cell"><div class="info-lbl">Status</div><div class="info-val"><span class="badge ${bc(pat.status)}">${pat.status}</span></div></div>
       </div>
-      <div class="assign-section">
-        <div class="assign-title">Assigned Physician</div>
+      <div class="assign-box">
+        <div class="assign-lbl">Assigned Physician</div>
         <div class="assign-row">
-          <select class="panel-select" id="assignDoctorSelect">${allDoctors.map(d=>`<option value="${d.id}" ${d.id===p.doctor_id?'selected':''}>${d.name}</option>`).join('')}</select>
-          <button class="btn btn-primary" style="font-size:12px;padding:8px 14px;" onclick="assignDoctor('${p.id}')">Assign</button>
+          <select class="p-select" id="assignDrSel">${allDrs.map(d=>`<option value="${d.id}" ${d.id===pat.doctor_id?'selected':''}>${d.name}</option>`).join('')}</select>
+          <button class="btn btn-c" style="font-size:12px;padding:8px 14px;" onclick="assignDr('${pat.id}')">Assign</button>
         </div>
       </div>
-      <div class="assign-section">
-        <div class="assign-title">Transfer Department</div>
+      <div class="assign-box">
+        <div class="assign-lbl">Transfer Department</div>
         <div class="assign-row">
-          <select class="panel-select" id="transferDeptSelect">${allDepts.map(d=>`<option value="${d.id}" ${d.id===(p.departments?.id||p.department_id)?'selected':''}>${d.name}</option>`).join('')}</select>
-          <button class="btn btn-gold" style="font-size:12px;padding:8px 14px;" onclick="transferDept('${p.id}')">Transfer</button>
+          <select class="p-select" id="transferDeptSel">${allDepts.map(d=>`<option value="${d.id}" ${d.id===(pat.departments?.id||pat.department_id)?'selected':''}>${d.name}</option>`).join('')}</select>
+          <button class="btn btn-g" style="font-size:12px;padding:8px 14px;" onclick="transferDept('${pat.id}')">Transfer</button>
         </div>
       </div>
-      <div class="delete-zone">
-        <div class="delete-zone-title">⚠ Danger Zone</div>
-        <div class="delete-zone-sub">Permanently remove this patient and all linked appointments and invoices. This cannot be undone.</div>
-        <button class="btn btn-danger" onclick="confirmDelete('${p.id}','${p.name.replace(/'/g,"\\'")}')">🗑 Delete Patient Permanently</button>
+      <div class="danger-zone">
+        <div class="danger-lbl">⚠ Danger Zone</div>
+        <div class="danger-sub">Permanently remove this patient and all linked appointments and invoices. Cannot be undone.</div>
+        <button class="btn btn-r" onclick="startDelete('${pat.id}','${pat.name.replace(/'/g,"\\'")}')">🗑 Delete Patient Permanently</button>
       </div>`;
   }
 
-  else if(tab==='timeline'){
-    const days=pt.admitted_at?Math.floor((Date.now()-new Date(pt.admitted_at))/86400000):'?';
-    body.innerHTML=`<div class="timeline">
-      <div class="tl-item"><div class="tl-dot cyan-dot">🏥</div><div><div class="tl-label">Patient Admitted</div><div class="tl-time">${pt.admitted_at?new Date(pt.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'—'} · ${pt.departments?.name||'—'}</div><div class="tl-note">Initial admission. Assigned to ${pt.doctors?.name||'—'}.</div></div></div>
-      ${pt.status==='Critical'?`<div class="tl-item"><div class="tl-dot rose-dot">🚨</div><div><div class="tl-label">Status → Critical</div><div class="tl-time">Immediate review required</div></div></div>`:''}
-      ${pt.status==='Discharged'?`<div class="tl-item"><div class="tl-dot muted-dot">✅</div><div><div class="tl-label">Patient Discharged</div><div class="tl-time">Follow-up recommended</div></div></div>`:''}
-      <div class="tl-item"><div class="tl-dot gold-dot">📋</div><div><div class="tl-label">Record created</div><div class="tl-time">${days} day${days!==1?'s':''} ago · MedoScope</div></div></div>
+  else if (tab === 'timeline') {
+    const days = pt.admitted_at ? Math.floor((Date.now()-new Date(pt.admitted_at))/86400000) : '?';
+    body.innerHTML = `<div class="tl">
+      <div class="tl-item"><div class="tl-dot c">🏥</div><div><div class="tl-lbl">Patient Admitted</div><div class="tl-time">${pt.admitted_at?new Date(pt.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'—'} · ${pt.departments?.name||'—'}</div><div class="tl-note">Initial admission. Assigned to ${pt.doctors?.name||'—'}.</div></div></div>
+      ${pt.status==='Critical'?`<div class="tl-item"><div class="tl-dot r">🚨</div><div><div class="tl-lbl">Status → Critical</div><div class="tl-time">Immediate review required</div></div></div>`:''}
+      ${pt.status==='Discharged'?`<div class="tl-item"><div class="tl-dot n">✅</div><div><div class="tl-lbl">Patient Discharged</div><div class="tl-time">Follow-up recommended</div></div></div>`:''}
+      <div class="tl-item"><div class="tl-dot g">📋</div><div><div class="tl-lbl">Record created</div><div class="tl-time">${days} day${days!==1?'s':''} ago · MedoScope</div></div></div>
     </div>`;
   }
 
-  else if(tab==='appointments'){
-    body.innerHTML=`<div class="loading"><div class="spinner"></div></div>`;
-    const {data:appts}=await sb.from('appointments').select('*, doctors(name,initials)').eq('patient_id',pt.id).order('scheduled_at');
-    if(!appts||!appts.length){body.innerHTML=`<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-title">No appointments</div></div>`;return;}
-    const colors={'Dr. Nour Amin':'linear-gradient(135deg,#00c9b1,#008fa0)','Dr. Tarek Said':'linear-gradient(135deg,#4d9fff,#2563eb)','Dr. Mona Badr':'linear-gradient(135deg,#e8b84b,#b45309)','Dr. Hana Kamal':'linear-gradient(135deg,#a78bfa,#7c3aed)'};
-    body.innerHTML=`<div class="appt-list">${appts.map(a=>{const t=a.scheduled_at?new Date(a.scheduled_at):null;const hr=t?t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}):'—';const bg=colors[a.doctors?.name]||'linear-gradient(135deg,#4a6080,#2a4060)';return`<div class="appt"><div class="appt-time-box"><div class="appt-hr">${hr}</div><div class="appt-period">${t&&t.getHours()<12?'AM':'PM'}</div></div><div class="appt-body"><div class="appt-patient-name">${a.appointment_type||'Consultation'}</div><div class="appt-meta">${a.room||'—'} · ${a.doctors?.name||'—'}</div></div><span class="badge ${badgeClass(a.status)}">${a.status}</span></div>`;}).join('')}</div>`;
+  else if (tab === 'appts') {
+    body.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+    const { data:appts } = await sb.from('appointments').select('*, doctors(name,initials)').eq('patient_id',pt.id).order('scheduled_at');
+    if (!appts||!appts.length) { body.innerHTML='<div class="empty"><div class="empty-icon">📅</div><div class="empty-title">No appointments</div></div>'; return; }
+    body.innerHTML = '<div class="appt-list">' + appts.map(a=>{
+      const t = a.scheduled_at ? new Date(a.scheduled_at) : null;
+      const hr = t ? t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}) : '—';
+      return `<div class="appt"><div class="appt-time"><div class="appt-hr">${hr}</div><div class="appt-am">${t&&t.getHours()<12?'AM':'PM'}</div></div><div class="appt-body"><div class="appt-name">${a.appointment_type||'Consultation'}</div><div class="appt-meta">${a.room||'—'} · ${a.doctors?.name||'—'}</div></div><span class="badge ${bc(a.status)}">${a.status}</span></div>`;
+    }).join('') + '</div>';
   }
 
-  else if(tab==='billing'){
-    body.innerHTML=`<div class="loading"><div class="spinner"></div></div>`;
-    const {data:invs}=await sb.from('invoices').select('*').eq('patient_id',pt.id).order('issued_at',{ascending:false});
-    if(!invs||!invs.length){body.innerHTML=`<div class="empty-state"><div class="empty-icon">🧾</div><div class="empty-title">No invoices</div></div>`;return;}
-    const total=invs.reduce((s,i)=>s+parseFloat(i.amount||0),0);
-    body.innerHTML=`<div style="display:flex;gap:10px;margin-bottom:16px;"><div class="info-cell" style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px;"><div class="info-label">Total Billed</div><div class="info-value" style="font-family:'Instrument Serif',serif;font-size:22px;">${fmt(total)}</div></div><div class="info-cell" style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px;"><div class="info-label">Invoices</div><div class="info-value" style="font-family:'Instrument Serif',serif;font-size:22px;">${invs.length}</div></div></div><div class="inv-list">${invs.map(i=>`<div class="inv-item"><div class="inv-icon">🧾</div><div style="flex:1;min-width:0"><div class="inv-name">${i.description||'Invoice'}</div><div class="inv-date">${i.invoice_code} · ${i.issued_at?new Date(i.issued_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—'}</div></div><span class="badge ${badgeClass(i.status)}" style="margin-right:10px;">${i.status}</span><div class="inv-amt ${i.status.toLowerCase()}">${fmt(parseFloat(i.amount||0))}</div></div>`).join('')}</div>`;
+  else if (tab === 'billing') {
+    body.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+    const { data:invs } = await sb.from('invoices').select('*').eq('patient_id',pt.id).order('issued_at',{ascending:false});
+    if (!invs||!invs.length) { body.innerHTML='<div class="empty"><div class="empty-icon">🧾</div><div class="empty-title">No invoices</div></div>'; return; }
+    const total = invs.reduce((s,i)=>s+parseFloat(i.amount||0),0);
+    body.innerHTML = `<div style="display:flex;gap:10px;margin-bottom:16px;">
+      <div class="info-cell" style="flex:1;"><div class="info-lbl">Total Billed</div><div class="info-val" style="font-family:'Instrument Serif',serif;font-size:20px;">${fmt(total)}</div></div>
+      <div class="info-cell" style="flex:1;"><div class="info-lbl">Invoices</div><div class="info-val" style="font-family:'Instrument Serif',serif;font-size:20px;">${invs.length}</div></div>
+    </div>
+    <div class="inv-list">${invs.map(i=>`<div class="inv-item"><div class="inv-icon">🧾</div><div style="flex:1;min-width:0"><div class="inv-name">${i.description||'Invoice'}</div><div class="inv-date">${i.invoice_code} · ${i.issued_at?new Date(i.issued_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—'}</div></div><span class="badge ${bc(i.status)}" style="margin-right:10px;">${i.status}</span><div class="inv-amt ${i.status.toLowerCase()}">${fmt(parseFloat(i.amount||0))}</div></div>`).join('')}</div>`;
   }
 
-  else if(tab==='notes'){
-    body.innerHTML=`<div style="margin-bottom:12px;font-size:12px;color:var(--text3);">Clinical notes for this patient.</div><textarea class="notes-area" id="patientNotesInput" placeholder="Type clinical notes or observations…"></textarea><button class="panel-save-btn" onclick="saveNote()">Save Note</button><div style="margin-top:20px;font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Previous Notes</div><div class="timeline"><div class="tl-item"><div class="tl-dot cyan-dot">📝</div><div><div class="tl-label">System Note</div><div class="tl-time">Record created in MedoScope</div><div class="tl-note">Patient record is active and up to date.</div></div></div></div>`;
+  else if (tab === 'notes') {
+    body.innerHTML = `<textarea class="notes-ta" placeholder="Type clinical notes…"></textarea><button class="save-note-btn" onclick="toast('Note saved','s')">Save Note</button>
+    <div style="margin:18px 0 10px;font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;">Previous Notes</div>
+    <div class="tl"><div class="tl-item"><div class="tl-dot c">📝</div><div><div class="tl-lbl">System</div><div class="tl-time">Record created in MedoScope</div><div class="tl-note">Patient record is active.</div></div></div></div>`;
   }
 }
-function saveNote(){const v=document.getElementById('patientNotesInput')?.value;if(!v?.trim()){toast('Note is empty','info');return;}toast('Note saved','success');}
 
-// ═══ STATUS UPDATE ═══
-async function updateStatus(id,newStatus){
-  const {error}=await sb.from('patients').update({status:newStatus}).eq('id',id);
-  if(error){toast('Update failed','error');return;}
-  const idx=allPatients.findIndex(p=>p.id===id);
-  if(idx>=0) allPatients[idx].status=newStatus;
-  if(currentPatient?.id===id){currentPatient.status=newStatus;renderStatusActions(currentPatient);}
-  toast(`Status → ${newStatus}`,'success');
-  logActivity('📋',`${currentPatient?.name||'Patient'} → ${newStatus}`,'Just now');
-  if(loaded['patients']){updatePatientKPIs(allPatients);renderPatientTable(allPatients);}
-  renderOverviewTable();
-  const critical=allPatients.filter(p=>p.status==='Critical').length;
-  document.getElementById('kpi-critical').textContent=critical;
-  document.getElementById('badge-critical').textContent=critical;
-  document.getElementById('critical-count').textContent=critical+' Critical Patient'+(critical!==1?'s':'');
+// ─── STATUS UPDATE ────────────────────────────────────────────────────────────
+async function setStatus(id, newStatus) {
+  const { error } = await sb.from('patients').update({ status:newStatus }).eq('id',id);
+  if (error) { toast('Update failed','e'); return; }
+  const i = allPts.findIndex(p=>p.id===id);
+  if (i>=0) allPts[i].status = newStatus;
+  if (curPt?.id===id) { curPt.status=newStatus; renderStatusBtns(curPt); }
+  toast('Status → ' + newStatus, 's');
+  log('📋', (curPt?.name||'Patient') + ' → ' + newStatus);
+  if (loaded['patients']) { refreshPtKpis(allPts); renderPtTable(allPts); }
+  renderOvTable();
+  const crit = allPts.filter(p=>p.status==='Critical').length;
+  document.getElementById('kpiCrit').textContent = crit;
+  document.getElementById('badgeCritical').textContent = crit;
+  document.getElementById('critCount').textContent = crit + ' Critical Patient' + (crit!==1?'s':'');
 }
 
-// ═══ ASSIGN DOCTOR ═══
-async function assignDoctor(patientId){
-  const sel=document.getElementById('assignDoctorSelect'); if(!sel) return;
-  const {error}=await sb.from('patients').update({doctor_id:sel.value}).eq('id',patientId);
-  if(error){toast('Assignment failed','error');return;}
-  toast(`Assigned to ${sel.options[sel.selectedIndex]?.text}`,'success');
-  if(loaded['patients']){const {data:pts}=await sb.from('patients').select('*, departments(name), doctors(name)').order('admitted_at',{ascending:false});if(pts){allPatients=pts;renderPatientTable(pts);}}
+// ─── ASSIGN DR ────────────────────────────────────────────────────────────────
+async function assignDr(patId) {
+  const sel = document.getElementById('assignDrSel'); if (!sel) return;
+  const { error } = await sb.from('patients').update({ doctor_id:sel.value }).eq('id',patId);
+  if (error) { toast('Assignment failed','e'); return; }
+  toast('Assigned to ' + sel.options[sel.selectedIndex]?.text, 's');
+  if (loaded['patients']) loadPatients();
 }
 
-// ═══ TRANSFER DEPT ═══
-async function transferDept(patientId){
-  const sel=document.getElementById('transferDeptSelect'); if(!sel) return;
-  const deptId=sel.value; const deptName=sel.options[sel.selectedIndex]?.text;
-  const {error}=await sb.from('patients').update({department_id:deptId}).eq('id',patientId);
-  if(error){toast('Transfer failed','error');return;}
-  const idx=allPatients.findIndex(p=>p.id===patientId);
-  if(idx>=0) allPatients[idx].departments={name:deptName,id:deptId};
-  toast(`Transferred to ${deptName}`,'success');
-  logActivity('🔄',`${currentPatient?.name||'Patient'} → ${deptName}`,'Just now');
-  if(loaded['patients']) renderPatientTable(allPatients);
+// ─── TRANSFER DEPT ────────────────────────────────────────────────────────────
+async function transferDept(patId) {
+  const sel = document.getElementById('transferDeptSel'); if (!sel) return;
+  const deptId = sel.value, deptName = sel.options[sel.selectedIndex]?.text;
+  const { error } = await sb.from('patients').update({ department_id:deptId }).eq('id',patId);
+  if (error) { toast('Transfer failed','e'); return; }
+  const i = allPts.findIndex(p=>p.id===patId);
+  if (i>=0) allPts[i].departments = { name:deptName, id:deptId };
+  toast('Transferred to ' + deptName, 's');
+  log('🔄', (curPt?.name||'Patient') + ' → ' + deptName);
+  if (loaded['patients']) renderPtTable(allPts);
 }
 
-// ═══ DELETE PATIENT ═══
-let deleteTargetId=null;
-function confirmDelete(id,name){
-  deleteTargetId=id;
-  document.getElementById('confirmTitle').textContent=`Delete ${name}?`;
-  document.getElementById('confirmSub').innerHTML=`This will permanently remove <strong>${name}</strong> and all linked appointments and invoices. <strong>This cannot be undone.</strong>`;
-  document.getElementById('confirmWrap').classList.add('show');
+// ─── DELETE PATIENT ───────────────────────────────────────────────────────────
+function startDelete(id, name) {
+  delTarget = id;
+  document.getElementById('confirmTitle').textContent = 'Delete ' + name + '?';
+  document.getElementById('confirmSub').innerHTML = `This will permanently remove <strong>${name}</strong> and all linked appointments and invoices. <strong>Cannot be undone.</strong>`;
+  document.getElementById('confirmModal').classList.add('on');
 }
-document.getElementById('confirmCancel').addEventListener('click',()=>{document.getElementById('confirmWrap').classList.remove('show');deleteTargetId=null;});
-document.getElementById('confirmOk').addEventListener('click',async()=>{
-  if(!deleteTargetId) return;
-  const btn=document.getElementById('confirmOk');
-  btn.textContent='Deleting…'; btn.disabled=true;
-  try{
-    const id=deleteTargetId;
-    const name=currentPatient?.name||'Patient';
-    await sb.from('invoices').delete().eq('patient_id',id);
-    await sb.from('appointments').delete().eq('patient_id',id);
-    const {error}=await sb.from('patients').delete().eq('id',id);
-    if(error) throw error;
-    allPatients=allPatients.filter(p=>p.id!==id);
-    document.getElementById('confirmWrap').classList.remove('show');
+document.getElementById('confirmNo').addEventListener('click', () => {
+  document.getElementById('confirmModal').classList.remove('on');
+  delTarget = null;
+});
+document.getElementById('confirmYes').addEventListener('click', async () => {
+  if (!delTarget) return;
+  const btn = document.getElementById('confirmYes');
+  btn.textContent = 'Deleting…'; btn.disabled = true;
+  const id = delTarget;
+  const name = curPt?.name || 'Patient';
+  try {
+    const r1 = await sb.from('invoices').delete().eq('patient_id',id);
+    if (r1.error) throw r1.error;
+    const r2 = await sb.from('appointments').delete().eq('patient_id',id);
+    if (r2.error) throw r2.error;
+    const r3 = await sb.from('patients').delete().eq('id',id);
+    if (r3.error) throw r3.error;
+    allPts = allPts.filter(p=>p.id!==id);
+    document.getElementById('confirmModal').classList.remove('on');
     closePanel();
-    toast(`${name} deleted`,'info');
-    logActivity('🗑️',`${name} record deleted`,'Just now');
-    updatePatientKPIs(allPatients);
-    renderPatientTable(allPatients);
-    renderOverviewTable();
-    const critical=allPatients.filter(p=>p.status==='Critical').length;
-    document.getElementById('kpi-critical').textContent=critical;
-    document.getElementById('kpi-total').textContent=allPatients.length;
-    document.getElementById('badge-critical').textContent=critical;
-    document.getElementById('critical-count').textContent=critical+' Critical Patient'+(critical!==1?'s':'');
-  }catch(e){console.error(e);toast('Delete failed: '+(e.message||'Error'),'error');}
-  finally{btn.textContent='Delete Permanently';btn.disabled=false;deleteTargetId=null;}
+    toast(name + ' deleted', 'i');
+    log('🗑️', name + ' deleted');
+    refreshPtKpis(allPts);
+    renderPtTable(allPts);
+    renderOvTable();
+    const crit = allPts.filter(p=>p.status==='Critical').length;
+    document.getElementById('kpiTotal').textContent = allPts.length;
+    document.getElementById('kpiCrit').textContent = crit;
+    document.getElementById('badgeCritical').textContent = crit;
+    document.getElementById('critCount').textContent = crit + ' Critical Patient' + (crit!==1?'s':'');
+  } catch(e) {
+    console.error(e);
+    toast('Delete failed: ' + (e.message||'Check Supabase delete policies'), 'e');
+  } finally {
+    btn.textContent = 'Delete Permanently'; btn.disabled = false; delTarget = null;
+  }
 });
 
-// ═══ APPOINTMENTS ═══
-async function loadAppointments(){
-  const {data:appts}=await sb.from('appointments').select('*, patients(name, patient_code), doctors(name, initials)').order('scheduled_at');
-  if(!appts) return;
-  document.getElementById('appt-kpi-total').textContent=appts.length;
-  document.getElementById('appt-kpi-confirmed').textContent=appts.filter(a=>a.status==='Confirmed').length;
-  document.getElementById('appt-kpi-pending').textContent=appts.filter(a=>a.status==='Pending').length;
-  document.getElementById('appt-kpi-cancelled').textContent=appts.filter(a=>a.status==='Cancelled').length;
-  if(!appts.length){document.getElementById('appt-list-wrap').innerHTML=`<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-title">No appointments</div></div>`;return;}
-  const colors={'Dr. Nour Amin':'linear-gradient(135deg,#00c9b1,#008fa0)','Dr. Tarek Said':'linear-gradient(135deg,#4d9fff,#2563eb)','Dr. Mona Badr':'linear-gradient(135deg,#e8b84b,#b45309)','Dr. Hana Kamal':'linear-gradient(135deg,#a78bfa,#7c3aed)'};
-  document.getElementById('appt-list-wrap').innerHTML=`<div class="appt-list">${appts.map(a=>{const t=a.scheduled_at?new Date(a.scheduled_at):null;const hr=t?t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}):'—';const period=t?(t.getHours()<12?'AM':'PM'):'';const bg=colors[a.doctors?.name]||'linear-gradient(135deg,#4a6080,#2a4060)';return`<div class="appt" onclick="openPatient('${a.patient_id}')"><div class="appt-time-box"><div class="appt-hr">${hr}</div><div class="appt-period">${period}</div></div><div class="appt-body"><div class="appt-patient-name">${a.patients?.name||'Unknown'}</div><div class="appt-meta">${a.appointment_type||'Consultation'} · ${a.room||'—'}</div></div><div class="appt-dr"><div class="dr-av" style="background:${bg}">${a.doctors?.initials||'DR'}</div><span style="font-size:12px;color:var(--text2);white-space:nowrap;">${a.doctors?.name||'—'}</span></div><span class="badge ${badgeClass(a.status)}">${a.status}</span></div>`;}).join('')}</div>`;
+// ─── APPOINTMENTS ─────────────────────────────────────────────────────────────
+async function loadAppointments() {
+  const { data:appts } = await sb.from('appointments').select('*, patients(name), doctors(name,initials)').order('scheduled_at');
+  if (!appts) return;
+  document.getElementById('apptKpiTotal').textContent = appts.length;
+  document.getElementById('apptKpiConf').textContent = appts.filter(a=>a.status==='Confirmed').length;
+  document.getElementById('apptKpiPend').textContent = appts.filter(a=>a.status==='Pending').length;
+  document.getElementById('apptKpiCanc').textContent = appts.filter(a=>a.status==='Cancelled').length;
+  if (!appts.length) { document.getElementById('apptListWrap').innerHTML='<div class="empty"><div class="empty-icon">📅</div><div class="empty-title">No appointments</div></div>'; return; }
+  const DR_GRAD = { 'Dr. Nour Amin':'linear-gradient(135deg,#00c9b1,#008fa0)', 'Dr. Tarek Said':'linear-gradient(135deg,#4d9fff,#2563eb)', 'Dr. Mona Badr':'linear-gradient(135deg,#e8b84b,#b45309)', 'Dr. Hana Kamal':'linear-gradient(135deg,#a78bfa,#7c3aed)' };
+  document.getElementById('apptListWrap').innerHTML = '<div class="appt-list">' + appts.map(a => {
+    const t = a.scheduled_at ? new Date(a.scheduled_at) : null;
+    const hr = t ? t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}) : '—';
+    const bg = DR_GRAD[a.doctors?.name] || 'linear-gradient(135deg,#4a6080,#2a4060)';
+    return `<div class="appt" onclick="openPt('${a.patient_id}')">
+      <div class="appt-time"><div class="appt-hr">${hr}</div><div class="appt-am">${t&&t.getHours()<12?'AM':'PM'}</div></div>
+      <div class="appt-body"><div class="appt-name">${a.patients?.name||'Unknown'}</div><div class="appt-meta">${a.appointment_type||'Consultation'} · ${a.room||'—'}</div></div>
+      <div class="appt-dr"><div class="dr-av" style="background:${bg}">${a.doctors?.initials||'DR'}</div><span style="font-size:12px;color:var(--text2);white-space:nowrap;">${a.doctors?.name||'—'}</span></div>
+      <span class="badge ${bc(a.status)}">${a.status}</span>
+    </div>`;
+  }).join('') + '</div>';
 }
 
-// ═══ BILLING ═══
-let billingChartDrawn=false;
-async function loadBilling(){
-  const {data:invs}=await sb.from('invoices').select('*, patients(name)').order('issued_at',{ascending:false});
-  if(!invs) return;
-  const paid=invs.filter(i=>i.status==='Paid').reduce((s,i)=>s+parseFloat(i.amount||0),0);
-  const pending=invs.filter(i=>i.status==='Pending').reduce((s,i)=>s+parseFloat(i.amount||0),0);
-  const overdue=invs.filter(i=>i.status==='Overdue').reduce((s,i)=>s+parseFloat(i.amount||0),0);
-  const total=paid+pending+overdue;
-  document.getElementById('bill-kpi-total').textContent=fmt(total);
-  document.getElementById('bill-kpi-paid').textContent=fmt(paid);
-  document.getElementById('bill-kpi-pending').textContent=fmt(pending);
-  document.getElementById('bill-kpi-overdue').textContent=fmt(overdue);
-  document.getElementById('leg-paid').textContent=fmt(paid);
-  document.getElementById('leg-pending').textContent=fmt(pending);
-  document.getElementById('leg-overdue').textContent=fmt(overdue);
-  if(!invs.length){document.getElementById('invoices-wrap').innerHTML=`<div class="empty-state"><div class="empty-icon">🧾</div><div class="empty-title">No invoices yet</div></div>`;}
-  else{document.getElementById('invoices-wrap').innerHTML=`<div class="inv-list">${invs.map(i=>`<div class="inv-item"><div class="inv-icon">🧾</div><div style="flex:1;min-width:0"><div class="inv-name">${i.patients?.name||'Unknown'} — ${i.description||'Invoice'}</div><div class="inv-date">${i.invoice_code} · ${i.issued_at?new Date(i.issued_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—'}</div></div><span class="badge ${badgeClass(i.status)}" style="margin-right:12px;">${i.status}</span><div class="inv-amt ${i.status.toLowerCase()}">${fmt(parseFloat(i.amount||0))}</div></div>`).join('')}</div>`;}
-  if(!billingChartDrawn){
-    billingChartDrawn=true;
-    setTimeout(()=>{
-      new Chart(document.getElementById('chart-revenue'),{type:'line',data:{labels:['Nov','Dec','Jan','Feb','Mar','Apr'],datasets:[{data:[98,112,125,118,131,Math.round(total/1000*10)/10||0],borderColor:'#e8b84b',backgroundColor:ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,180);g.addColorStop(0,'rgba(232,184,75,0.15)');g.addColorStop(1,'rgba(232,184,75,0)');return g;},fill:true,tension:0.4,pointBackgroundColor:'#e8b84b',pointRadius:4,pointHoverRadius:7,borderWidth:2.5}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:c=>' $'+c.parsed.y+'K'}}},scales:{x:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'}},y:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080',callback:v=>'$'+v+'K'}}}}});
-      new Chart(document.getElementById('chart-payment'),{type:'doughnut',data:{datasets:[{data:[paid||1,pending,overdue],backgroundColor:['#00e5c8','#e8b84b','#ff4d6d'],borderWidth:0,hoverOffset:8}]},options:{responsive:true,cutout:'70%',plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:c=>' '+fmt(c.parsed)}}}}});
-    },60);
+// ─── DOCTORS ──────────────────────────────────────────────────────────────────
+const DR_COLORS = ['linear-gradient(135deg,#00c9b1,#008fa0)','linear-gradient(135deg,#4d9fff,#2563eb)','linear-gradient(135deg,#e8b84b,#b45309)','linear-gradient(135deg,#a78bfa,#7c3aed)','linear-gradient(135deg,#ff4d6d,#be123c)','linear-gradient(135deg,#00e5c8,#0891b2)'];
+
+async function loadDoctors() {
+  const [{ data:docs },{ data:depts }] = await Promise.all([
+    sb.from('doctors').select('*, departments(name)').order('name'),
+    sb.from('departments').select('*')
+  ]);
+  if (depts) allDepts = depts;
+  if (docs) allDrs = docs;
+  document.getElementById('drKpiTotal').textContent = docs?.length ?? '—';
+  document.getElementById('drKpiCardio').textContent = docs?.filter(d=>d.departments?.name==='Cardiology').length ?? '—';
+  document.getElementById('drKpiNeuro').textContent = docs?.filter(d=>d.departments?.name==='Neurology').length ?? '—';
+  document.getElementById('drKpiOther').textContent = docs?.filter(d=>!['Cardiology','Neurology'].includes(d.departments?.name)).length ?? '—';
+  if (!docs?.length) { document.getElementById('drGridWrap').innerHTML='<div class="empty"><div class="empty-icon">🩺</div><div class="empty-title">No doctors yet</div><div class="empty-sub">Add your first doctor.</div></div>'; return; }
+  document.getElementById('drGridWrap').innerHTML = '<div class="dr-grid">' + docs.map((d,i) => `
+    <div class="dr-card">
+      <div class="dr-card-top">
+        <div class="dr-card-av" style="background:${DR_COLORS[i%DR_COLORS.length]}">${d.initials||inits(d.name)}</div>
+        <div><div class="dr-card-name">${d.name}</div><div class="dr-card-dept">${d.departments?.name||'—'}</div></div>
+      </div>
+      ${d.specialization?`<div style="font-size:11px;color:var(--text3);">${d.specialization}</div>`:''}
+      <button class="dr-del-btn" onclick="deleteDoctor('${d.id}','${d.name.replace(/'/g,"\\'")}')">Remove</button>
+    </div>`).join('') + '</div>';
+}
+
+function openDrModal() {
+  if (!allDepts.length) { sb.from('departments').select('*').then(({data})=>{ if(data){allDepts=data; fillDrDepts();} }); } else fillDrDepts();
+  document.getElementById('drName').value = '';
+  document.getElementById('drInitials').value = '';
+  document.getElementById('drSpec').value = '';
+  document.getElementById('drModal').classList.add('on');
+}
+function fillDrDepts() { document.getElementById('drDept').innerHTML = allDepts.map(d=>`<option value="${d.id}">${d.name}</option>`).join(''); }
+function closeDrModal() { document.getElementById('drModal').classList.remove('on'); }
+async function submitDr() {
+  const name = document.getElementById('drName').value.trim();
+  if (!name) { toast('Name required','e'); return; }
+  const btn = document.getElementById('drSubmitBtn');
+  btn.textContent='Adding…'; btn.disabled=true;
+  const { error } = await sb.from('doctors').insert([{
+    name,
+    initials: (document.getElementById('drInitials').value.trim()||inits(name)).toUpperCase(),
+    department_id: document.getElementById('drDept').value||null,
+    specialization: document.getElementById('drSpec').value.trim()||null
+  }]);
+  btn.textContent='Add Doctor'; btn.disabled=false;
+  if (error) { toast('Failed: '+error.message,'e'); return; }
+  closeDrModal();
+  toast(name + ' added','s');
+  log('🩺', name + ' added to staff');
+  loaded['doctors'] = false; loadDoctors(); loaded['doctors'] = true;
+}
+async function deleteDoctor(id, name) {
+  if (!confirm('Remove ' + name + '?')) return;
+  const { error } = await sb.from('doctors').delete().eq('id',id);
+  if (error) { toast('Delete failed — check Supabase delete policies for doctors table','e'); return; }
+  allDrs = allDrs.filter(d=>d.id!==id);
+  toast(name + ' removed','i');
+  loaded['doctors'] = false; loadDoctors(); loaded['doctors'] = true;
+}
+
+document.getElementById('addDrBtn').addEventListener('click', openDrModal);
+document.getElementById('drX').addEventListener('click', closeDrModal);
+document.getElementById('drCancelBtn').addEventListener('click', closeDrModal);
+document.getElementById('drSubmitBtn').addEventListener('click', submitDr);
+document.getElementById('drModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeDrModal(); });
+
+// ─── BILLING ──────────────────────────────────────────────────────────────────
+async function loadBilling() {
+  loadChargeList();
+  const { data:invs } = await sb.from('invoices').select('*, patients(name)').order('issued_at',{ascending:false});
+  if (!invs) return;
+  const paid = invs.filter(i=>i.status==='Paid').reduce((s,i)=>s+parseFloat(i.amount||0),0);
+  const pend = invs.filter(i=>i.status==='Pending').reduce((s,i)=>s+parseFloat(i.amount||0),0);
+  const over = invs.filter(i=>i.status==='Overdue').reduce((s,i)=>s+parseFloat(i.amount||0),0);
+  const total = paid+pend+over;
+  document.getElementById('billKpiTotal').textContent = fmt(total);
+  document.getElementById('billKpiPaid').textContent = fmt(paid);
+  document.getElementById('billKpiPend').textContent = fmt(pend);
+  document.getElementById('billKpiOver').textContent = fmt(over);
+  document.getElementById('legPaid').textContent = fmt(paid);
+  document.getElementById('legPend').textContent = fmt(pend);
+  document.getElementById('legOver').textContent = fmt(over);
+  if (!invs.length) {
+    document.getElementById('invListWrap').innerHTML = '<div class="empty"><div class="empty-icon">🧾</div><div class="empty-title">No invoices yet</div><div class="empty-sub">Use the Charge button above to bill a patient.</div></div>';
+  } else {
+    document.getElementById('invListWrap').innerHTML = '<div class="inv-list">' + invs.map(i=>`
+      <div class="inv-item">
+        <div class="inv-icon">🧾</div>
+        <div style="flex:1;min-width:0"><div class="inv-name">${i.patients?.name||'Unknown'} — ${i.description||'Invoice'}</div><div class="inv-date">${i.invoice_code} · ${i.issued_at?new Date(i.issued_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):'—'}</div></div>
+        <span class="badge ${bc(i.status)}" style="margin-right:12px;">${i.status}</span>
+        <div class="inv-amt ${i.status.toLowerCase()}">${fmt(parseFloat(i.amount||0))}</div>
+      </div>`).join('') + '</div>';
+  }
+  if (!billingChartDone) {
+    billingChartDone = true;
+    setTimeout(() => {
+      new Chart(document.getElementById('chartRev'), {
+        type:'line',
+        data:{ labels:['Nov','Dec','Jan','Feb','Mar','Apr'], datasets:[{ data:[98,112,125,118,131,Math.round(total/1000*10)/10||0], borderColor:'#e8b84b',
+          backgroundColor: ctx => { const g=ctx.chart.ctx.createLinearGradient(0,0,0,180); g.addColorStop(0,'rgba(232,184,75,0.15)'); g.addColorStop(1,'rgba(232,184,75,0)'); return g; },
+          fill:true, tension:0.4, pointBackgroundColor:'#e8b84b', pointRadius:4, pointHoverRadius:7, borderWidth:2.5 }]},
+        options:{ responsive:true, plugins:{ legend:{display:false}, tooltip:{ ...TIP, callbacks:{ label: c=>' EGP '+c.parsed.y+'K' } } }, scales:{ x:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'}}, y:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080',callback:v=>'EGP '+v+'K'}} } }
+      });
+      new Chart(document.getElementById('chartPay'), {
+        type:'doughnut',
+        data:{ datasets:[{ data:[paid||1,pend,over], backgroundColor:['#00e5c8','#e8b84b','#ff4d6d'], borderWidth:0, hoverOffset:8 }] },
+        options:{ responsive:true, cutout:'70%', plugins:{ legend:{display:false}, tooltip:{ ...TIP, callbacks:{ label: c=>' '+fmt(c.parsed) } } } }
+      });
+    }, 60);
   }
 }
 
-// ═══ ADD PATIENT MODAL ═══
-async function openAddPatient(){
-  if(!allDepts.length){const {data:d}=await sb.from('departments').select('*');if(d)allDepts=d;}
-  if(!allDoctors.length){const {data:d}=await sb.from('doctors').select('*');if(d)allDoctors=d;}
-  document.getElementById('f-dept').innerHTML=allDepts.map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
-  updateDoctorOptions();
-  document.getElementById('f-date').value=new Date().toISOString().split('T')[0];
-  document.getElementById('f-name').value=''; document.getElementById('f-age').value='';
-  document.getElementById('addPatientModal').classList.add('show');
+async function loadChargeList() {
+  const wrap = document.getElementById('chargeWrap');
+  if (!wrap) return;
+  wrap.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  const { data:pts } = await sb.from('patients').select('*, departments(name)').in('status',['Active','Critical','Pending']).order('admitted_at',{ascending:false});
+  const list = pts || [];
+  if (!list.length) { wrap.innerHTML='<div class="empty" style="padding:24px;"><div class="empty-icon">🏥</div><div class="empty-title">No admitted patients</div><div class="empty-sub">Admit patients first.</div></div>'; return; }
+  wrap.innerHTML = '<div class="inv-list">' + list.map(p=>`
+    <div class="charge-row">
+      <div style="flex:1;min-width:0;">
+        <div class="charge-pt-name">${p.name} <span class="badge ${bc(p.status)}" style="margin-left:6px;">${p.status}</span></div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px;">${p.patient_code} · ${p.departments?.name||'—'} · Admitted ${p.admitted_at?new Date(p.admitted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'—'}</div>
+      </div>
+      <button class="charge-btn" onclick="openInvModal('${p.id}','${p.name.replace(/'/g,"\\'")}','${p.patient_code}','${p.departments?.name||''}')">+ Charge</button>
+    </div>`).join('') + '</div>';
 }
-function updateDoctorOptions(){
-  const deptId=document.getElementById('f-dept')?.value;
-  const docSel=document.getElementById('f-doctor'); if(!docSel) return;
-  const filtered=deptId?allDoctors.filter(d=>d.department_id===deptId):allDoctors;
-  docSel.innerHTML=filtered.map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
-}
-function closeAddPatient(){document.getElementById('addPatientModal').classList.remove('show');}
-async function submitNewPatient(){
-  const name=document.getElementById('f-name').value.trim();
-  if(!name){toast('Name is required','error');return;}
-  const lastCode=allPatients.length>0?Math.max(...allPatients.map(p=>parseInt(p.patient_code?.replace('#PT-',''))||0)):0;
-  const patient_code=`#PT-${String(lastCode+1).padStart(5,'0')}`;
-  const btn=document.getElementById('modalSubmitBtn');
-  btn.textContent='Admitting…'; btn.disabled=true;
-  try{
-    const {data,error}=await sb.from('patients').insert([{name,age:parseInt(document.getElementById('f-age').value)||null,gender:document.getElementById('f-gender').value,blood_type:document.getElementById('f-blood').value,department_id:document.getElementById('f-dept').value||null,doctor_id:document.getElementById('f-doctor').value||null,status:document.getElementById('f-status').value,admitted_at:document.getElementById('f-date').value,patient_code}]).select('*, departments(name), doctors(name)').single();
-    if(error) throw error;
-    allPatients.unshift(data);
-    closeAddPatient();
-    toast(`${name} admitted`,'success');
-    logActivity('🏥',`${name} admitted`,'Just now');
-    updatePatientKPIs(allPatients); renderPatientTable(allPatients); renderOverviewTable();
-    document.getElementById('kpi-total').textContent=allPatients.length;
-    document.getElementById('badge-critical').textContent=allPatients.filter(p=>p.status==='Critical').length;
-  }catch(e){toast('Failed: '+(e.message||'Error'),'error');}
-  finally{btn.textContent='Admit Patient';btn.disabled=false;}
-}
-document.getElementById('topNewPatientBtn').addEventListener('click',openAddPatient);
-document.getElementById('admitNewBtn')?.addEventListener('click',openAddPatient);
-document.getElementById('modalClose').addEventListener('click',closeAddPatient);
-document.getElementById('modalCancelBtn').addEventListener('click',closeAddPatient);
-document.getElementById('modalSubmitBtn').addEventListener('click',submitNewPatient);
-document.getElementById('addPatientModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeAddPatient();});
 
-function loadPage(pageId){
-  if(pageId==='patients') loadPatients();
-  if(pageId==='appointments') loadAppointments();
-  if(pageId==='billing') loadBilling();
+// ─── INVOICE MODAL ────────────────────────────────────────────────────────────
+function openInvModal(patId, name, code, dept) {
+  invPatientId = patId;
+  document.getElementById('invPtName').textContent = name;
+  document.getElementById('invPtMeta').textContent = code + ' · ' + dept;
+  document.getElementById('invDesc').value = '';
+  document.getElementById('invAmt').value = '';
+  document.getElementById('invStatus').value = 'Pending';
+  document.getElementById('invDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('invModal').classList.add('on');
 }
+function closeInvModal() { document.getElementById('invModal').classList.remove('on'); invPatientId = null; }
+async function submitInv() {
+  const desc = document.getElementById('invDesc').value.trim();
+  const amt = parseFloat(document.getElementById('invAmt').value) || 0;
+  if (!desc) { toast('Description required','e'); return; }
+  if (!invPatientId) { toast('No patient selected','e'); return; }
+  const btn = document.getElementById('invSubmitBtn');
+  btn.textContent='Creating…'; btn.disabled=true;
+  const { data:last } = await sb.from('invoices').select('invoice_code').order('created_at',{ascending:false}).limit(1).single();
+  const lastNum = last ? parseInt(last.invoice_code?.split('-').pop())||0 : 0;
+  const invoice_code = 'INV-' + new Date().getFullYear() + '-' + String(lastNum+1).padStart(4,'0');
+  const { error } = await sb.from('invoices').insert([{
+    invoice_code,
+    patient_id: invPatientId,
+    description: desc,
+    amount: amt,
+    status: document.getElementById('invStatus').value,
+    issued_at: document.getElementById('invDate').value
+  }]);
+  btn.textContent='Create Invoice'; btn.disabled=false;
+  if (error) { toast('Failed: '+error.message,'e'); return; }
+  closeInvModal();
+  toast('Invoice created — ' + fmt(amt), 's');
+  log('🧾', 'Invoice ' + invoice_code + ' created');
+  loaded['billing'] = false; loadBilling(); loaded['billing'] = true;
+}
+document.getElementById('invX').addEventListener('click', closeInvModal);
+document.getElementById('invCancelBtn').addEventListener('click', closeInvModal);
+document.getElementById('invSubmitBtn').addEventListener('click', submitInv);
+document.getElementById('invModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeInvModal(); });
+
+// ─── ADMIT PATIENT MODAL ──────────────────────────────────────────────────────
+async function openAdmitModal() {
+  if (!allDepts.length) { const {data}=await sb.from('departments').select('*'); if(data) allDepts=data; }
+  if (!allDrs.length) { const {data}=await sb.from('doctors').select('*'); if(data) allDrs=data; }
+  document.getElementById('ptDept').innerHTML = allDepts.map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
+  fillPtDoctors();
+  document.getElementById('ptDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('ptName').value = '';
+  document.getElementById('ptAge').value = '';
+  document.getElementById('admitModal').classList.add('on');
+}
+function fillPtDoctors() {
+  const deptId = document.getElementById('ptDept')?.value;
+  const filtered = deptId ? allDrs.filter(d=>d.department_id===deptId) : allDrs;
+  document.getElementById('ptDoctor').innerHTML = filtered.map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
+}
+document.getElementById('ptDept').addEventListener('change', fillPtDoctors);
+function closeAdmitModal() { document.getElementById('admitModal').classList.remove('on'); }
+async function submitAdmit() {
+  const name = document.getElementById('ptName').value.trim();
+  if (!name) { toast('Name required','e'); return; }
+  const lastCode = allPts.length ? Math.max(...allPts.map(p=>parseInt(p.patient_code?.replace('#PT-',''))||0)) : 0;
+  const patient_code = '#PT-' + String(lastCode+1).padStart(5,'0');
+  const btn = document.getElementById('admitSubmitBtn');
+  btn.textContent='Admitting…'; btn.disabled=true;
+  const { data, error } = await sb.from('patients').insert([{
+    name,
+    age: parseInt(document.getElementById('ptAge').value)||null,
+    gender: document.getElementById('ptGender').value,
+    blood_type: document.getElementById('ptBlood').value,
+    department_id: document.getElementById('ptDept').value||null,
+    doctor_id: document.getElementById('ptDoctor').value||null,
+    status: document.getElementById('ptStatus').value,
+    admitted_at: document.getElementById('ptDate').value,
+    patient_code
+  }]).select('*, departments(name), doctors(name)').single();
+  btn.textContent='Admit Patient'; btn.disabled=false;
+  if (error) { toast('Failed: '+error.message,'e'); return; }
+  allPts.unshift(data);
+  closeAdmitModal();
+  toast(name + ' admitted','s');
+  log('🏥', name + ' admitted');
+  refreshPtKpis(allPts);
+  renderPtTable(allPts);
+  renderOvTable();
+  document.getElementById('kpiTotal').textContent = allPts.length;
+}
+document.getElementById('topAdmitBtn').addEventListener('click', openAdmitModal);
+document.getElementById('ptAdmitBtn').addEventListener('click', openAdmitModal);
+document.getElementById('admitX').addEventListener('click', closeAdmitModal);
+document.getElementById('admitCancelBtn').addEventListener('click', closeAdmitModal);
+document.getElementById('admitSubmitBtn').addEventListener('click', submitAdmit);
+document.getElementById('admitModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeAdmitModal(); });
+
+// ─── ALERT BAR ────────────────────────────────────────────────────────────────
+document.getElementById('viewCritBtn').addEventListener('click', () => { goTo('patients'); setFilter('Critical'); });
+
+// ─── PAGE LOADER ──────────────────────────────────────────────────────────────
+function loadPage(p) {
+  if (p==='overview')     loadOverview();
+  if (p==='patients')     loadPatients();
+  if (p==='appointments') loadAppointments();
+  if (p==='doctors')      loadDoctors();
+  if (p==='billing')      loadBilling();
+}
+
+// ─── BOOT ─────────────────────────────────────────────────────────────────────
+initApp();
 </script>
 </body>
 </html>
