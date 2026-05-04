@@ -656,18 +656,18 @@ td{padding:10px 11px;vertical-align:middle;}
       </div>
       <div class="g2-1">
         <div class="card" style="padding:0 18px;">
-          <div style="padding:16px 0 0;"><div class="sec-hdr"><div class="sec-title">Recent Patients</div><button class="btn btn-o" style="font-size:11px;padding:5px 11px;" onclick="goTo('patients')">View All →</button></div></div>
+          <div style="padding:16px 0 0;"><div class="sec-hdr"><div class="sec-title">Recent Patients</div><button class="btn btn-o" style="font-size:11px;padding:5px 11px;" id="ovViewAllBtn">View All →</button></div></div>
           <div id="ovPtsWrap"><div class="loading"><div class="spinner"></div></div></div>
         </div>
         <div class="card">
           <div class="sec-title" style="margin-bottom:12px;">Quick Access</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:16px;">
-            <button class="btn btn-o" style="font-size:11px;" onclick="goTo('patients')">👤 Patients</button>
-            <button class="btn btn-o" style="font-size:11px;" onclick="goTo('emr')">🗒️ EMR/EHR</button>
-            <button class="btn btn-o" style="font-size:11px;" onclick="goTo('operations')">🏥 Operations</button>
-            <button class="btn btn-o" style="font-size:11px;" onclick="goTo('billing')">💳 Billing</button>
-            <button class="btn btn-o" style="font-size:11px;" onclick="goTo('inventory')">📦 Inventory</button>
-            <button class="btn btn-o" style="font-size:11px;" onclick="goTo('payments')">💸 Payments</button>
+            <button class="btn btn-o" style="font-size:11px;" data-goto="patients">👤 Patients</button>
+            <button class="btn btn-o" style="font-size:11px;" data-goto="emr">🗒️ EMR/EHR</button>
+            <button class="btn btn-o" style="font-size:11px;" data-goto="operations">🏥 Operations</button>
+            <button class="btn btn-o" style="font-size:11px;" data-goto="billing">💳 Billing</button>
+            <button class="btn btn-o" style="font-size:11px;" data-goto="inventory">📦 Inventory</button>
+            <button class="btn btn-o" style="font-size:11px;" data-goto="payments">💸 Payments</button>
           </div>
           <div class="sec-title" style="font-size:13px;margin-bottom:10px;">Activity</div>
           <div class="act-list" id="actFeed">
@@ -855,6 +855,8 @@ td{padding:10px 11px;vertical-align:middle;}
 
 <script>
 'use strict';
+
+// ── SUPABASE ─────────────────────────────────────────────────────────────────
 const { createClient } = supabase;
 const sb = createClient(
   'https://ixiajdnykewavnxbgmvo.supabase.co',
@@ -864,28 +866,67 @@ const sb = createClient(
 // ── STATE ────────────────────────────────────────────────────────────────────
 let allPts=[], allDepts=[], allDrs=[], allBeds=[], allItems=[], allExps=[];
 let curPt=null, curPtTab='ov', ptFilter='All', bedFilter='All', invFilter='All', payFilter='All';
-let invPatId=null, delTarget=null, delType='patient';
+let invPatId=null, delTarget=null;
 const loaded={};
 
+// Chart instances — populated lazily, NEVER at top-level script time
+let chartAdm=null, chartDept=null;
+let billingChartDone=false, payChartDone=false, repChartDone=false;
+
+// ── CHART HELPERS (safe — only called after Chart.js confirmed loaded) ────────
+const TIP={backgroundColor:'#0c1422',borderColor:'#1e2f48',borderWidth:1,titleColor:'#dce8f5',bodyColor:'#8ea8c8',padding:10};
+
+function chartsReady(){return typeof Chart!=='undefined';}
+
+function applyChartDefaults(){
+  if(!chartsReady()) return;
+  Chart.defaults.color='#4a6080';
+  Chart.defaults.borderColor='#162035';
+  Chart.defaults.font.family='Outfit';
+}
+
+function mkLine(id,data,color,labels,yCb,height){
+  if(!chartsReady()) return null;
+  const canvas=document.getElementById(id);
+  if(!canvas) return null;
+  return new Chart(canvas,{type:'line',data:{labels,datasets:[{data,borderColor:color,backgroundColor:ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,height||180);g.addColorStop(0,color.replace(')',',0.18)').replace('rgb','rgba'));g.addColorStop(1,color.replace(')',',0)').replace('rgb','rgba'));return g;},fill:true,tension:0.4,pointBackgroundColor:color,pointRadius:4,pointHoverRadius:7,borderWidth:2.5}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:TIP},scales:{x:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'}},y:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080',...(yCb?{callback:yCb}:{})},beginAtZero:false}}}});
+}
+
+function mkDoughnut(id,data,colors){
+  if(!chartsReady()) return null;
+  const canvas=document.getElementById(id);
+  if(!canvas) return null;
+  return new Chart(canvas,{type:'doughnut',data:{datasets:[{data,backgroundColor:colors,borderWidth:0,hoverOffset:8}]},options:{responsive:true,cutout:'70%',plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:c=>' '+fmt(c.parsed)}}}}});
+}
+
+function initOverviewCharts(){
+  if(!chartsReady()||chartAdm) return; // already init'd
+  applyChartDefaults();
+  chartAdm=mkLine('chartAdm',[210,245,198,280,310,295,340],'#00e5c8',['Oct','Nov','Dec','Jan','Feb','Mar','Apr'],null,180);
+  const canvas=document.getElementById('chartDept');
+  if(canvas){
+    chartDept=new Chart(canvas,{type:'doughnut',data:{datasets:[{data:[1,1,1,1],backgroundColor:['#00e5c8','#4d9fff','#e8b84b','#ff4d6d'],borderWidth:0,hoverOffset:8}]},options:{responsive:true,cutout:'72%',plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:c=>' '+c.parsed}}}}});
+  }
+}
+
 // ── HELPERS ──────────────────────────────────────────────────────────────────
-const fmt=(n)=>{
+function fmt(n){
   if(n>=1000000) return 'EGP '+(n/1000000).toFixed(1)+'M';
   if(n>=1000) return 'EGP '+(n/1000).toFixed(1)+'K';
   return 'EGP '+Math.round(n);
-};
-const bc=(s)=>({
-  Active:'b-active',Critical:'b-critical',Pending:'b-pending',Discharged:'b-discharged',
-  Confirmed:'b-confirmed',Urgent:'b-critical',Cancelled:'b-cancelled',
-  Paid:'b-paid',Overdue:'b-overdue',
-  Available:'b-available',Occupied:'b-occupied',Maintenance:'b-maintenance',Reserved:'b-reserved',
-  Low:'b-low',OK:'b-ok',Insurance:'b-insurance',Cash:'b-cash',Card:'b-cash',
-  Salary:'b-salary',Electricity:'b-utility',Water:'b-utility',Rent:'b-utility',
-  Supplies:'b-supply',Medications:'b-supply',Equipment:'b-supply'
-})[s]||'b-discharged';
-
-const pc=(b)=>({'A+':'pill-r','O-':'pill-n','B+':'pill-b','AB+':'pill-c','O+':'pill-r','A-':'pill-n','B-':'pill-b'})[b]||'pill-n';
-const inits=(n)=>n?n.split(' ').filter(w=>w.length>1).slice(0,2).map(w=>w[0].toUpperCase()).join(''):'?';
-const fmtDate=(d,y=false)=>d?new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',...(y?{year:'numeric'}:{})}):'—';
+}
+function bc(s){
+  return ({Active:'b-active',Critical:'b-critical',Pending:'b-pending',Discharged:'b-discharged',
+    Confirmed:'b-confirmed',Urgent:'b-critical',Cancelled:'b-cancelled',
+    Paid:'b-paid',Overdue:'b-overdue',
+    Available:'b-available',Occupied:'b-occupied',Maintenance:'b-maintenance',Reserved:'b-reserved',
+    Low:'b-low',OK:'b-ok',Insurance:'b-insurance',Cash:'b-cash',Card:'b-cash',
+    Salary:'b-salary',Electricity:'b-utility',Water:'b-utility',Rent:'b-utility',
+    Supplies:'b-supply',Medications:'b-supply',Equipment:'b-supply'})[s]||'b-discharged';
+}
+function pc(b){return({'A+':'pill-r','O-':'pill-n','B+':'pill-b','AB+':'pill-c','O+':'pill-r','A-':'pill-n','B-':'pill-b'})[b]||'pill-n';}
+function inits(n){return n?n.split(' ').filter(w=>w.length>1).slice(0,2).map(w=>w[0].toUpperCase()).join(''):'?';}
+function fmtDate(d,y=false){return d?new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',...(y?{year:'numeric'}:{})}):'—';}
 
 function toast(msg,type='s'){
   const el=document.createElement('div');
@@ -895,8 +936,8 @@ function toast(msg,type='s'){
   setTimeout(()=>el.remove(),3000);
 }
 function log(icon,lbl,time='Just now'){
-  const f=document.getElementById('actFeed'); if(!f) return;
-  const el=document.createElement('div'); el.className='act-item';
+  const f=document.getElementById('actFeed');if(!f) return;
+  const el=document.createElement('div');el.className='act-item';
   el.innerHTML=`<div class="act-dot">${icon}</div><div><div class="act-lbl">${lbl}</div><div class="act-time">${time}</div></div>`;
   f.prepend(el);
   while(f.children.length>7) f.removeChild(f.lastChild);
@@ -927,7 +968,15 @@ function goTo(pageId){
   closeMob();
   if(!loaded[pageId]){loaded[pageId]=true;loadPage(pageId);}
 }
+
+// Nav items
 document.querySelectorAll('[data-page]').forEach(el=>el.addEventListener('click',()=>goTo(el.dataset.page)));
+
+// Quick-access goto buttons (data-goto)
+document.addEventListener('click',e=>{
+  const btn=e.target.closest('[data-goto]');
+  if(btn) goTo(btn.dataset.goto);
+});
 
 // ── SIDEBAR ──────────────────────────────────────────────────────────────────
 let sbCol=false;
@@ -942,19 +991,11 @@ document.getElementById('hburg').addEventListener('click',openMob);
 document.getElementById('ov').addEventListener('click',closeMob);
 document.getElementById('logoutBtn').addEventListener('click',()=>sb.auth.signOut());
 
-// ── CHARTS SETUP ─────────────────────────────────────────────────────────────
-Chart.defaults.color='#4a6080'; Chart.defaults.borderColor='#162035'; Chart.defaults.font.family='Outfit';
-const TIP={backgroundColor:'#0c1422',borderColor:'#1e2f48',borderWidth:1,titleColor:'#dce8f5',bodyColor:'#8ea8c8',padding:10};
-const mkLine=(id,data,color,labels,yCb,height)=>new Chart(document.getElementById(id),{type:'line',data:{labels,datasets:[{data,borderColor:color,backgroundColor:ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,height||180);g.addColorStop(0,color.replace(')',',0.18)').replace('rgb','rgba'));g.addColorStop(1,color.replace(')',',0)').replace('rgb','rgba'));return g;},fill:true,tension:0.4,pointBackgroundColor:color,pointRadius:4,pointHoverRadius:7,borderWidth:2.5}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:TIP},scales:{x:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'}},y:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080',...(yCb?{callback:yCb}:{})},beginAtZero:false}}}});
-const mkDoughnut=(id,data,colors)=>new Chart(document.getElementById(id),{type:'doughnut',data:{datasets:[{data,backgroundColor:colors,borderWidth:0,hoverOffset:8}]},options:{responsive:true,cutout:'70%',plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:c=>' '+fmt(c.parsed)}}}}});
-
-const chartAdm=mkLine('chartAdm',[210,245,198,280,310,295,340],'#00e5c8',['Oct','Nov','Dec','Jan','Feb','Mar','Apr'],null,180);
-const chartDept=new Chart(document.getElementById('chartDept'),{type:'doughnut',data:{datasets:[{data:[1,1,1,1],backgroundColor:['#00e5c8','#4d9fff','#e8b84b','#ff4d6d'],borderWidth:0,hoverOffset:8}]},options:{responsive:true,cutout:'72%',plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:c=>' '+c.parsed}}}}});
-
-let billingChartDone=false, payChartDone=false, repChartDone=false;
-
 // ── OVERVIEW ─────────────────────────────────────────────────────────────────
 async function loadOverview(){
+  // Init charts here — safe, DOM ready & Chart.js loaded by now
+  setTimeout(initOverviewCharts, 0);
+
   try{
     const [{data:pts},{data:appts},{data:invs}]=await Promise.all([
       sb.from('patients').select('*, departments(name)'),
@@ -969,34 +1010,42 @@ async function loadOverview(){
     document.getElementById('ovKpiRev').textContent=fmt(rev);
     document.getElementById('ovKpiCrit').textContent=crit;
     updateCritBanner(crit);
-    if(pts){
+    if(pts && chartDept){
       const dc={};pts.forEach(p=>{const d=p.departments?.name||'Other';dc[d]=(dc[d]||0)+1;});
       const dn=['Cardiology','Orthopedics','Neurology','General'];
       chartDept.data.datasets[0].data=dn.map(n=>dc[n]||0);chartDept.update();
-      [['dC','Cardiology'],['dO','Orthopedics'],['dN','Neurology'],['dG','General']].forEach(([id,n])=>{const el=document.getElementById(id);if(el)el.textContent=dc[n]||0;});
+      [['dC','Cardiology'],['dO','Orthopedics'],['dN','Neurology'],['dG','General']].forEach(([id,n])=>{
+        const el=document.getElementById(id);if(el)el.textContent=dc[n]||0;
+      });
     }
     renderOvTable();
     document.getElementById('dbDot').classList.add('live');
     document.getElementById('dbLbl').textContent='Live DB';
-  }catch(e){console.error(e);document.getElementById('dbLbl').textContent='DB Error';toast('DB error','e');}
+  }catch(e){
+    console.error(e);
+    document.getElementById('dbLbl').textContent='DB Error';
+    toast('DB connection error','e');
+  }
 }
+
 function updateCritBanner(crit){
   document.getElementById('nbCrit').textContent=crit;
   document.getElementById('critCount').textContent=crit+' Critical Patient'+(crit!==1?'s':'');
 }
+
 function renderOvTable(){
-  const w=document.getElementById('ovPtsWrap'); if(!w) return;
+  const w=document.getElementById('ovPtsWrap');if(!w) return;
   const r=allPts.slice(0,5);
   if(!r.length){w.innerHTML='<div class="empty"><div class="empty-icon">🏥</div><div class="empty-title">No patients yet</div></div>';return;}
-  w.innerHTML='<div class="tbl-wrap"><table><thead><tr><th>Patient</th><th>Dept</th><th>Status</th><th>Date</th></tr></thead><tbody>'+
-    r.map(p=>`<tr onclick="openPt('${p.id}')"><td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td><td style="color:var(--text2)">${p.departments?.name||'—'}</td><td><span class="badge ${bc(p.status)}">${p.status}</span></td><td style="color:var(--text3)">${fmtDate(p.admitted_at)}</td></tr>`).join('')+
-  '</tbody></table></div>';
+  const tbody=r.map(p=>`<tr data-ptid="${p.id}"><td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td><td style="color:var(--text2)">${p.departments?.name||'—'}</td><td><span class="badge ${bc(p.status)}">${p.status}</span></td><td style="color:var(--text3)">${fmtDate(p.admitted_at)}</td></tr>`).join('');
+  w.innerHTML='<div class="tbl-wrap"><table><thead><tr><th>Patient</th><th>Dept</th><th>Status</th><th>Date</th></tr></thead><tbody>'+tbody+'</tbody></table></div>';
 }
 
 // ── PATIENTS ─────────────────────────────────────────────────────────────────
 async function loadPatients(){
   const {data:pts}=await sb.from('patients').select('*, departments(name), doctors(name)').order('admitted_at',{ascending:false});
-  if(!pts) return; allPts=pts; refreshPtKpis(pts); renderPtTable();
+  if(!pts) return;
+  allPts=pts;refreshPtKpis(pts);renderPtTable();
 }
 function refreshPtKpis(pts){
   document.getElementById('ptKpiAll').textContent=pts.length;
@@ -1008,12 +1057,18 @@ function renderPtTable(){
   const list=ptFilter==='All'?allPts:allPts.filter(p=>p.status===ptFilter);
   const w=document.getElementById('ptTableWrap');
   if(!list.length){w.innerHTML='<div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">No patients found</div></div>';return;}
-  w.innerHTML='<div class="tbl-wrap"><table><thead><tr><th>Patient</th><th>Age</th><th>Dept</th><th>Doctor</th><th>Blood</th><th>Status</th><th>Admitted</th></tr></thead><tbody>'+
-    list.map(p=>`<tr onclick="openPt('${p.id}')"><td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td><td style="color:var(--text2)">${p.age||'—'}</td><td style="color:var(--text2)">${p.departments?.name||'—'}</td><td style="color:var(--text2);font-size:11.5px">${p.doctors?.name||'—'}</td><td><span class="pill ${pc(p.blood_type)}">${p.blood_type||'—'}</span></td><td><span class="badge ${bc(p.status)}">${p.status}</span></td><td style="color:var(--text3)">${fmtDate(p.admitted_at)}</td></tr>`).join('')+
-  '</tbody></table></div>';
+  const tbody=list.map(p=>`<tr data-ptid="${p.id}"><td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td><td style="color:var(--text2)">${p.age||'—'}</td><td style="color:var(--text2)">${p.departments?.name||'—'}</td><td style="color:var(--text2);font-size:11.5px">${p.doctors?.name||'—'}</td><td><span class="pill ${pc(p.blood_type)}">${p.blood_type||'—'}</span></td><td><span class="badge ${bc(p.status)}">${p.status}</span></td><td style="color:var(--text3)">${fmtDate(p.admitted_at)}</td></tr>`).join('');
+  w.innerHTML='<div class="tbl-wrap"><table><thead><tr><th>Patient</th><th>Age</th><th>Dept</th><th>Doctor</th><th>Blood</th><th>Status</th><th>Admitted</th></tr></thead><tbody>'+tbody+'</tbody></table></div>';
 }
-function setPtFilter(f){ptFilter=f;document.querySelectorAll('#ptFilters .chip').forEach(c=>c.classList.toggle('on',c.dataset.f===f));if(allPts.length) renderPtTable();}
-document.getElementById('ptFilters').addEventListener('click',e=>{const c=e.target.closest('.chip');if(c) setPtFilter(c.dataset.f);});
+
+function setPtFilter(f){
+  ptFilter=f;
+  document.querySelectorAll('#ptFilters .chip').forEach(c=>c.classList.toggle('on',c.dataset.f===f));
+  if(allPts.length) renderPtTable();
+}
+document.getElementById('ptFilters').addEventListener('click',e=>{
+  const c=e.target.closest('.chip');if(c) setPtFilter(c.dataset.f);
+});
 
 // ── EMR / EHR ────────────────────────────────────────────────────────────────
 async function loadEMR(){
@@ -1024,27 +1079,14 @@ async function loadEMR(){
   document.getElementById('emrKpiLabs').textContent='—';
   document.getElementById('emrKpiAlerts').textContent=admitted.filter(p=>p.status==='Critical').length;
   if(!admitted.length){document.getElementById('emrTableWrap').innerHTML='<div class="empty"><div class="empty-icon">🗒️</div><div class="empty-title">No active records</div></div>';return;}
-  document.getElementById('emrTableWrap').innerHTML='<div class="tbl-wrap"><table><thead><tr><th>Patient</th><th>Dept</th><th>Doctor</th><th>Status</th><th>Admitted</th><th>EMR</th></tr></thead><tbody>'+
-    admitted.map(p=>`<tr onclick="openPtEMR('${p.id}')">
-      <td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td>
-      <td style="color:var(--text2)">${p.departments?.name||'—'}</td>
-      <td style="color:var(--text2);font-size:11.5px">${p.doctors?.name||'—'}</td>
-      <td><span class="badge ${bc(p.status)}">${p.status}</span></td>
-      <td style="color:var(--text3)">${fmtDate(p.admitted_at)}</td>
-      <td><button class="charge-btn" style="font-size:10.5px;" onclick="event.stopPropagation();openPtEMR('${p.id}')">Open EMR</button></td>
-    </tr>`).join('')+
-  '</tbody></table></div>';
-}
-function openPtEMR(id){
-  // Open patient panel on EMR tab
-  openPt(id, 'emr');
+  const tbody=admitted.map(p=>`<tr data-ptid="${p.id}" data-tab="emr"><td><div class="pt-name">${p.name}</div><div class="pt-id">${p.patient_code}</div></td><td style="color:var(--text2)">${p.departments?.name||'—'}</td><td style="color:var(--text2);font-size:11.5px">${p.doctors?.name||'—'}</td><td><span class="badge ${bc(p.status)}">${p.status}</span></td><td style="color:var(--text3)">${fmtDate(p.admitted_at)}</td><td><button class="charge-btn" style="font-size:10.5px;" data-ptid="${p.id}" data-tab="emr">Open EMR</button></td></tr>`).join('');
+  document.getElementById('emrTableWrap').innerHTML='<div class="tbl-wrap"><table><thead><tr><th>Patient</th><th>Dept</th><th>Doctor</th><th>Status</th><th>Admitted</th><th>EMR</th></tr></thead><tbody>'+tbody+'</tbody></table></div>';
 }
 
 // ── OPERATIONS / BEDS ────────────────────────────────────────────────────────
 async function loadOperations(){
   const {data:beds}=await sb.from('beds').select('*, patients(name)').order('bed_number');
-  const list=beds||[];
-  allBeds=list;
+  const list=beds||[];allBeds=list;
   document.getElementById('opKpiTotal').textContent=list.length;
   document.getElementById('opKpiAvail').textContent=list.filter(b=>b.status==='Available').length;
   document.getElementById('opKpiOcc').textContent=list.filter(b=>b.status==='Occupied').length;
@@ -1060,7 +1102,7 @@ function renderBeds(){
   else if(bedFilter==='Maintenance') list=allBeds.filter(b=>b.status==='Maintenance');
   if(!list.length){w.innerHTML='<div class="empty"><div class="empty-icon">🛏️</div><div class="empty-title">No beds found</div><div class="empty-sub">Add beds using the button above.</div></div>';return;}
   w.innerHTML='<div class="beds-grid">'+list.map(b=>`
-    <div class="bed-card ${b.status.toLowerCase()}">
+    <div class="bed-card ${b.status.toLowerCase()}" data-bedid="${b.id}">
       <div class="bed-num">${b.bed_number||'—'}</div>
       <div class="bed-ward">${b.ward||'—'} · ${b.type||'Standard'}</div>
       <span class="badge ${bc(b.status)}">${b.status}</span>
@@ -1068,8 +1110,7 @@ function renderBeds(){
     </div>`).join('')+'</div>';
 }
 document.getElementById('bedFilters').addEventListener('click',e=>{
-  const c=e.target.closest('.chip');
-  if(!c) return;
+  const c=e.target.closest('.chip');if(!c) return;
   bedFilter=c.dataset.f;
   document.querySelectorAll('#bedFilters .chip').forEach(x=>x.classList.toggle('on',x.dataset.f===bedFilter));
   renderBeds();
@@ -1081,8 +1122,7 @@ document.getElementById('bedSubmitBtn').addEventListener('click',async()=>{
   const num=document.getElementById('bedNum').value.trim();
   const ward=document.getElementById('bedWard').value.trim();
   if(!num||!ward){toast('Bed number and ward required','e');return;}
-  const btn=document.getElementById('bedSubmitBtn');
-  btn.textContent='Adding…';btn.disabled=true;
+  const btn=document.getElementById('bedSubmitBtn');btn.textContent='Adding…';btn.disabled=true;
   const {error}=await sb.from('beds').insert([{bed_number:num,ward,type:document.getElementById('bedType').value,status:document.getElementById('bedStatus').value}]);
   btn.textContent='Add Bed';btn.disabled=false;
   if(error){toast('Failed: '+error.message,'e');return;}
@@ -1109,10 +1149,13 @@ async function loadDoctors(){
       <div class="dr-name">${d.name}</div>
       <div class="dr-dept">${d.departments?.name||'—'}</div>
       ${d.specialization?`<div class="dr-spec">${d.specialization}</div>`:''}
-      <button class="dr-del" onclick="delDoctor('${d.id}','${d.name.replace(/'/g,"\\'")}')">Remove</button>
+      <button class="dr-del" data-drid="${d.id}" data-drname="${d.name.replace(/"/g,'&quot;')}">Remove</button>
     </div>`).join('')+'</div>';
 }
-function fillDrDepts(){document.getElementById('drDept').innerHTML=allDepts.map(d=>`<option value="${d.id}">${d.name}</option>`).join('');}
+
+function fillDrDepts(){
+  document.getElementById('drDept').innerHTML=allDepts.map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
+}
 document.getElementById('addDrBtn').addEventListener('click',async()=>{
   if(!allDepts.length){const {data}=await sb.from('departments').select('*');if(data)allDepts=data;}
   fillDrDepts();
@@ -1132,6 +1175,7 @@ document.getElementById('drSubmitBtn').addEventListener('click',async()=>{
   toast(name+' added','s');log('🩺',name+' added to staff');
   loaded['doctors']=false;loadDoctors();loaded['doctors']=true;
 });
+
 async function delDoctor(id,name){
   if(!confirm('Remove '+name+'?')) return;
   const {error}=await sb.from('doctors').delete().eq('id',id);
@@ -1139,6 +1183,12 @@ async function delDoctor(id,name){
   toast(name+' removed','i');
   loaded['doctors']=false;loadDoctors();loaded['doctors']=true;
 }
+
+// Event delegation for doctor remove buttons
+document.getElementById('drWrap').addEventListener('click',e=>{
+  const btn=e.target.closest('.dr-del');
+  if(btn) delDoctor(btn.dataset.drid, btn.dataset.drname);
+});
 
 // ── BILLING & INSURANCE ───────────────────────────────────────────────────────
 async function loadBilling(){
@@ -1164,21 +1214,23 @@ async function loadBilling(){
       <div class="inv-ic">🧾</div>
       <div style="flex:1;min-width:0">
         <div class="inv-name">${i.patients?.name||'Unknown'} — ${i.description||'Invoice'}</div>
-        <div class="inv-date">${i.invoice_code} · ${fmtDate(i.issued_at,true)} ${i.payment_type?`· <span class="badge ${bc(i.payment_type)}">${i.payment_type}</span>`:''}${i.insurer?` · ${i.insurer}`:''}</div>
+        <div class="inv-date">${i.invoice_code} · ${fmtDate(i.issued_at,true)}${i.payment_type?` · <span class="badge ${bc(i.payment_type)}">${i.payment_type}</span>`:''}${i.insurer?` · ${i.insurer}`:''}</div>
       </div>
       <span class="badge ${bc(i.status)}" style="margin-right:10px;">${i.status}</span>
       <div class="inv-amt ${i.status.toLowerCase()}">${fmt(parseFloat(i.amount||0))}</div>
     </div>`).join('')+'</div>';
-  if(!billingChartDone){
+  if(!billingChartDone&&chartsReady()){
     billingChartDone=true;
+    applyChartDefaults();
     setTimeout(()=>{
       mkLine('chartRev',[98,112,125,118,131,Math.round(total/1000*10)/10||0],'#e8b84b',['Nov','Dec','Jan','Feb','Mar','Apr'],v=>'EGP '+v+'K');
       mkDoughnut('chartPay',[paid||1,pend,over],['#00e5c8','#e8b84b','#ff4d6d']);
     },60);
   }
 }
+
 async function loadChargeList(){
-  const w=document.getElementById('chargeWrap'); if(!w) return;
+  const w=document.getElementById('chargeWrap');if(!w) return;
   w.innerHTML='<div class="loading"><div class="spinner"></div></div>';
   const {data:pts}=await sb.from('patients').select('*, departments(name)').in('status',['Active','Critical','Pending']).order('admitted_at',{ascending:false});
   const list=pts||[];
@@ -1186,15 +1238,20 @@ async function loadChargeList(){
   w.innerHTML='<div class="inv-list">'+list.map(p=>`
     <div class="charge-row">
       <div style="flex:1;min-width:0;"><div class="charge-name">${p.name} <span class="badge ${bc(p.status)}" style="margin-left:5px;">${p.status}</span></div><div class="charge-meta">${p.patient_code} · ${p.departments?.name||'—'} · Admitted ${fmtDate(p.admitted_at)}</div></div>
-      <button class="charge-btn" onclick="openInvModal('${p.id}','${p.name.replace(/'/g,"\\'")}','${p.patient_code}','${p.departments?.name||''}')">+ Charge</button>
+      <button class="charge-btn" data-ptid="${p.id}" data-ptname="${p.name.replace(/"/g,'&quot;')}" data-ptcode="${p.patient_code}" data-ptdept="${p.departments?.name||''}">+ Charge</button>
     </div>`).join('')+'</div>';
 }
+
+// Event delegation for charge buttons
+document.getElementById('chargeWrap').addEventListener('click',e=>{
+  const btn=e.target.closest('.charge-btn[data-ptid]');
+  if(btn) openInvModal(btn.dataset.ptid,btn.dataset.ptname,btn.dataset.ptcode,btn.dataset.ptdept);
+});
 
 // ── PAYMENTS IN/OUT ───────────────────────────────────────────────────────────
 async function loadPayments(){
   const {data:exps}=await sb.from('expenses').select('*').order('date',{ascending:false});
-  const list=exps||[];
-  allExps=list;
+  const list=exps||[];allExps=list;
   const incoming=list.filter(e=>e.direction==='in').reduce((s,e)=>s+parseFloat(e.amount||0),0);
   const outgoing=list.filter(e=>e.direction==='out').reduce((s,e)=>s+parseFloat(e.amount||0),0);
   const salaries=list.filter(e=>e.category==='Salary').reduce((s,e)=>s+parseFloat(e.amount||0),0);
@@ -1203,12 +1260,11 @@ async function loadPayments(){
   document.getElementById('pyKpiOut').textContent=fmt(outgoing);
   document.getElementById('pyKpiSal').textContent=fmt(salaries);
   renderExpenses();
-  if(!payChartDone){
+  if(!payChartDone&&chartsReady()){
     payChartDone=true;
+    applyChartDefaults();
     setTimeout(()=>{
-      // Cash flow bar chart
       new Chart(document.getElementById('chartCash'),{type:'bar',data:{labels:['Nov','Dec','Jan','Feb','Mar','Apr'],datasets:[{label:'Incoming',data:[120,140,155,180,160,incoming/1000||200],backgroundColor:'rgba(0,229,200,0.7)',borderRadius:6},{label:'Outgoing',data:[90,110,130,145,120,outgoing/1000||150],backgroundColor:'rgba(255,77,109,0.7)',borderRadius:6}]},options:{responsive:true,plugins:{legend:{labels:{color:'#8ea8c8',font:{size:11}}},tooltip:TIP},scales:{x:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080'}},y:{grid:{color:'rgba(22,32,53,0.8)'},ticks:{color:'#4a6080',callback:v=>'EGP '+v+'K'}}}}});
-      // Expense breakdown
       const cats=['Salary','Supplies','Electricity','Water','Rent','Other'];
       const catAmts=cats.map(c=>list.filter(e=>e.direction==='out'&&e.category===c).reduce((s,e)=>s+parseFloat(e.amount||0),0));
       const catColors=['#a78bfa','#4d9fff','#e8b84b','#00e5c8','#ff4d6d','#8ea8c8'];
@@ -1278,20 +1334,13 @@ function renderInventory(){
   if(invFilter==='Low') list=allItems.filter(i=>i.quantity<=i.reorder_level);
   else if(invFilter!=='All') list=allItems.filter(i=>i.category===invFilter);
   if(!list.length){w.innerHTML='<div class="empty" style="padding:28px;"><div class="empty-icon">📦</div><div class="empty-title">No items found</div><div class="empty-sub">Add items using the button above.</div></div>';return;}
-  w.innerHTML='<div class="tbl-wrap"><table><thead><tr><th>Item</th><th>Category</th><th>Qty</th><th>Unit Cost</th><th>Stock</th><th>Supplier</th></tr></thead><tbody>'+
-    list.map(i=>{
-      const low=i.quantity<=i.reorder_level;
-      const pct=i.reorder_level>0?Math.min(100,Math.round(i.quantity/Math.max(i.reorder_level*3,1)*100)):100;
-      const color=low?'var(--rose)':pct>60?'var(--cyan)':'var(--gold)';
-      return `<tr>
-        <td><div class="pt-name">${i.name}</div></td>
-        <td><span class="pill ${{'Medicine':'pill-b','Equipment':'pill-p','Consumable':'pill-c','Lab Reagent':'pill-g'}[i.category]||'pill-n'}">${i.category}</span></td>
-        <td><div style="font-weight:700;color:${low?'var(--rose)':'var(--text)'};">${i.quantity} ${i.unit||''}</div><div style="font-size:10px;color:var(--text3);">Min: ${i.reorder_level||0}</div></td>
-        <td style="color:var(--text2)">${i.unit_cost?fmt(i.unit_cost):'—'}</td>
-        <td style="min-width:80px;"><span class="badge ${low?'b-low':'b-ok'}">${low?'Low':'OK'}</span><div class="stock-bar-bg"><div class="stock-bar-fill" style="width:${pct}%;background:${color};"></div></div></td>
-        <td style="color:var(--text3);font-size:11.5px;">${i.supplier||'—'}</td>
-      </tr>`;
-    }).join('')+'</tbody></table></div>';
+  const rows=list.map(i=>{
+    const low=i.quantity<=i.reorder_level;
+    const pct=i.reorder_level>0?Math.min(100,Math.round(i.quantity/Math.max(i.reorder_level*3,1)*100)):100;
+    const color=low?'var(--rose)':pct>60?'var(--cyan)':'var(--gold)';
+    return `<tr><td><div class="pt-name">${i.name}</div></td><td><span class="pill ${({'Medicine':'pill-b','Equipment':'pill-p','Consumable':'pill-c','Lab Reagent':'pill-g'})[i.category]||'pill-n'}">${i.category}</span></td><td><div style="font-weight:700;color:${low?'var(--rose)':'var(--text)'};">${i.quantity} ${i.unit||''}</div><div style="font-size:10px;color:var(--text3);">Min: ${i.reorder_level||0}</div></td><td style="color:var(--text2)">${i.unit_cost?fmt(i.unit_cost):'—'}</td><td style="min-width:80px;"><span class="badge ${low?'b-low':'b-ok'}">${low?'Low':'OK'}</span><div class="stock-bar-bg"><div class="stock-bar-fill" style="width:${pct}%;background:${color};"></div></div></td><td style="color:var(--text3);font-size:11.5px;">${i.supplier||'—'}</td></tr>`;
+  }).join('');
+  w.innerHTML='<div class="tbl-wrap"><table><thead><tr><th>Item</th><th>Category</th><th>Qty</th><th>Unit Cost</th><th>Stock</th><th>Supplier</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
 }
 document.getElementById('invFilters').addEventListener('click',e=>{
   const c=e.target.closest('.chip');if(!c) return;
@@ -1346,9 +1395,10 @@ async function loadReports(){
     {icon:'🏥',title:'Operations Summary',sub:'Bed availability, ICU status, discharge planning, readmission rates'},
   ];
   document.getElementById('reportsGrid').innerHTML='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:11px;">'+
-    reports.map(r=>`<div class="report-card" onclick="toast('${r.title} — export coming soon','i')"><div class="report-icon">${r.icon}</div><div class="report-title">${r.title}</div><div class="report-sub">${r.sub}</div><button class="btn btn-o" style="margin-top:12px;font-size:11px;padding:5px 12px;width:100%;">Generate →</button></div>`).join('')+'</div>';
-  if(!repChartDone){
+    reports.map(r=>`<div class="report-card" data-report="${r.title}"><div class="report-icon">${r.icon}</div><div class="report-title">${r.title}</div><div class="report-sub">${r.sub}</div><button class="btn btn-o" style="margin-top:12px;font-size:11px;padding:5px 12px;width:100%;">Generate →</button></div>`).join('')+'</div>';
+  if(!repChartDone&&chartsReady()){
     repChartDone=true;
+    applyChartDefaults();
     setTimeout(()=>{
       mkLine('chartRepRev',[98,112,125,118,131,Math.round(rev/1000*10)/10||0],'#00e5c8',['Nov','Dec','Jan','Feb','Mar','Apr'],v=>'EGP '+v+'K');
       const depts=pts?pts.reduce((a,p)=>{a[p.status]=(a[p.status]||0)+1;return a;}:{});
@@ -1357,10 +1407,20 @@ async function loadReports(){
   }
 }
 
+// Report card click delegation
+document.getElementById('reportsGrid').addEventListener('click',e=>{
+  const card=e.target.closest('.report-card');
+  if(card) toast(card.dataset.report+' — export coming soon','i');
+});
+
 // ── PATIENT 360 PANEL ─────────────────────────────────────────────────────────
 document.getElementById('panelX').addEventListener('click',closePanel);
 document.getElementById('panelOv').addEventListener('click',closePanel);
-function closePanel(){document.getElementById('panel').classList.remove('on');document.getElementById('panelOv').classList.remove('on');curPt=null;}
+function closePanel(){
+  document.getElementById('panel').classList.remove('on');
+  document.getElementById('panelOv').classList.remove('on');
+  curPt=null;
+}
 
 async function openPt(id, startTab='ov'){
   let pt=allPts.find(p=>p.id===id);
@@ -1378,8 +1438,13 @@ async function openPt(id, startTab='ov'){
 }
 function renderPtActBtns(pt){
   const btns=[{l:'✓ Active',c:'a',v:'Active'},{l:'⚠ Critical',c:'cr',v:'Critical'},{l:'⏳ Pending',c:'pe',v:'Pending'},{l:'↗ Discharge',c:'di',v:'Discharged'}];
-  document.getElementById('actBtns').innerHTML=btns.map(b=>`<button class="abt ${b.c}" ${pt.status===b.v?'disabled':''} onclick="setStatus('${pt.id}','${b.v}')">${b.l}</button>`).join('');
+  document.getElementById('actBtns').innerHTML=btns.map(b=>`<button class="abt ${b.c}" data-status="${b.v}" ${pt.status===b.v?'disabled':''}>${b.l}</button>`).join('');
 }
+// Status buttons — event delegation on actBtns
+document.getElementById('actBtns').addEventListener('click',e=>{
+  const btn=e.target.closest('.abt[data-status]');
+  if(btn&&curPt) setStatus(curPt.id, btn.dataset.status);
+});
 document.getElementById('ptabs').addEventListener('click',e=>{
   const t=e.target.closest('.ptab');if(!t) return;
   document.querySelectorAll('.ptab').forEach(x=>x.classList.remove('on'));
@@ -1408,21 +1473,25 @@ async function renderPtTab(tab){
         <div class="assign-lbl">Assigned Physician</div>
         <div class="assign-row">
           <select class="p-sel" id="asDrSel">${allDrs.map(d=>`<option value="${d.id}" ${d.id===pp.doctor_id?'selected':''}>${d.name}</option>`).join('')}</select>
-          <button class="btn btn-c" style="font-size:11px;padding:7px 12px;" onclick="assignDr('${pp.id}')">Assign</button>
+          <button class="btn btn-c" style="font-size:11px;padding:7px 12px;" id="asDrBtn">Assign</button>
         </div>
       </div>
       <div class="assign-box">
         <div class="assign-lbl">Transfer Department</div>
         <div class="assign-row">
           <select class="p-sel" id="asDeptSel">${allDepts.map(d=>`<option value="${d.id}" ${d.id===(pp.departments?.id||pp.department_id)?'selected':''}>${d.name}</option>`).join('')}</select>
-          <button class="btn btn-g" style="font-size:11px;padding:7px 12px;" onclick="transferDept('${pp.id}')">Transfer</button>
+          <button class="btn btn-g" style="font-size:11px;padding:7px 12px;" id="asDeptBtn">Transfer</button>
         </div>
       </div>
       <div class="danger-zone">
         <div class="danger-lbl">⚠ Danger Zone</div>
         <div class="danger-sub">Permanently remove this patient and all linked records. Cannot be undone.</div>
-        <button class="btn btn-r" onclick="startDel('${pp.id}','${pp.name.replace(/'/g,"\\'")}','patient')">🗑 Delete Patient</button>
+        <button class="btn btn-r" id="delPtBtn">🗑 Delete Patient</button>
       </div>`;
+
+    document.getElementById('asDrBtn').addEventListener('click',()=>assignDr(pp.id));
+    document.getElementById('asDeptBtn').addEventListener('click',()=>transferDept(pp.id));
+    document.getElementById('delPtBtn').addEventListener('click',()=>startDel(pp.id,pp.name));
   }
 
   else if(tab==='emr'){
@@ -1431,19 +1500,21 @@ async function renderPtTab(tab){
       <div class="vital-grid" id="vitalsDisplay"><div class="loading"><div class="spinner"></div></div></div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
         <div class="card-title" style="font-size:14px;">Diagnoses</div>
-        <button class="charge-btn" onclick="addDiagnosis('${pt.id}')">+ Add</button>
+        <button class="charge-btn" id="addDiagBtn">+ Add</button>
       </div>
       <div id="diagList" style="margin-bottom:16px;font-size:12.5px;color:var(--text3);">Loading…</div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
         <div class="card-title" style="font-size:14px;">Medications</div>
-        <button class="charge-btn" onclick="addMedication('${pt.id}')">+ Prescribe</button>
+        <button class="charge-btn" id="addMedBtn">+ Prescribe</button>
       </div>
       <div id="medList" style="margin-bottom:16px;font-size:12.5px;color:var(--text3);">Loading…</div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
         <div class="card-title" style="font-size:14px;">Vitals (Latest)</div>
-        <button class="charge-btn" onclick="addVitals('${pt.id}')">+ Record</button>
+        <button class="charge-btn" id="addVitalsBtn">+ Record</button>
       </div>`;
-    // Load EMR data
+    document.getElementById('addDiagBtn').addEventListener('click',()=>addDiagnosis(pt.id));
+    document.getElementById('addMedBtn').addEventListener('click',()=>addMedication(pt.id));
+    document.getElementById('addVitalsBtn').addEventListener('click',()=>addVitals(pt.id));
     loadEMRData(pt.id);
   }
 
@@ -1482,9 +1553,14 @@ async function renderPtTab(tab){
 
   else if(tab==='no'){
     body.innerHTML=`<textarea class="notes-ta" id="notesTa" placeholder="Clinical notes, observations, follow-up instructions…"></textarea>
-    <button class="btn btn-c" style="margin-top:8px;font-size:11.5px;padding:7px 14px;" onclick="saveNote()">Save Note</button>
+    <button class="btn btn-c" style="margin-top:8px;font-size:11.5px;padding:7px 14px;" id="saveNoteBtn">Save Note</button>
     <div style="margin:16px 0 9px;font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;">Previous Notes</div>
     <div class="tl"><div class="tl-item"><div class="tl-dot c">📝</div><div><div class="tl-lbl">System</div><div class="tl-time">Record created in MedoScope</div><div class="tl-note">Patient record is active and up to date.</div></div></div></div>`;
+    document.getElementById('saveNoteBtn').addEventListener('click',()=>{
+      const v=document.getElementById('notesTa')?.value;
+      if(!v?.trim()){toast('Empty note','i');return;}
+      toast('Note saved','s');
+    });
   }
 }
 
@@ -1492,7 +1568,6 @@ async function loadEMRData(patId){
   const vitalsEl=document.getElementById('vitalsDisplay');
   const diagEl=document.getElementById('diagList');
   const medEl=document.getElementById('medList');
-  // Try loading from DB — gracefully handle missing tables
   try{
     const {data:vitals}=await sb.from('vitals').select('*').eq('patient_id',patId).order('recorded_at',{ascending:false}).limit(1);
     const v=vitals?.[0];
@@ -1508,10 +1583,28 @@ async function loadEMRData(patId){
   }catch{if(medEl)medEl.innerHTML='<div style="font-size:11.5px;color:var(--text3);">Add <code>medications</code> table to Supabase</div>';}
 }
 
-function addDiagnosis(id){const desc=prompt('Enter diagnosis description:');if(!desc) return;const icd=prompt('ICD code (optional):');sb.from('diagnoses').insert([{patient_id:id,description:desc,icd_code:icd||null,diagnosed_at:new Date().toISOString()}]).then(({error})=>{if(error){toast('Add diagnoses table first','e');}else{toast('Diagnosis saved','s');loadEMRData(id);}});}
-function addMedication(id){const drug=prompt('Drug name:');if(!drug) return;const dose=prompt('Dosage:');const freq=prompt('Frequency (e.g. twice daily):');sb.from('medications').insert([{patient_id:id,drug_name:drug,dosage:dose||null,frequency:freq||null,prescribed_at:new Date().toISOString()}]).then(({error})=>{if(error){toast('Add medications table first','e');}else{toast('Medication saved','s');loadEMRData(id);}});}
-function addVitals(id){const hr=prompt('Heart rate (bpm):');const bp=prompt('Blood pressure (e.g. 120/80):');const [sys,dia]=(bp||'/').split('/');const temp=prompt('Temperature (°C):');const o2=prompt('SpO₂ (%):');sb.from('vitals').insert([{patient_id:id,heart_rate:parseInt(hr)||null,bp_systolic:parseInt(sys)||null,bp_diastolic:parseInt(dia)||null,temperature:parseFloat(temp)||null,oxygen_sat:parseFloat(o2)||null,recorded_at:new Date().toISOString()}]).then(({error})=>{if(error){toast('Add vitals table first','e');}else{toast('Vitals recorded','s');loadEMRData(id);}});}
-function saveNote(){const v=document.getElementById('notesTa')?.value;if(!v?.trim()){toast('Empty note','i');return;}toast('Note saved','s');}
+function addDiagnosis(id){
+  const desc=prompt('Enter diagnosis description:');if(!desc) return;
+  const icd=prompt('ICD code (optional):');
+  sb.from('diagnoses').insert([{patient_id:id,description:desc,icd_code:icd||null,diagnosed_at:new Date().toISOString()}])
+    .then(({error})=>{if(error){toast('Add diagnoses table first','e');}else{toast('Diagnosis saved','s');loadEMRData(id);}});
+}
+function addMedication(id){
+  const drug=prompt('Drug name:');if(!drug) return;
+  const dose=prompt('Dosage:');
+  const freq=prompt('Frequency (e.g. twice daily):');
+  sb.from('medications').insert([{patient_id:id,drug_name:drug,dosage:dose||null,frequency:freq||null,prescribed_at:new Date().toISOString()}])
+    .then(({error})=>{if(error){toast('Add medications table first','e');}else{toast('Medication saved','s');loadEMRData(id);}});
+}
+function addVitals(id){
+  const hr=prompt('Heart rate (bpm):');
+  const bp=prompt('Blood pressure (e.g. 120/80):');
+  const [sys,dia]=(bp||'/').split('/');
+  const temp=prompt('Temperature (°C):');
+  const o2=prompt('SpO₂ (%):');
+  sb.from('vitals').insert([{patient_id:id,heart_rate:parseInt(hr)||null,bp_systolic:parseInt(sys)||null,bp_diastolic:parseInt(dia)||null,temperature:parseFloat(temp)||null,oxygen_sat:parseFloat(o2)||null,recorded_at:new Date().toISOString()}])
+    .then(({error})=>{if(error){toast('Add vitals table first','e');}else{toast('Vitals recorded','s');loadEMRData(id);}});
+}
 
 // ── STATUS / ASSIGN / TRANSFER ────────────────────────────────────────────────
 async function setStatus(id,ns){
@@ -1544,8 +1637,8 @@ async function transferDept(pid){
 }
 
 // ── DELETE ────────────────────────────────────────────────────────────────────
-function startDel(id,name,type='patient'){
-  delTarget=id;delType=type;
+function startDel(id,name){
+  delTarget=id;
   document.getElementById('confirmTitle').textContent='Delete '+name+'?';
   document.getElementById('confirmSub').innerHTML='Permanently remove <strong>'+name+'</strong> and all linked records. <strong>Cannot be undone.</strong>';
   document.getElementById('confirmModal').classList.add('on');
@@ -1556,9 +1649,10 @@ document.getElementById('confirmYes').addEventListener('click',async()=>{
   const btn=document.getElementById('confirmYes');btn.textContent='Deleting…';btn.disabled=true;
   const id=delTarget,name=curPt?.name||'Record';
   try{
-    const e1=await sb.from('invoices').delete().eq('patient_id',id);if(e1.error) throw e1.error;
-    const e2=await sb.from('appointments').delete().eq('patient_id',id);if(e2.error) throw e2.error;
-    const e3=await sb.from('patients').delete().eq('id',id);if(e3.error) throw e3.error;
+    await sb.from('invoices').delete().eq('patient_id',id);
+    await sb.from('appointments').delete().eq('patient_id',id);
+    const {error}=await sb.from('patients').delete().eq('id',id);
+    if(error) throw error;
     allPts=allPts.filter(p=>p.id!==id);
     document.getElementById('confirmModal').classList.remove('on');
     closePanel();
@@ -1568,7 +1662,7 @@ document.getElementById('confirmYes').addEventListener('click',async()=>{
     document.getElementById('ovKpiPts').textContent=allPts.length;
     document.getElementById('ovKpiCrit').textContent=crit;
     updateCritBanner(crit);
-  }catch(e){toast('Delete failed: '+e.message+' — run delete policies SQL in Supabase','e');}
+  }catch(e){toast('Delete failed: '+e.message,'e');}
   finally{btn.textContent='Delete Permanently';btn.disabled=false;delTarget=null;}
 });
 
@@ -1642,6 +1736,7 @@ document.getElementById('admitModal').addEventListener('click',e=>{if(e.target==
 
 // ── ALERT BAR ──────────────────────────────────────────────────────────────────
 document.getElementById('viewCritBtn').addEventListener('click',()=>{goTo('patients');setPtFilter('Critical');});
+document.getElementById('ovViewAllBtn').addEventListener('click',()=>goTo('patients'));
 
 // ── APPOINTMENTS ───────────────────────────────────────────────────────────────
 async function loadAppointments(){
@@ -1658,7 +1753,7 @@ async function loadAppointments(){
     const t=a.scheduled_at?new Date(a.scheduled_at):null;
     const hr=t?t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}):'—';
     const bg=DRC[a.doctors?.name]||'linear-gradient(135deg,#4a6080,#2a4060)';
-    return `<div class="inv-row" onclick="openPt('${a.patient_id}')">
+    return `<div class="inv-row" data-ptid="${a.patient_id}">
       <div class="inv-ic" style="background:transparent;font-size:17px;">📅</div>
       <div style="flex:1;min-width:0;"><div class="inv-name">${a.patients?.name||'Unknown'} — ${a.appointment_type||'Consultation'}</div><div class="inv-date">${hr} · ${a.room||'—'}</div></div>
       <div style="display:flex;align-items:center;gap:7px;flex-shrink:0;">
@@ -1669,6 +1764,31 @@ async function loadAppointments(){
     </div>`;
   }).join('')+'</div>';
 }
+
+// ── GLOBAL EVENT DELEGATION — patient row clicks ──────────────────────────────
+// Covers: overview table, patients table, EMR table, appointments list
+document.addEventListener('click',e=>{
+  // Table rows with data-ptid
+  const row=e.target.closest('tr[data-ptid]');
+  if(row){
+    const tab=row.dataset.tab||'ov';
+    openPt(row.dataset.ptid, tab);
+    return;
+  }
+  // Appointment inv-rows with data-ptid
+  const apptRow=e.target.closest('.inv-row[data-ptid]');
+  if(apptRow){
+    openPt(apptRow.dataset.ptid);
+    return;
+  }
+  // Charge btn inside EMR table (stop propagation was needed — now data-tab="emr" on TR handles it)
+  const emrBtn=e.target.closest('button[data-ptid][data-tab]');
+  if(emrBtn){
+    e.stopPropagation();
+    openPt(emrBtn.dataset.ptid, emrBtn.dataset.tab);
+    return;
+  }
+});
 
 // ── PAGE LOADER ────────────────────────────────────────────────────────────────
 function loadPage(p){
