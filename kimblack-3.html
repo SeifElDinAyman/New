@@ -1,0 +1,3080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FabFiction Magazine — Content Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script>
+  /* ╔══════════════════════════════════════════════════════════════╗
+     ║  SUPABASE CONFIG — paste your two values between the quotes.   ║
+     ║  Find them in your project: Settings → API                    ║
+     ╚══════════════════════════════════════════════════════════════╝ */
+  const SUPABASE_URL      = "https://ktplwftawufgzcpcwnhw.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_LPs_ZkNVS5YrHByzxvTpfg_SLin0m_y";
+</script>
+<style>
+  :root {
+    --bg: #efe4d2;
+    --surface: #fbf6ec;
+    --surface2: #f3ebda;
+    --surface3: #e8dcc6;
+    --border: rgba(22,52,49,0.10);
+    --border2: rgba(22,52,49,0.20);
+    --teal: #163431;
+    --teal2: #2a8079;
+    --teal-dim: rgba(42,128,121,0.12);
+    --gold: #b8923c;
+    --gold2: #cba552;
+    --gold-dim: rgba(184,146,60,0.14);
+    --gold-dim2: rgba(184,146,60,0.07);
+    --text: #163431;
+    --text2: #4a625e;
+    --text3: #8a9b96;
+    --red: #b8473f;
+    --green: #2f8f5b;
+    --blue: #2d6ca8;
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --sidebar: 230px;
+    --radius: 8px;
+    --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { max-width: 100%; overflow-x: hidden; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar);
+    min-width: var(--sidebar);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+  }
+
+  .sidebar-logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-emblem {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid var(--gold-dim);
+  }
+
+  .logo-name {
+    font-family: var(--font-display);
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--teal);
+    line-height: 1;
+  }
+
+  .logo-name .fab { color: var(--teal); }
+  .logo-name .fiction { color: var(--gold); }
+
+  .logo-sub {
+    font-size: 9px;
+    color: var(--text3);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 16px 0;
+    overflow-y: auto;
+  }
+
+  .nav-section-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-weight: 600;
+    padding: 12px 20px 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all var(--transition);
+    font-size: 13px;
+    font-weight: 400;
+    border-left: 2px solid transparent;
+    position: relative;
+  }
+
+  .nav-item:hover { color: var(--text); background: var(--surface2); }
+
+  .nav-item.active {
+    color: var(--teal);
+    background: var(--teal-dim);
+    border-left-color: var(--teal2);
+    font-weight: 600;
+  }
+
+  .nav-icon {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  .nav-item.active .nav-icon { opacity: 1; }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--gold);
+    color: var(--bg);
+    font-size: 9px;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 2px 6px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  .sidebar-bottom {
+    padding: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    display: inline-block;
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .status-text { font-size: 11px; color: var(--text3); }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: var(--sidebar);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    height: 60px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+
+  .topbar-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
+
+  /* ── CONTENT AREA ── */
+  .content-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px;
+  }
+
+  /* ── PAGES ── */
+  .page { display: none; animation: fadeIn 0.3s ease; }
+  .page.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition);
+    border: 1px solid transparent;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .btn-primary {
+    background: var(--teal);
+    color: #fbf6ec;
+    border-color: var(--teal);
+  }
+  .btn-primary:hover { background: #1f4a45; border-color: #1f4a45; }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text2);
+    border-color: var(--border2);
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--border2); background: var(--surface2); }
+
+  .btn-danger {
+    background: transparent;
+    color: var(--red);
+    border-color: rgba(201,76,76,0.3);
+  }
+  .btn-danger:hover { background: rgba(201,76,76,0.1); }
+
+  .btn-icon {
+    padding: 7px;
+    background: transparent;
+    color: var(--text2);
+    border-color: var(--border);
+  }
+  .btn-icon:hover { color: var(--text); background: var(--surface2); }
+
+  .btn-sm { padding: 5px 11px; font-size: 12px; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+
+  .card-gold {
+    background: var(--gold-dim2);
+    border-color: rgba(201,168,76,0.2);
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1;
+  }
+
+  .section-sub {
+    font-size: 12px;
+    color: var(--text3);
+    margin-top: 5px;
+    font-weight: 400;
+  }
+
+  /* ── STATS ROW ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .stat-change {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 4px;
+  }
+
+  /* ── UPLOAD ZONE ── */
+  .upload-zone {
+    border: 1.5px dashed rgba(201,168,76,0.3);
+    border-radius: var(--radius);
+    padding: 48px 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition);
+    background: var(--gold-dim2);
+    position: relative;
+  }
+
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--gold);
+    background: var(--gold-dim);
+  }
+
+  .upload-zone input[type=file] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .upload-icon {
+    font-size: 36px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .upload-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .upload-sub { font-size: 12px; color: var(--text3); }
+
+  /* ── QUOTE CARDS ── */
+  .quotes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 14px;
+  }
+
+  .quote-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: all var(--transition);
+  }
+
+  .quote-card:hover { border-color: var(--border2); }
+
+  .quote-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--text3);
+    background: var(--surface2);
+    padding: 3px 8px;
+    border-radius: 4px;
+    width: fit-content;
+  }
+
+  .quote-tag.tension { color: var(--red); background: rgba(201,76,76,0.08); }
+  .quote-tag.atmosphere { color: var(--blue); background: rgba(76,127,201,0.08); }
+  .quote-tag.character { color: var(--green); background: rgba(76,175,114,0.08); }
+  .quote-tag.hook { color: var(--gold); background: var(--gold-dim); }
+
+  .quote-text {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.55;
+    color: var(--text);
+    border-left: 2px solid var(--gold);
+    padding-left: 14px;
+  }
+
+  .quote-source {
+    font-size: 11px;
+    color: var(--text3);
+    font-weight: 400;
+  }
+
+  .quote-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  /* ── POST BUILDER ── */
+  .post-builder {
+    background: var(--surface);
+    border: 1px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-top: 0;
+    animation: slideDown 0.3s ease;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .post-builder-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 24px;
+  }
+
+  .builder-section-label {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 13px;
+    line-height: 1.6;
+    padding: 12px;
+    resize: vertical;
+    min-height: 90px;
+    transition: border-color var(--transition);
+    outline: none;
+  }
+
+  textarea:focus { border-color: var(--gold); }
+
+  input[type=text], input[type=email], input[type=time], input[type=date], select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 13px;
+    padding: 9px 12px;
+    outline: none;
+    transition: border-color var(--transition);
+  }
+
+  input[type=text]:focus, input[type=email]:focus, input[type=date]:focus, select:focus { border-color: var(--gold); }
+
+  select { appearance: none; cursor: pointer; }
+  select option { background: var(--surface2); }
+
+  /* ── PLATFORM CHIPS ── */
+  .platform-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .platform-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    transition: all var(--transition);
+    user-select: none;
+  }
+
+  .platform-chip.selected-ig { border-color: #e1306c; color: #e1306c; background: rgba(225,48,108,0.08); }
+  .platform-chip.selected-fb { border-color: #1877f2; color: #1877f2; background: rgba(24,119,242,0.08); }
+  .platform-chip.selected-li { border-color: #0a66c2; color: #0a66c2; background: rgba(10,102,194,0.08); }
+  .platform-chip.selected-tt { border-color: #163431; color: #163431; background: rgba(22,52,49,0.08); }
+
+  /* ── TOGGLE ── */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .toggle-row:last-child { border-bottom: none; }
+
+  .toggle-label { font-size: 13px; color: var(--text2); }
+  .toggle-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  .toggle {
+    width: 36px; height: 20px;
+    background: var(--surface3);
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    transition: background var(--transition);
+    flex-shrink: 0;
+    border: 1px solid var(--border2);
+  }
+
+  .toggle.on { background: var(--gold); border-color: var(--gold); }
+
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    top: 2px; left: 2px;
+    transition: transform var(--transition);
+  }
+
+  .toggle.on::after { transform: translateX(16px); }
+
+  /* ── CALENDAR ── */
+  .calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .calendar-nav { display: flex; align-items: center; gap: 12px; }
+
+  .calendar-month {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    min-width: 180px;
+    text-align: center;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .cal-day-header {
+    background: var(--surface);
+    padding: 10px 8px;
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-weight: 600;
+  }
+
+  .cal-day {
+    background: var(--surface);
+    min-height: 110px;
+    padding: 8px;
+    position: relative;
+    cursor: pointer;
+    transition: background var(--transition);
+  }
+
+  .cal-day:hover { background: var(--surface2); }
+  .cal-day.other-month { opacity: 0.35; }
+  .cal-day.today { background: var(--gold-dim2); }
+  .cal-day.today .cal-date { color: var(--gold); font-weight: 600; }
+
+  .cal-date {
+    font-size: 12px;
+    color: var(--text3);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .cal-post {
+    background: var(--surface3);
+    border-left: 2px solid var(--gold);
+    border-radius: 4px;
+    padding: 4px 7px;
+    margin-bottom: 3px;
+    font-size: 10px;
+    color: var(--text2);
+    line-height: 1.3;
+    cursor: grab;
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .cal-post:hover { background: var(--surface2); color: var(--text); }
+  .cal-post.pending { border-left-color: #c9a84c; }
+  .cal-post.approved { border-left-color: var(--green); }
+  .cal-post.draft { border-left-color: var(--text3); }
+  .cal-post.posted { border-left-color: var(--blue); opacity: 0.6; }
+
+  .cal-post-platforms {
+    display: flex;
+    gap: 2px;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  .cal-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+  }
+
+  /* ── SCHEDULED LIST ── */
+  .schedule-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .schedule-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all var(--transition);
+    cursor: grab;
+  }
+
+  .schedule-item:hover { border-color: var(--border2); }
+  .schedule-item.dragging { opacity: 0.4; }
+
+  .schedule-drag-handle {
+    color: var(--text3);
+    cursor: grab;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .schedule-date {
+    text-align: center;
+    min-width: 44px;
+    flex-shrink: 0;
+  }
+
+  .schedule-date-day {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .schedule-date-mon {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text3);
+    font-weight: 600;
+  }
+
+  .schedule-divider {
+    width: 1px;
+    height: 40px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  .schedule-info { flex: 1; min-width: 0; }
+
+  .schedule-quote {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-style: italic;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+  }
+
+  .schedule-meta {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .schedule-platforms { display: flex; gap: 4px; }
+
+  .plt-badge {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+
+  .plt-ig { background: rgba(225,48,108,0.12); color: #e1306c; }
+  .plt-fb { background: rgba(24,119,242,0.12); color: #1877f2; }
+  .plt-li { background: rgba(10,102,194,0.12); color: #0a66c2; }
+  .plt-tt { background: rgba(22,52,49,0.1); color: #163431; }
+
+  .status-badge {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 3px;
+  }
+
+  .status-pending { background: rgba(201,168,76,0.12); color: var(--gold); }
+  .status-approved { background: rgba(76,175,114,0.12); color: var(--green); }
+  .status-draft { background: rgba(150,150,150,0.1); color: var(--text3); }
+  .status-posted { background: rgba(76,127,201,0.12); color: var(--blue); }
+
+  .schedule-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+  /* ── SETTINGS ── */
+  .settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .settings-section-title {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-weight: 600;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .form-row { margin-bottom: 14px; }
+
+  .form-label {
+    font-size: 11px;
+    color: var(--text2);
+    font-weight: 500;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .color-row { display: flex; gap: 10px; align-items: center; }
+
+  .color-swatch {
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .color-swatch input[type=color] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 0;
+  }
+
+  .platform-connect-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background: var(--surface2);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+  }
+
+  .platform-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .platform-status {
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* ── SCHEDULE SETTINGS ── */
+  .day-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .day-pill {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+    color: var(--text3);
+    transition: all var(--transition);
+    user-select: none;
+  }
+
+  .day-pill.active {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: var(--gold-dim);
+  }
+
+  /* ── PROGRESS / LOADING ── */
+  .progress-wrap {
+    background: var(--surface2);
+    border-radius: 4px;
+    height: 4px;
+    overflow: hidden;
+    margin-top: 16px;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 4px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .loading-state {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text3);
+    font-size: 12px;
+    padding: 16px 0;
+  }
+
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid var(--border2);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text3);
+  }
+
+  .empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.4; }
+
+  .empty-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--text2);
+    margin-bottom: 6px;
+  }
+
+  .empty-sub { font-size: 12px; }
+
+  /* ── NOTIFICATION ── */
+  .notif {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    max-width: 340px;
+    box-shadow: 0 8px 32px rgba(22,52,49,0.18);
+  }
+
+  .notif.show { transform: translateY(0); opacity: 1; }
+  .notif.success { border-color: rgba(76,175,114,0.4); }
+  .notif.error { border-color: rgba(201,76,76,0.4); }
+  .notif-icon { font-size: 16px; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 28px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 85vh;
+    max-height: 85dvh;
+    overflow-y: auto;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .modal-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 400;
+  }
+
+  /* ── TABS ── */
+  .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+
+  .tab {
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all var(--transition);
+  }
+
+  .tab:hover { color: var(--text2); }
+  .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 20px 0;
+  }
+
+  /* ── BOOK CARDS ── */
+  .books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .book-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: all var(--transition);
+    cursor: pointer;
+  }
+
+  .book-card:hover { border-color: var(--gold); }
+  .book-card.active { border-color: var(--gold); background: var(--gold-dim2); }
+
+  .book-cover {
+    width: 100%;
+    aspect-ratio: 2/3;
+    background: linear-gradient(135deg, var(--surface2), var(--surface3));
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 40px;
+    color: var(--gold);
+    font-style: italic;
+    opacity: 0.7;
+    border: 1px solid var(--border);
+  }
+
+  .book-title {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 500;
+    font-style: italic;
+    line-height: 1.3;
+  }
+
+  .book-meta { font-size: 11px; color: var(--text3); }
+
+  /* image preview placeholder */
+  .image-placeholder {
+    background: linear-gradient(135deg, #f3ebda, #e8dcc6);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: var(--text3);
+    font-size: 11px;
+    text-align: center;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .image-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 30% 30%, rgba(201,168,76,0.04), transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(201,76,76,0.03), transparent 60%);
+  }
+
+  .image-placeholder-icon { font-size: 28px; opacity: 0.3; }
+
+  /* ── ANALYTICS ── */
+  .analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .bar-chart {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+
+  .bar-chart-title {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .bar-label { font-size: 11px; color: var(--text2); width: 60px; flex-shrink: 0; }
+
+  .bar-track {
+    flex: 1;
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--gold);
+    transition: width 0.8s ease;
+  }
+
+  .bar-val { font-size: 11px; color: var(--text3); width: 30px; text-align: right; }
+
+  /* ── GRID LAYOUTS ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+  /* misc */
+  .gold { color: var(--gold); }
+  .text3 { color: var(--text3); }
+  .text2 { color: var(--text2); }
+  .mt8 { margin-top: 8px; }
+  .mt12 { margin-top: 12px; }
+  .mt16 { margin-top: 16px; }
+  .mt20 { margin-top: 20px; }
+  .mb12 { margin-bottom: 12px; }
+  .mb16 { margin-bottom: 16px; }
+  .mb20 { margin-bottom: 20px; }
+  .flex { display: flex; }
+  .flex-center { display: flex; align-items: center; }
+  .gap8 { gap: 8px; }
+  .gap12 { gap: 12px; }
+  .gap16 { gap: 16px; }
+  .justify-between { justify-content: space-between; }
+  .w-full { width: 100%; }
+
+  /* ── MOBILE NAV ── */
+  .mobile-nav {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 60px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: rgba(251,246,236,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border2);
+    z-index: 150;
+    justify-content: space-around;
+    align-items: stretch;
+    box-shadow: 0 -2px 16px rgba(22,52,49,0.06);
+  }
+
+  .mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: color var(--transition);
+    color: var(--text3);
+    flex: 1;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  .mobile-nav-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 28px;
+    height: 3px;
+    border-radius: 0 0 3px 3px;
+    background: transparent;
+    transition: background var(--transition);
+  }
+
+  .mobile-nav-item.active { color: var(--teal); }
+  .mobile-nav-item.active::before { background: var(--gold); }
+  .mobile-nav-item.active .mobile-nav-icon { transform: translateY(-1px); }
+  .mobile-nav-item:active { background: var(--teal-dim); }
+
+  .mobile-nav-icon { font-size: 20px; line-height: 1; transition: transform var(--transition); }
+  .mobile-nav-label { font-size: 10px; font-weight: 600; letter-spacing: 0.02em; }
+
+  /* sidebar overlay on mobile */
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 90;
+    backdrop-filter: blur(2px);
+  }
+
+  .sidebar-overlay.open { display: block; }
+
+  /* hamburger */
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: background var(--transition);
+  }
+  .hamburger:hover { background: var(--surface2); }
+  .hamburger span {
+    display: block;
+    width: 18px; height: 2px;
+    background: var(--text2);
+    border-radius: 1px;
+    transition: all var(--transition);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    body { overflow: auto; }
+
+    .sidebar {
+      transform: translateX(-100%);
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      z-index: 100;
+      width: 260px;
+      min-width: 260px;
+    }
+
+    .sidebar.open { transform: translateX(0); }
+
+    .main { margin-left: 0; height: auto; min-height: 100vh; }
+
+    .topbar { padding: 0 16px; }
+
+    .hamburger { display: flex; }
+
+    .topbar-actions .btn:not(.btn-primary) { display: none; }
+    .topbar-actions .btn-primary { font-size: 12px; padding: 7px 12px; }
+
+    .content-area {
+      padding: 16px;
+      padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      height: calc(100vh - 60px);
+      height: calc(100dvh - 60px);
+    }
+
+    .mobile-nav { display: flex; }
+
+    /* grids → single column */
+    .stats-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .two-col { grid-template-columns: 1fr; }
+    .three-col { grid-template-columns: 1fr; }
+    .settings-grid { grid-template-columns: 1fr; }
+    .analytics-grid { grid-template-columns: 1fr; }
+    .quotes-grid { grid-template-columns: 1fr; }
+    .books-grid { grid-template-columns: repeat(2, 1fr); }
+
+    /* post builder */
+    .post-builder-grid { grid-template-columns: 1fr; }
+
+    /* section headers stack */
+    .section-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .section-header .flex { flex-wrap: wrap; }
+
+    /* topbar title smaller */
+    .topbar-title { font-size: 16px; }
+
+    /* calendar */
+    .cal-day { min-height: 70px; padding: 5px; }
+    .cal-day-header { padding: 7px 4px; font-size: 9px; }
+    .cal-date { font-size: 11px; }
+    .cal-post { font-size: 9px; padding: 3px 5px; }
+    .calendar-header { flex-direction: column; gap: 10px; align-items: flex-start; }
+
+    /* schedule items */
+    .schedule-item { flex-wrap: wrap; gap: 10px; padding: 12px; }
+    .schedule-actions { width: 100%; justify-content: flex-end; }
+
+    /* stat cards */
+    .stat-value { font-size: 26px; }
+
+    /* modal full-width */
+    .modal { width: 95%; max-height: 90vh; max-height: 90dvh; padding: 20px; }
+
+    /* comfortable tap targets */
+    .btn-sm { padding: 9px 13px; min-height: 38px; }
+    .nav-item { padding: 12px 20px; }
+    .platform-chip { padding: 9px 14px; }
+
+    /* platform chips scroll */
+    .platform-chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+
+    /* tabs scroll */
+    .tabs { overflow-x: auto; white-space: nowrap; }
+
+    /* upload zone */
+    .upload-zone { padding: 32px 20px; }
+
+    /* bar chart */
+    .bar-chart { padding: 14px; }
+
+    /* prevent iOS zoom-on-focus by using 16px inputs */
+    input[type=text], input[type=email], input[type=time], input[type=date], select, textarea {
+      font-size: 16px;
+    }
+
+    /* prevent iOS text auto-inflation */
+    html { -webkit-text-size-adjust: 100%; }
+  }
+
+  @media (max-width: 400px) {
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .books-grid { grid-template-columns: 1fr 1fr; }
+    .stat-value { font-size: 22px; }
+    .section-title { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <img class="logo-emblem" src="data:image/jpeg;base64,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" alt="FabFiction" />
+    <div>
+      <div class="logo-name"><span class="fab">Fab</span><span class="fiction">Fiction</span></div>
+      <div class="logo-sub">Magazine · Engine</div>
+    </div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <div class="nav-item active" onclick="navigate('dashboard')">
+      <span class="nav-icon">◈</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="navigate('calendar')">
+      <span class="nav-icon">⊞</span> Calendar
+    </div>
+    <div class="nav-section-label">Content</div>
+    <div class="nav-item" onclick="navigate('books')">
+      <span class="nav-icon">◎</span> Books
+    </div>
+    <div class="nav-item" onclick="navigate('quotes')">
+      <span class="nav-icon">❝</span> Quote Library
+      <span class="nav-badge" id="quote-count-badge">0</span>
+    </div>
+    <div class="nav-item" onclick="navigate('posts')">
+      <span class="nav-icon">⊡</span> Posts
+      <span class="nav-badge" id="posts-count-badge">0</span>
+    </div>
+    <div class="nav-section-label">Platform</div>
+    <div class="nav-item" onclick="navigate('schedule')">
+      <span class="nav-icon">◷</span> Schedule
+    </div>
+    <div class="nav-item" onclick="navigate('analytics')">
+      <span class="nav-icon">◈</span> Analytics
+    </div>
+    <div class="nav-section-label">Setup</div>
+    <div class="nav-item" onclick="navigate('settings')">
+      <span class="nav-icon">⊙</span> Settings
+    </div>
+  </div>
+  <div class="sidebar-bottom">
+    <span class="status-dot"></span>
+    <span class="status-text">Engine ready</span>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="flex-center gap12">
+      <div class="hamburger" onclick="openSidebar()">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost btn-sm" onclick="navigate('books')">＋ Upload Book</button>
+      <button class="btn btn-primary btn-sm" onclick="navigate('schedule')">⊞ Schedule Posts</button>
+    </div>
+  </div>
+
+  <div class="content-area">
+
+    <!-- ─── DASHBOARD ─── -->
+    <div class="page active" id="page-dashboard">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Good evening.</div>
+          <div class="section-sub">Here's where everything stands.</div>
+        </div>
+        <button class="btn btn-ghost btn-sm">View report →</button>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Books Uploaded</div>
+          <div class="stat-value" id="stat-books">0</div>
+          <div class="stat-change">— add your first book</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Quotes Extracted</div>
+          <div class="stat-value" id="stat-quotes">0</div>
+          <div class="stat-change">across all books</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Posts Ready</div>
+          <div class="stat-value" id="stat-posts">0</div>
+          <div class="stat-change">pending approval</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Posted This Month</div>
+          <div class="stat-value" id="stat-posted">0</div>
+          <div class="stat-change">across all platforms</div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="settings-section-title">Quick Actions</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <button class="btn btn-ghost w-full" style="justify-content:flex-start" onclick="navigate('books')">📖 Upload a new book</button>
+            <button class="btn btn-ghost w-full" style="justify-content:flex-start" onclick="navigate('quotes')">❝ Browse quote library</button>
+            <button class="btn btn-ghost w-full" style="justify-content:flex-start" onclick="navigate('calendar')">⊞ View content calendar</button>
+            <button class="btn btn-ghost w-full" style="justify-content:flex-start" onclick="navigate('settings')">⚙ Configure platforms</button>
+          </div>
+        </div>
+        <div class="card card-gold">
+          <div class="settings-section-title">Upcoming</div>
+          <div id="dash-upcoming" class="empty-state" style="padding:20px 0;">
+            <div class="empty-icon">◷</div>
+            <div style="font-size:12px;color:var(--text3)">No posts scheduled yet</div>
+          </div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="card card-gold">
+        <div class="flex-center gap12 justify-between mb12">
+          <div>
+            <div style="font-family:var(--font-display);font-size:18px;font-weight:400;color:var(--gold)">Start Here</div>
+            <div style="font-size:12px;color:var(--text3);margin-top:3px">Upload your first book to begin</div>
+          </div>
+          <button class="btn btn-primary" onclick="navigate('books')">Upload PDF →</button>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <span style="font-size:11px;color:var(--text3)">Steps:</span>
+          <span style="font-size:11px;padding:3px 8px;background:var(--surface2);border-radius:4px;color:var(--text2)">① Upload book</span>
+          <span style="font-size:11px;color:var(--text3)">→</span>
+          <span style="font-size:11px;padding:3px 8px;background:var(--surface2);border-radius:4px;color:var(--text2)">② Extract quotes</span>
+          <span style="font-size:11px;color:var(--text3)">→</span>
+          <span style="font-size:11px;padding:3px 8px;background:var(--surface2);border-radius:4px;color:var(--text2)">③ Generate posts</span>
+          <span style="font-size:11px;color:var(--text3)">→</span>
+          <span style="font-size:11px;padding:3px 8px;background:var(--surface2);border-radius:4px;color:var(--text2)">④ Schedule &amp; approve</span>
+          <span style="font-size:11px;color:var(--text3)">→</span>
+          <span style="font-size:11px;padding:3px 8px;background:var(--surface2);border-radius:4px;color:var(--text2)">⑤ Auto-post</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── BOOKS ─── -->
+    <div class="page" id="page-books">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Books</div>
+          <div class="section-sub">Upload PDFs to extract quote content</div>
+        </div>
+      </div>
+      <div class="books-grid" id="books-grid"></div>
+      <div class="upload-zone" id="book-upload-zone">
+        <input type="file" accept=".pdf,.txt" id="book-file-input" onchange="handleBookUpload(event)" />
+        <span class="upload-icon">📖</span>
+        <div class="upload-title">Drop your manuscript here</div>
+        <div class="upload-sub">PDF or TXT • Kim Black's fiction novels</div>
+      </div>
+      <div id="book-processing" style="display:none;margin-top:20px">
+        <div class="card">
+          <div class="flex-center gap12 mb12">
+            <div class="spinner"></div>
+            <div style="font-size:14px;font-weight:500" id="processing-label">Reading manuscript...</div>
+          </div>
+          <div class="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+          <div style="font-size:11px;color:var(--text3);margin-top:8px" id="processing-sub">Extracting atmospheric and emotionally charged passages</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── QUOTES ─── -->
+    <div class="page" id="page-quotes">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Quote Library</div>
+          <div class="section-sub">Extracted lines ready for content creation</div>
+        </div>
+        <div class="flex gap8">
+          <select id="quote-filter-book" onchange="filterQuotes()" style="width:auto">
+            <option value="">All Books</option>
+          </select>
+          <select id="quote-filter-tag" onchange="filterQuotes()" style="width:auto">
+            <option value="">All Types</option>
+            <option value="hook">Hook</option>
+            <option value="tension">Tension</option>
+            <option value="atmosphere">Atmosphere</option>
+            <option value="character">Character</option>
+          </select>
+          <button class="btn btn-primary btn-sm" onclick="openNewQuote()">＋ Add Quote</button>
+        </div>
+      </div>
+      <div class="quotes-grid" id="quotes-grid">
+        <div class="empty-state" style="grid-column:1/-1">
+          <div class="empty-icon">❝</div>
+          <div class="empty-title">No quotes yet</div>
+          <div class="empty-sub">Upload a book to extract lines, or add one manually</div>
+          <button class="btn btn-primary btn-sm" style="margin-top:14px" onclick="openNewQuote()">＋ Add Quote</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── POSTS ─── -->
+    <div class="page" id="page-posts">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Posts</div>
+          <div class="section-sub">Generated content ready to schedule</div>
+        </div>
+        <div class="flex gap8">
+          <select id="post-filter-status" onchange="filterPosts()" style="width:auto">
+            <option value="">All Status</option>
+            <option value="draft">Draft</option>
+            <option value="pending">Pending Approval</option>
+            <option value="approved">Approved</option>
+            <option value="posted">Posted</option>
+          </select>
+          <button class="btn btn-primary btn-sm" onclick="openNewPost()">＋ New Post</button>
+        </div>
+      </div>
+      <div class="schedule-list" id="posts-list">
+        <div class="empty-state">
+          <div class="empty-icon">⊡</div>
+          <div class="empty-title">No posts yet</div>
+          <div class="empty-sub">Generate posts from your quote library</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── CALENDAR ─── -->
+    <div class="page" id="page-calendar">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Content Calendar</div>
+          <div class="section-sub">Drag to reorder • Click to edit</div>
+        </div>
+        <div class="flex gap8">
+          <button class="btn btn-ghost btn-sm" onclick="changeView('list')" id="view-list-btn">≡ List</button>
+          <button class="btn btn-ghost btn-sm" onclick="changeView('grid')" id="view-grid-btn">⊞ Month</button>
+        </div>
+      </div>
+      <div class="calendar-header">
+        <div class="calendar-nav">
+          <button class="btn btn-icon" onclick="prevMonth()">←</button>
+          <div class="calendar-month" id="cal-month-label">May 2025</div>
+          <button class="btn btn-icon" onclick="nextMonth()">→</button>
+        </div>
+        <div class="flex gap8 flex-center">
+          <span style="font-size:11px;color:var(--text3)">Legend:</span>
+          <span style="font-size:11px;color:var(--gold)">● Pending</span>
+          <span style="font-size:11px;color:var(--green)">● Approved</span>
+          <span style="font-size:11px;color:var(--blue)">● Posted</span>
+          <span style="font-size:11px;color:var(--text3)">● Draft</span>
+        </div>
+      </div>
+      <div id="cal-view-grid">
+        <div class="calendar-grid" id="calendar-grid"></div>
+      </div>
+      <div id="cal-view-list" style="display:none">
+        <div class="schedule-list" id="calendar-list-view"></div>
+      </div>
+    </div>
+
+    <!-- ─── SCHEDULE ─── -->
+    <div class="page" id="page-schedule">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Schedule</div>
+          <div class="section-sub">Drag to reorder • Set approval email timing</div>
+        </div>
+      </div>
+      <div class="two-col mb20">
+        <div class="card">
+          <div class="settings-section-title">Approval Email</div>
+          <div class="form-row">
+            <label class="form-label">Send approval digest on</label>
+            <div class="day-pills" id="approval-days">
+              <div class="day-pill" onclick="toggleDay(this)">Sun</div>
+              <div class="day-pill active" onclick="toggleDay(this)">Fri</div>
+              <div class="day-pill" onclick="toggleDay(this)">Sat</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">At time</label>
+            <input type="time" id="approval-time" value="09:00" />
+          </div>
+          <div class="form-row">
+            <label class="form-label">Send to</label>
+            <input type="email" id="approval-email" placeholder="kim@example.com" />
+          </div>
+          <button class="btn btn-primary btn-sm mt8" onclick="saveApprovalSettings()">Save Settings</button>
+        </div>
+        <div class="card">
+          <div class="settings-section-title">Posting Windows</div>
+          <div class="form-row">
+            <label class="form-label">Default post time</label>
+            <input type="time" id="default-post-time" value="10:00" />
+          </div>
+          <div class="form-row">
+            <label class="form-label">Content ratio</label>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px">
+              <div class="bar-row">
+                <div class="bar-label" style="width:120px;font-size:11px;color:var(--text2)">Brand-building</div>
+                <div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--gold)"></div></div>
+                <div class="bar-val">60%</div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-label" style="width:120px;font-size:11px;color:var(--text2)">Book-forward</div>
+                <div class="bar-track"><div class="bar-fill" style="width:30%;background:var(--blue)"></div></div>
+                <div class="bar-val">30%</div>
+              </div>
+              <div class="bar-row">
+                <div class="bar-label" style="width:120px;font-size:11px;color:var(--text2)">Direct CTA</div>
+                <div class="bar-track"><div class="bar-fill" style="width:10%;background:var(--red)"></div></div>
+                <div class="bar-val">10%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="settings-section-title">Upcoming Queue</div>
+      <div class="schedule-list" id="schedule-list">
+        <div class="empty-state">
+          <div class="empty-icon">◷</div>
+          <div class="empty-title">Queue is empty</div>
+          <div class="empty-sub">Generate posts from your quotes to fill the schedule</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── ANALYTICS ─── -->
+    <div class="page" id="page-analytics">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Analytics</div>
+          <div class="section-sub">Performance across all platforms</div>
+        </div>
+        <div class="flex gap8">
+          <select style="width:auto">
+            <option>Last 30 days</option>
+            <option>Last 90 days</option>
+            <option>All time</option>
+          </select>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Total Reach</div><div class="stat-value gold">—</div><div class="stat-change">Connect platforms to see data</div></div>
+        <div class="stat-card"><div class="stat-label">Engagements</div><div class="stat-value gold">—</div><div class="stat-change">likes + comments + shares</div></div>
+        <div class="stat-card"><div class="stat-label">Profile Visits</div><div class="stat-value gold">—</div><div class="stat-change">from posts</div></div>
+        <div class="stat-card"><div class="stat-label">Link Clicks</div><div class="stat-value gold">—</div><div class="stat-change">to book pages</div></div>
+      </div>
+      <div class="three-col">
+        <div class="bar-chart">
+          <div class="bar-chart-title">By Platform</div>
+          <div class="empty-state" style="padding:20px 0;text-align:left"><div style="font-size:11px;color:var(--text3)">Connect platforms in Settings to see performance data</div></div>
+        </div>
+        <div class="bar-chart">
+          <div class="bar-chart-title">By Content Type</div>
+          <div class="empty-state" style="padding:20px 0;text-align:left"><div style="font-size:11px;color:var(--text3)">Post content to begin tracking</div></div>
+        </div>
+        <div class="bar-chart">
+          <div class="bar-chart-title">By Book</div>
+          <div class="empty-state" style="padding:20px 0;text-align:left"><div style="font-size:11px;color:var(--text3)">Upload books to compare performance</div></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="card" style="background:rgba(201,168,76,0.04);border-color:rgba(201,168,76,0.15)">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="font-size:24px">📊</div>
+          <div>
+            <div style="font-size:14px;font-weight:500;margin-bottom:4px">Connect Your Accounts</div>
+            <div style="font-size:12px;color:var(--text3)">Go to Settings → Platforms to connect Instagram, Facebook, LinkedIn, and TikTok. Analytics will populate automatically.</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" style="margin-left:auto;white-space:nowrap" onclick="navigate('settings')">Connect →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SETTINGS ─── -->
+    <div class="page" id="page-settings">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Settings</div>
+          <div class="section-sub">Brand kit, platforms, and preferences</div>
+        </div>
+      </div>
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('brand')">Brand Kit</div>
+        <div class="tab" onclick="switchTab('platforms')">Platforms</div>
+        <div class="tab" onclick="switchTab('voice')">Voice &amp; Audio</div>
+        <div class="tab" onclick="switchTab('api')">API Keys</div>
+      </div>
+
+      <!-- Brand Tab -->
+      <div id="tab-brand" class="settings-grid">
+        <div class="card">
+          <div class="settings-section-title">Identity</div>
+          <div class="form-row">
+            <label class="form-label">Author name</label>
+            <input type="text" value="FabFiction Magazine" id="brand-author" />
+          </div>
+          <div class="form-row">
+            <label class="form-label">Tagline / Bio</label>
+            <textarea id="brand-tagline" style="min-height:60px" placeholder="Fiction that pulls you into the dark..."></textarea>
+          </div>
+          <div class="form-row">
+            <label class="form-label">Brand Tone</label>
+            <select id="brand-tone">
+              <option value="dark_cinematic">Dark &amp; Cinematic</option>
+              <option value="atmospheric">Atmospheric &amp; Literary</option>
+              <option value="tense_thriller">Tense &amp; Thriller</option>
+              <option value="romantic_dark">Dark Romance</option>
+              <option value="mysterious">Mysterious &amp; Evocative</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label class="form-label">Logo Upload</label>
+            <div class="upload-zone" style="padding:24px;min-height:unset">
+              <input type="file" accept="image/*" onchange="handleLogoUpload(event)" />
+              <div style="font-size:24px;margin-bottom:6px" id="logo-preview">🖼</div>
+              <div style="font-size:12px;color:var(--text3)">Drop logo here</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="settings-section-title">Color Palette</div>
+          <div class="form-row">
+            <label class="form-label">Primary Color</label>
+            <div class="color-row">
+              <div class="color-swatch" style="background:#b8923c" id="swatch-primary">
+                <input type="color" value="#b8923c" onchange="updateColor('primary', this.value)" />
+              </div>
+              <input type="text" value="#b8923c" id="color-primary-text" style="width:100px" />
+            </div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">Background Color</label>
+            <div class="color-row">
+              <div class="color-swatch" style="background:#efe4d2" id="swatch-bg">
+                <input type="color" value="#efe4d2" onchange="updateColor('bg', this.value)" />
+              </div>
+              <input type="text" value="#efe4d2" id="color-bg-text" style="width:100px" />
+            </div>
+          </div>
+          <div class="form-row">
+            <label class="form-label">Text Color</label>
+            <div class="color-row">
+              <div class="color-swatch" style="background:#163431" id="swatch-text">
+                <input type="color" value="#163431" onchange="updateColor('text', this.value)" />
+              </div>
+              <input type="text" value="#163431" id="color-text-text" style="width:100px" />
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="settings-section-title">Typography</div>
+          <div class="form-row">
+            <label class="form-label">Display Font</label>
+            <select id="brand-font-display">
+              <option value="Cormorant Garamond">Cormorant Garamond (current)</option>
+              <option value="Playfair Display">Playfair Display</option>
+              <option value="EB Garamond">EB Garamond</option>
+              <option value="DM Serif Display">DM Serif Display</option>
+            </select>
+          </div>
+          <button class="btn btn-primary mt8" onclick="saveBrandKit()">Save Brand Kit</button>
+        </div>
+      </div>
+
+      <!-- Platforms Tab -->
+      <div id="tab-platforms" style="display:none">
+        <div class="card" style="max-width:600px">
+          <div class="settings-section-title">Connected Platforms</div>
+          <div class="platform-connect-row">
+            <div class="platform-name">
+              <span style="font-size:20px">📸</span>
+              <div><div>Instagram</div><div style="font-size:11px;color:var(--text3)">Posts + Stories + Reels</div></div>
+            </div>
+            <div class="platform-status"><span style="width:6px;height:6px;border-radius:50%;background:var(--text3);display:inline-block"></span> <span style="color:var(--text3)">Not connected</span></div>
+            <button class="btn btn-ghost btn-sm" onclick="connectPlatform('instagram')">Connect</button>
+          </div>
+          <div class="platform-connect-row">
+            <div class="platform-name">
+              <span style="font-size:20px">🔵</span>
+              <div><div>Facebook</div><div style="font-size:11px;color:var(--text3)">Posts + Stories</div></div>
+            </div>
+            <div class="platform-status"><span style="width:6px;height:6px;border-radius:50%;background:var(--text3);display:inline-block"></span> <span style="color:var(--text3)">Not connected</span></div>
+            <button class="btn btn-ghost btn-sm" onclick="connectPlatform('facebook')">Connect</button>
+          </div>
+          <div class="platform-connect-row">
+            <div class="platform-name">
+              <span style="font-size:20px">💼</span>
+              <div><div>LinkedIn</div><div style="font-size:11px;color:var(--text3)">Posts + Articles</div></div>
+            </div>
+            <div class="platform-status"><span style="width:6px;height:6px;border-radius:50%;background:var(--text3);display:inline-block"></span> <span style="color:var(--text3)">Not connected</span></div>
+            <button class="btn btn-ghost btn-sm" onclick="connectPlatform('linkedin')">Connect</button>
+          </div>
+          <div class="platform-connect-row">
+            <div class="platform-name">
+              <span style="font-size:20px">🎵</span>
+              <div><div>TikTok</div><div style="font-size:11px;color:var(--text3)">Video + Stories • Requires Business account</div></div>
+            </div>
+            <div class="platform-status"><span style="width:6px;height:6px;border-radius:50%;background:var(--text3);display:inline-block"></span> <span style="color:var(--text3)">Not connected</span></div>
+            <button class="btn btn-ghost btn-sm" onclick="connectPlatform('tiktok')">Connect</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Voice Tab -->
+      <div id="tab-voice" style="display:none">
+        <div class="settings-grid">
+          <div class="card">
+            <div class="settings-section-title">Voiceover</div>
+            <div class="form-row">
+              <label class="form-label">ElevenLabs API Key</label>
+              <input type="text" id="eleven-key" placeholder="sk_..." />
+            </div>
+            <div class="form-row">
+              <label class="form-label">Voice ID</label>
+              <input type="text" id="eleven-voice" placeholder="Paste voice ID from ElevenLabs" />
+            </div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Voice on by default</div><div class="toggle-sub">Can be toggled off per post</div></div>
+              <div class="toggle on" onclick="this.classList.toggle('on')" id="voice-default-toggle"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="settings-section-title">Background Music</div>
+            <div class="form-row">
+              <label class="form-label">Music Source</label>
+              <select id="music-source">
+                <option value="library">Royalty-Free Library (built-in)</option>
+                <option value="suno">Suno API (AI-generated)</option>
+                <option value="none">None by default</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label class="form-label">Music Mood</label>
+              <select id="music-mood">
+                <option value="atmospheric">Atmospheric / Ambient</option>
+                <option value="tense">Tense / Thriller</option>
+                <option value="dark">Dark &amp; Brooding</option>
+                <option value="emotional">Emotional / Cinematic</option>
+              </select>
+            </div>
+            <div class="toggle-row">
+              <div><div class="toggle-label">Music on by default</div><div class="toggle-sub">Can be toggled off per post</div></div>
+              <div class="toggle" onclick="this.classList.toggle('on')" id="music-default-toggle"></div>
+            </div>
+            <button class="btn btn-primary btn-sm mt16" onclick="saveVoiceSettings()">Save Audio Settings</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- API Tab -->
+      <div id="tab-api" style="display:none">
+        <div class="card" style="max-width:560px">
+          <div class="settings-section-title">AI Provider</div>
+          <div class="form-row">
+            <label class="form-label">Content engine <span style="color:var(--red)">*</span></label>
+            <select id="ai-provider" onchange="onProviderChange()">
+              <option value="gemini">Google Gemini — 2.5 Flash (free, generous limits)</option>
+              <option value="groq">Groq — Llama 3.3 70B (free, fast)</option>
+              <option value="anthropic">Anthropic — Claude (paid)</option>
+            </select>
+            <div style="font-size:11px;color:var(--text3);margin-top:5px" id="provider-hint">Free tier · no credit card · ~14,400 requests/day. Get a key at console.groq.com</div>
+          </div>
+          <div class="form-row" id="gemini-key-row">
+            <label class="form-label">Gemini API Key <span style="color:var(--red)">*</span></label>
+            <input type="text" id="gemini-key" placeholder="AIza..." />
+          </div>
+          <div class="form-row" id="gemini-model-row">
+            <label class="form-label">Model</label>
+            <select id="gemini-model">
+              <option value="gemini-2.5-flash">Gemini 2.5 Flash — best quality</option>
+              <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash-Lite — highest limits (1,500/day)</option>
+            </select>
+          </div>
+          <div class="form-row" id="groq-key-row" style="display:none">
+            <label class="form-label">Groq API Key <span style="color:var(--red)">*</span></label>
+            <input type="text" id="groq-key" placeholder="gsk_..." />
+          </div>
+          <div class="form-row" id="groq-model-row" style="display:none">
+            <label class="form-label">Model</label>
+            <select id="groq-model">
+              <option value="llama-3.3-70b-versatile">Llama 3.3 70B — best quality</option>
+              <option value="llama-3.1-8b-instant">Llama 3.1 8B — fastest, higher limits</option>
+            </select>
+          </div>
+          <div class="form-row" id="anthropic-key-row" style="display:none">
+            <label class="form-label">Anthropic API Key</label>
+            <input type="text" id="anthropic-key" placeholder="sk-ant-..." />
+          </div>
+          <div class="divider"></div>
+          <div class="settings-section-title">Database (optional)</div>
+          <div class="form-row">
+            <label class="form-label">Supabase URL</label>
+            <input type="text" id="supabase-url" placeholder="https://xxx.supabase.co" />
+          </div>
+          <div class="form-row">
+            <label class="form-label">Supabase Anon Key</label>
+            <input type="text" id="supabase-key" placeholder="eyJ..." />
+          </div>
+          <button class="btn btn-primary mt8" onclick="saveApiSettings()">Save &amp; Test Connection</button>
+          <div id="api-test-result" style="margin-top:10px;font-size:12px"></div>
+          <div style="font-size:11px;color:var(--text3);margin-top:8px">Leave the Supabase fields blank to use the values baked into the file, or paste them here to connect this session. Connecting reloads your saved data.</div>
+
+          <div class="divider"></div>
+          <div class="settings-section-title" style="color:var(--red)">Danger Zone</div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:10px">Permanently delete all books, quotes, and posts — from this session and from the database.</div>
+          <button class="btn btn-danger" onclick="clearAllData()">Delete all entries</button>
+          <div id="clear-result" style="margin-top:10px;font-size:12px"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end content-area -->
+</div><!-- end main -->
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="mobile-nav">
+  <div class="mobile-nav-item active" id="mnav-dashboard" onclick="navigate('dashboard');setMobileNav('dashboard')">
+    <span class="mobile-nav-icon">◈</span>
+    <span class="mobile-nav-label">Home</span>
+  </div>
+  <div class="mobile-nav-item" id="mnav-books" onclick="navigate('books');setMobileNav('books')">
+    <span class="mobile-nav-icon">◫</span>
+    <span class="mobile-nav-label">Books</span>
+  </div>
+  <div class="mobile-nav-item" id="mnav-calendar" onclick="navigate('calendar');setMobileNav('calendar')">
+    <span class="mobile-nav-icon">⊞</span>
+    <span class="mobile-nav-label">Calendar</span>
+  </div>
+  <div class="mobile-nav-item" id="mnav-posts" onclick="navigate('posts');setMobileNav('posts')">
+    <span class="mobile-nav-icon">⊡</span>
+    <span class="mobile-nav-label">Posts</span>
+  </div>
+  <div class="mobile-nav-item" id="mnav-settings" onclick="navigate('settings');setMobileNav('settings')">
+    <span class="mobile-nav-icon">⊙</span>
+    <span class="mobile-nav-label">Settings</span>
+  </div>
+</nav>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif">
+  <span class="notif-icon" id="notif-icon">✓</span>
+  <span id="notif-msg"></span>
+</div>
+
+<!-- POST MODAL -->
+<div class="modal-overlay" id="post-modal">
+  <div class="modal" style="max-width:700px">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Edit Post</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ─── STATE ───
+const state = {
+  books: [],
+  quotes: [],
+  posts: [],
+  currentView: 'grid',
+  calMonth: new Date().getMonth(),
+  calYear: new Date().getFullYear(),
+  settings: {
+    anthropicKey: '',
+    brand: { author: 'Kim Black', tone: 'dark_cinematic', colors: { primary: '#c9a84c', bg: '#080808', text: '#e8e6e0' } }
+  }
+};
+
+// ─── SUPABASE PERSISTENCE ───────────────────────────────────────────
+// Degrades gracefully: if the placeholders above aren't filled in, the
+// app runs in-memory exactly as before. Once filled, every add/edit/
+// delete syncs to your database and data reloads on startup.
+let sb = null;
+function dbReady() {
+  if (!sb) return false;
+  if (window.SUPABASE_URL_RUNTIME) return true;
+  return SUPABASE_URL && !SUPABASE_URL.startsWith('PASTE_')
+    && SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.startsWith('PASTE_');
+}
+function initSupabase() {
+  try {
+    if (SUPABASE_URL && !SUPABASE_URL.startsWith('PASTE_')
+        && SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.startsWith('PASTE_')
+        && window.supabase) {
+      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+  } catch (e) { console.warn('Supabase init failed:', e); }
+}
+
+const db = {
+  async loadAll() {
+    if (!dbReady()) return false;
+    try {
+      const [books, quotes, posts] = await Promise.all([
+        sb.from('books').select('*').order('id', { ascending: true }),
+        sb.from('quotes').select('*').order('id', { ascending: true }),
+        sb.from('posts').select('*').order('id', { ascending: true })
+      ]);
+      if (books.data)  state.books  = books.data.map(r => r.data);
+      if (quotes.data) state.quotes = quotes.data.map(r => r.data);
+      if (posts.data)  state.posts  = posts.data.map(r => r.data);
+      return true;
+    } catch (e) { console.warn('loadAll failed:', e); return false; }
+  },
+  async save(table, obj) {
+    if (!dbReady()) return;
+    try { await sb.from(table).upsert({ id: obj.id, data: obj }); }
+    catch (e) { console.warn('save '+table+' failed:', e); }
+  },
+  async remove(table, id) {
+    if (!dbReady()) return;
+    try { await sb.from(table).delete().eq('id', id); }
+    catch (e) { console.warn('delete '+table+' failed:', e); }
+  },
+  async clearAll() {
+    if (!dbReady()) return false;
+    try {
+      await Promise.all([
+        sb.from('posts').delete().neq('id', 0),
+        sb.from('quotes').delete().neq('id', 0),
+        sb.from('books').delete().neq('id', 0)
+      ]);
+      return true;
+    } catch (e) { console.warn('clearAll failed:', e); return false; }
+  }
+};
+
+// ─── NAVIGATION ───
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  const titles = { dashboard:'Dashboard', books:'Books', quotes:'Quote Library', posts:'Posts', calendar:'Content Calendar', schedule:'Schedule', analytics:'Analytics', settings:'Settings' };
+  document.getElementById('topbar-title').textContent = titles[page] || page;
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + page + "'")) n.classList.add('active');
+  });
+  if (page === 'calendar') renderCalendar();
+  if (page === 'schedule') renderScheduleList();
+  if (page === 'posts') renderPostsList();
+}
+
+// ─── TABS ───
+function switchTab(tab) {
+  document.querySelectorAll('[id^="tab-"]').forEach(t => t.style.display = 'none');
+  document.getElementById('tab-' + tab).style.display = tab === 'brand' ? 'grid' : 'block';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+// ─── NOTIFICATIONS ───
+function notify(msg, type = 'success') {
+  const el = document.getElementById('notif');
+  const icon = document.getElementById('notif-icon');
+  const msgEl = document.getElementById('notif-msg');
+  icon.textContent = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+  msgEl.textContent = msg;
+  el.className = 'notif show ' + type;
+  setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+// ─── FILE UPLOAD & BOOK PROCESSING ───
+async function handleBookUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const apiKey = getApiKey();
+  if (!hasApiKey()) {
+    notify('Add your AI provider key in Settings → API Keys first', 'error');
+    navigate('settings');
+    setTimeout(() => switchTabDirect('api'), 200);
+    return;
+  }
+  const bookName = file.name.replace(/\.[^/.]+$/, '');
+  showProcessing(true);
+  setProgress(10, 'Reading manuscript...');
+  let fileText = '';
+  try {
+    fileText = await readFileAsText(file);
+  } catch (e) {
+    notify('Could not read file. Please use a text-based PDF or TXT file.', 'error');
+    showProcessing(false);
+    return;
+  }
+  const truncated = fileText.slice(0, 15000);
+  setProgress(30, 'Analyzing passages...');
+  try {
+    const quotes = await extractQuotesFromText(truncated, bookName, apiKey);
+    setProgress(80, 'Organizing quotes...');
+    const book = { id: Date.now(), title: bookName, quotes: quotes.length, uploadedAt: new Date().toLocaleDateString() };
+    state.books.push(book);
+    const newQuotes = quotes.map(q => ({ ...q, bookId: book.id, bookTitle: book.title }));
+    state.quotes.push(...newQuotes);
+    db.save('books', book);
+    newQuotes.forEach(q => db.save('quotes', q));
+    setProgress(100, 'Done!');
+    setTimeout(() => {
+      showProcessing(false);
+      renderBooks();
+      updateBadges();
+      notify(`Extracted ${quotes.length} quotes from "${bookName}"`, 'success');
+      navigate('quotes');
+    }, 600);
+  } catch (e) {
+    showProcessing(false);
+    notify('Extraction failed: ' + e.message, 'error');
+  }
+}
+
+function switchTabDirect(tab) {
+  document.querySelectorAll('[id^="tab-"]').forEach(t => t.style.display = 'none');
+  document.getElementById('tab-' + tab).style.display = 'block';
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const tabs = { brand:0, platforms:1, voice:2, api:3 };
+  document.querySelectorAll('.tab')[tabs[tab]]?.classList.add('active');
+}
+
+function readFileAsText(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => resolve(e.target.result);
+    reader.onerror = reject;
+    if (file.name.endsWith('.pdf')) {
+      reader.readAsText(file);
+    } else {
+      reader.readAsText(file);
+    }
+  });
+}
+
+function showProcessing(show) {
+  document.getElementById('book-processing').style.display = show ? 'block' : 'none';
+}
+
+function setProgress(pct, label) {
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('processing-label').textContent = label;
+}
+
+// ─── PROVIDER CONFIG ───
+function getProvider() { return document.getElementById('ai-provider')?.value || 'gemini'; }
+function getApiKey() {
+  const p = getProvider();
+  if (p === 'anthropic') return document.getElementById('anthropic-key')?.value || '';
+  if (p === 'groq') return document.getElementById('groq-key')?.value || '';
+  return document.getElementById('gemini-key')?.value || '';
+}
+function hasApiKey() { return getApiKey().trim().length > 0; }
+
+// Unified AI call — handles both Groq (OpenAI-compatible) and Anthropic formats.
+// Returns the raw text reply. Both providers are asked to return JSON only.
+async function callAI(systemPrompt, userPrompt, maxTokens) {
+  const provider = getProvider();
+  const apiKey = getApiKey();
+  if (!apiKey) throw new Error('No API key set');
+
+  if (provider === 'anthropic') {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: maxTokens,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+    if (!res.ok) throw new Error('Claude API error ' + res.status);
+    const data = await res.json();
+    return data.content[0].text;
+  } else if (provider === 'gemini') {
+    // Google Gemini — generativelanguage REST API
+    const model = document.getElementById('gemini-model')?.value || 'gemini-2.5-flash';
+    const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + encodeURIComponent(apiKey);
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+        generationConfig: {
+          maxOutputTokens: maxTokens,
+          temperature: 0.8,
+          responseMimeType: 'application/json'
+        }
+      })
+    });
+    if (!res.ok) {
+      const errTxt = await res.text();
+      if (res.status === 429) throw new Error('Gemini rate limit hit — wait a moment or switch to Flash-Lite');
+      throw new Error('Gemini API error ' + res.status + (errTxt ? ': ' + errTxt.slice(0,140) : ''));
+    }
+    const data = await res.json();
+    const cand = data.candidates && data.candidates[0];
+    if (!cand || !cand.content || !cand.content.parts) throw new Error('Gemini returned no content (check key or quota)');
+    return cand.content.parts.map(p => p.text || '').join('');
+  } else {
+    // Groq — OpenAI-compatible chat completions
+    const model = document.getElementById('groq-model')?.value || 'llama-3.3-70b-versatile';
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+      body: JSON.stringify({
+        model,
+        max_tokens: maxTokens,
+        temperature: 0.8,
+        response_format: { type: 'json_object' },
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ]
+      })
+    });
+    if (!res.ok) {
+      const errTxt = await res.text();
+      if (res.status === 429) throw new Error('Groq rate limit hit — wait a moment or switch to the 8B model');
+      throw new Error('Groq API error ' + res.status + (errTxt ? ': ' + errTxt.slice(0,120) : ''));
+    }
+    const data = await res.json();
+    return data.choices[0].message.content;
+  }
+}
+
+function parseJSON(raw) {
+  const clean = raw.replace(/```json|```/g, '').trim();
+  // grab the first {...} block in case the model adds stray text
+  const match = clean.match(/\{[\s\S]*\}/);
+  return JSON.parse(match ? match[0] : clean);
+}
+
+// ─── QUOTE EXTRACTION ───
+async function extractQuotesFromText(text, bookTitle, apiKey) {
+  const system = `You are a literary editor for Kim Black, a fiction novelist. Extract 8-12 of the most powerful, scroll-stopping lines from the provided text. Focus on:
+- Lines with emotional tension or unresolved pull
+- Atmospheric, cinematic imagery
+- Sharp character voice moments
+- Lines that raise a question without answering it
+- Sentences with dark beauty or poetic weight
+
+Return ONLY valid JSON — no markdown, no explanation. Format:
+{"quotes":[{"text":"exact quote","tag":"hook|tension|atmosphere|character","chapter":"Chapter X or Unknown"}]}`;
+  const raw = await callAI(system, `Book: "${bookTitle}"\n\nText:\n${text}`, 2000);
+  const parsed = parseJSON(raw);
+  return parsed.quotes || [];
+}
+
+// ─── POST GENERATION ───
+async function generatePostContent(quote, platforms, apiKey) {
+  const tone = document.getElementById('brand-tone')?.value || 'dark_cinematic';
+  const platformList = platforms.join(', ');
+  const system = `You are the social media strategist for Kim Black, a fiction author. Your job is to craft social media content that feels literary, cinematic, and brand-consistent — never generic or corporate.
+
+Brand tone: ${tone}
+Author: Kim Black (pen name, fiction novelist)
+
+Rules:
+- Captions tease, never explain. Leave something unresolved.
+- No motivational clichés. This is literary fiction, not self-help.
+- Hashtags mix literary, book-community, and reach tags
+- LinkedIn caption is more reflective, slightly longer
+- Instagram/TikTok caption is shorter, more visceral
+
+Return ONLY valid JSON:
+{"caption":"...","caption_linkedin":"...","hashtags":["tag1","tag2"],"content_type":"brand_building|book_forward|direct_cta","image_prompt":"cinematic image generation prompt matching the quote's mood"}`;
+  const raw = await callAI(system, `Quote: "${quote.text}"\nBook: ${quote.bookTitle}\nPlatforms: ${platformList}`, 1000);
+  return parseJSON(raw);
+}
+
+// ─── RENDER BOOKS ───
+function renderBooks() {
+  const grid = document.getElementById('books-grid');
+  const filter = document.getElementById('quote-filter-book');
+  grid.innerHTML = '';
+  filter.innerHTML = '<option value="">All Books</option>';
+  state.books.forEach(book => {
+    const card = document.createElement('div');
+    card.className = 'book-card';
+    card.innerHTML = `
+      <div class="book-cover">K</div>
+      <div class="book-title">${book.title}</div>
+      <div class="book-meta">${book.quotes} quotes • ${book.uploadedAt}</div>
+      <div class="flex gap8">
+        <button class="btn btn-primary btn-sm" onclick="viewBookQuotes(${book.id})">View Quotes</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteBook(${book.id})">Delete</button>
+      </div>
+    `;
+    grid.appendChild(card);
+    const opt = document.createElement('option');
+    opt.value = book.id;
+    opt.textContent = book.title;
+    filter.appendChild(opt);
+  });
+  document.getElementById('stat-books').textContent = state.books.length;
+}
+
+function viewBookQuotes(bookId) {
+  document.getElementById('quote-filter-book').value = bookId;
+  navigate('quotes');
+  filterQuotes();
+}
+
+function deleteBook(bookId) {
+  const book = state.books.find(b => b.id === bookId);
+  if (!confirm(`Delete "${book ? book.title : 'this book'}" and all of its quotes? This cannot be undone.`)) return;
+  // remove the book's quotes (db + state)
+  const keptQuotes = [];
+  state.quotes.forEach(q => {
+    if (q.bookId === bookId) db.remove('quotes', q.id);
+    else keptQuotes.push(q);
+  });
+  state.quotes = keptQuotes;
+  // remove the book
+  state.books = state.books.filter(b => b.id !== bookId);
+  db.remove('books', bookId);
+  renderBooks();
+  filterQuotes();
+  updateBadges();
+  notify('Book and its quotes deleted', 'success');
+}
+
+// ─── RENDER QUOTES ───
+function renderQuotes(quotesToShow) {
+  const grid = document.getElementById('quotes-grid');
+  const quotes = quotesToShow || state.quotes;
+  grid.innerHTML = '';
+  if (!quotes.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">❝</div><div class="empty-title">No quotes yet</div><div class="empty-sub">Upload a book to extract lines, or add one manually</div><button class="btn btn-primary btn-sm" style="margin-top:14px" onclick="openNewQuote()">＋ Add Quote</button></div>`;
+    return;
+  }
+  quotes.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'quote-card';
+    const alreadyPost = state.posts.find(p => p.quoteId === q.id || p.quoteText === q.text);
+    card.innerHTML = `
+      <div class="flex-center gap8 justify-between">
+        <span class="quote-tag ${q.tag}">${q.tag || 'quote'}</span>
+        <span class="quote-source">${q.bookTitle || ''} ${q.chapter ? '· ' + q.chapter : ''}</span>
+      </div>
+      <div class="quote-text">${q.text}</div>
+      <div class="quote-actions">
+        ${alreadyPost ? '<span style="font-size:11px;color:var(--text3)">✓ Post created</span>' : `<button class="btn btn-primary btn-sm" onclick="openGeneratePost(${state.quotes.indexOf(q)})">Generate Post</button>`}
+        <button class="btn btn-ghost btn-sm" onclick="deleteQuote(${state.quotes.indexOf(q)})">Remove</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function filterQuotes() {
+  const bookFilter = document.getElementById('quote-filter-book').value;
+  const tagFilter = document.getElementById('quote-filter-tag').value;
+  let filtered = state.quotes;
+  if (bookFilter) filtered = filtered.filter(q => q.bookId == bookFilter);
+  if (tagFilter) filtered = filtered.filter(q => q.tag === tagFilter);
+  renderQuotes(filtered);
+}
+
+function deleteQuote(idx) {
+  const removed = state.quotes.splice(idx, 1)[0];
+  if (removed) db.remove('quotes', removed.id);
+  filterQuotes();
+  updateBadges();
+}
+
+// ─── MANUAL QUOTE (no book / no AI required) ───
+function openNewQuote() {
+  document.getElementById('modal-title').textContent = 'Add Quote';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="builder-section-label">Quote text <span style="color:var(--red)">*</span></div>
+    <textarea id="new-quote-text" style="min-height:110px;margin-bottom:16px" placeholder="Paste or type the line…"></textarea>
+    <div class="two-col mb16">
+      <div>
+        <div class="builder-section-label">Type</div>
+        <select id="new-quote-tag" style="width:100%">
+          <option value="hook">Hook</option>
+          <option value="tension">Tension</option>
+          <option value="atmosphere">Atmosphere</option>
+          <option value="character">Character</option>
+        </select>
+      </div>
+      <div>
+        <div class="builder-section-label">Source <span style="color:var(--text3)">(optional)</span></div>
+        <input type="text" id="new-quote-source" placeholder="Book or chapter" style="width:100%" />
+      </div>
+    </div>
+    <div class="flex gap8">
+      <button class="btn btn-primary" onclick="saveNewQuote()">Add Quote</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>
+  `;
+  document.getElementById('post-modal').classList.add('open');
+}
+
+function saveNewQuote() {
+  const text = document.getElementById('new-quote-text').value.trim();
+  if (!text) { notify('Add the quote text first', 'error'); return; }
+  const quote = {
+    id: Date.now(),
+    manual: true,
+    text,
+    tag: document.getElementById('new-quote-tag').value || 'hook',
+    chapter: '',
+    bookId: '',
+    bookTitle: document.getElementById('new-quote-source').value.trim()
+  };
+  state.quotes.push(quote);
+  db.save('quotes', quote);
+  closeModal();
+  updateBadges();
+  filterQuotes();
+  notify('Quote added to library', 'success');
+}
+
+// ─── GENERATE POST MODAL ───
+function openGeneratePost(quoteIdx) {
+  const q = state.quotes[quoteIdx];
+  if (!hasApiKey()) {
+    notify('Add your AI provider key in Settings → API Keys', 'error');
+    return;
+  }
+  const modalBody = document.getElementById('modal-body');
+  document.getElementById('modal-title').textContent = 'Generate Post';
+  modalBody.innerHTML = `
+    <div style="font-family:var(--font-display);font-size:16px;font-style:italic;border-left:2px solid var(--gold);padding-left:14px;margin-bottom:20px;color:var(--text2)">${q.text}</div>
+    <div class="builder-section-label">Post on platforms</div>
+    <div class="platform-chips mb16" id="gen-platforms">
+      <div class="platform-chip" onclick="toggleChip(this,'ig')" data-plat="ig">📸 Instagram</div>
+      <div class="platform-chip" onclick="toggleChip(this,'fb')" data-plat="fb">🔵 Facebook</div>
+      <div class="platform-chip" onclick="toggleChip(this,'li')" data-plat="li">💼 LinkedIn</div>
+      <div class="platform-chip" onclick="toggleChip(this,'tt')" data-plat="tt">🎵 TikTok</div>
+    </div>
+    <div class="builder-section-label">Schedule date</div>
+    <input type="date" id="gen-date" style="width:auto;margin-bottom:16px" value="${getNextPostDate()}" />
+    <div class="builder-section-label mb12">Audio</div>
+    <div class="toggle-row mb16">
+      <div><div class="toggle-label">Voiceover</div></div>
+      <div class="toggle on" id="gen-voice" onclick="this.classList.toggle('on')"></div>
+    </div>
+    <div class="toggle-row mb20">
+      <div><div class="toggle-label">Background Music</div></div>
+      <div class="toggle" id="gen-music" onclick="this.classList.toggle('on')"></div>
+    </div>
+    <button class="btn btn-primary w-full" id="gen-btn" onclick="doGeneratePost(${quoteIdx})">✦ Generate Post with AI</button>
+    <div id="gen-result" style="margin-top:16px"></div>
+  `;
+  document.getElementById('post-modal').classList.add('open');
+}
+
+function toggleChip(el, plat) {
+  el.classList.toggle('selected-' + plat);
+}
+
+function getNextPostDate() {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().split('T')[0];
+}
+
+// ─── MANUAL POST (no AI / no quote required) ───
+function openNewPost() {
+  document.getElementById('modal-title').textContent = 'New Post';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="builder-section-label">Caption / quote text <span style="color:var(--red)">*</span></div>
+    <textarea id="new-caption" style="min-height:110px;margin-bottom:16px" placeholder="Write the post text here…"></textarea>
+    <div class="builder-section-label">Platforms <span style="color:var(--red)">*</span></div>
+    <div class="platform-chips mb16" id="new-platforms">
+      <div class="platform-chip" onclick="toggleChip(this,'ig')" data-plat="ig">📸 Instagram</div>
+      <div class="platform-chip" onclick="toggleChip(this,'fb')" data-plat="fb">🔵 Facebook</div>
+      <div class="platform-chip" onclick="toggleChip(this,'li')" data-plat="li">💼 LinkedIn</div>
+      <div class="platform-chip" onclick="toggleChip(this,'tt')" data-plat="tt">🎵 TikTok</div>
+    </div>
+    <div class="two-col mb16">
+      <div>
+        <div class="builder-section-label">Schedule date <span style="color:var(--text3)">(optional)</span></div>
+        <input type="date" id="new-date" style="width:100%" />
+      </div>
+      <div>
+        <div class="builder-section-label">Status</div>
+        <select id="new-status" style="width:100%">
+          <option value="draft">Draft</option>
+          <option value="pending">Pending Approval</option>
+          <option value="approved">Approved</option>
+          <option value="posted">Posted</option>
+        </select>
+      </div>
+    </div>
+    <div class="flex gap8">
+      <button class="btn btn-primary" onclick="saveNewPost()">Add Post</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>
+  `;
+  document.getElementById('post-modal').classList.add('open');
+}
+
+function saveNewPost() {
+  const text = document.getElementById('new-caption').value.trim();
+  if (!text) { notify('Add some caption text first', 'error'); return; }
+  const chips = document.querySelectorAll('#new-platforms .platform-chip');
+  const platforms = [];
+  chips.forEach(c => { if ([...c.classList].some(cl => cl.startsWith('selected-'))) platforms.push(c.dataset.plat); });
+  if (!platforms.length) { notify('Select at least one platform', 'error'); return; }
+  const post = {
+    id: Date.now(),
+    quoteId: null,
+    manual: true,
+    quoteText: text,
+    bookTitle: '',
+    caption: text,
+    captionLinkedIn: '',
+    hashtags: [],
+    contentType: 'manual',
+    imagePrompt: '',
+    platforms,
+    voice: false,
+    music: false,
+    scheduledDate: document.getElementById('new-date').value || '',
+    status: document.getElementById('new-status').value || 'draft',
+    createdAt: new Date().toISOString()
+  };
+  state.posts.push(post);
+  db.save('posts', post);
+  closeModal();
+  updateBadges();
+  renderPostsList();
+  notify('Post added', 'success');
+}
+
+async function doGeneratePost(quoteIdx) {
+  const q = state.quotes[quoteIdx];
+  const apiKey = getApiKey();
+  const chips = document.querySelectorAll('#gen-platforms .platform-chip');
+  const platforms = [];
+  chips.forEach(c => { if ([...c.classList].some(cl => cl.startsWith('selected-'))) platforms.push(c.dataset.plat); });
+  if (!platforms.length) { notify('Select at least one platform', 'error'); return; }
+  const btn = document.getElementById('gen-btn');
+  btn.textContent = 'Generating...';
+  btn.disabled = true;
+  const result = document.getElementById('gen-result');
+  result.innerHTML = '<div class="loading-state"><div class="spinner"></div> AI is crafting your post...</div>';
+  try {
+    const content = await generatePostContent(q, platforms, apiKey);
+    const voice = document.getElementById('gen-voice').classList.contains('on');
+    const music = document.getElementById('gen-music').classList.contains('on');
+    const date = document.getElementById('gen-date').value;
+    const post = {
+      id: Date.now(),
+      quoteId: q.id,
+      quoteText: q.text,
+      bookTitle: q.bookTitle,
+      caption: content.caption,
+      captionLinkedIn: content.caption_linkedin,
+      hashtags: content.hashtags || [],
+      contentType: content.content_type,
+      imagePrompt: content.image_prompt,
+      platforms,
+      voice,
+      music,
+      scheduledDate: date,
+      status: 'draft',
+      createdAt: new Date().toISOString()
+    };
+    state.posts.push(post);
+    db.save('posts', post);
+    updateBadges();
+    result.innerHTML = `
+      <div class="card" style="background:var(--surface2)">
+        <div class="builder-section-label mb8">Caption</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--text);margin-bottom:12px">${content.caption}</div>
+        <div class="builder-section-label mb8">Hashtags</div>
+        <div style="font-size:12px;color:var(--gold)">${(content.hashtags||[]).map(h=>'#'+h).join(' ')}</div>
+        <div class="divider"></div>
+        <div class="flex gap8">
+          <button class="btn btn-primary btn-sm" onclick="closeModal();navigate('posts')">View in Posts →</button>
+          <button class="btn btn-ghost btn-sm" onclick="closeModal();navigate('calendar')">Add to Calendar →</button>
+        </div>
+      </div>
+    `;
+    btn.textContent = '✦ Regenerate';
+    btn.disabled = false;
+    notify('Post generated!', 'success');
+  } catch (e) {
+    result.innerHTML = `<div style="color:var(--red);font-size:12px">Error: ${e.message}</div>`;
+    btn.textContent = '✦ Try Again';
+    btn.disabled = false;
+  }
+}
+
+// ─── RENDER POSTS ───
+function renderPostsList() {
+  const list = document.getElementById('posts-list');
+  const statusFilter = document.getElementById('post-filter-status').value;
+  let posts = state.posts;
+  if (statusFilter) posts = posts.filter(p => p.status === statusFilter);
+  if (!posts.length) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">⊡</div><div class="empty-title">No posts yet</div><div class="empty-sub">Generate from your quote library, or add one manually</div><button class="btn btn-primary btn-sm" style="margin-top:14px" onclick="openNewPost()">＋ New Post</button></div>`;
+    return;
+  }
+  list.innerHTML = '';
+  posts.forEach((post, i) => {
+    const item = document.createElement('div');
+    item.className = 'schedule-item';
+    const d = post.scheduledDate ? new Date(post.scheduledDate + 'T12:00:00') : null;
+    item.innerHTML = `
+      <div class="schedule-drag-handle">⠿</div>
+      <div class="schedule-date">
+        <div class="schedule-date-day">${d ? d.getDate() : '—'}</div>
+        <div class="schedule-date-mon">${d ? d.toLocaleString('default',{month:'short'}) : ''}</div>
+      </div>
+      <div class="schedule-divider"></div>
+      <div class="schedule-info">
+        <div class="schedule-quote">"${post.quoteText}"</div>
+        <div class="schedule-meta">
+          <span class="status-badge status-${post.status}">${post.status}</span>
+          <div class="schedule-platforms">${post.platforms.map(p=>`<span class="plt-badge plt-${p}">${p.toUpperCase()}</span>`).join('')}</div>
+          ${post.voice ? '<span style="font-size:10px;color:var(--text3)">🎙 VO</span>' : ''}
+          ${post.music ? '<span style="font-size:10px;color:var(--text3)">♪ Music</span>' : ''}
+        </div>
+      </div>
+      <div class="schedule-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openEditPost(${state.posts.indexOf(post)})">Edit</button>
+        ${post.manual ? '' : `<button class="btn btn-ghost btn-sm" onclick="regeneratePost(${state.posts.indexOf(post)})">↺ Regen</button>`}
+        ${post.status === 'draft' ? `<button class="btn btn-primary btn-sm" onclick="approvePost(${state.posts.indexOf(post)})">Approve</button>` : ''}
+        <button class="btn btn-danger btn-sm" onclick="deletePost(${state.posts.indexOf(post)})">✕</button>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+function filterPosts() { renderPostsList(); }
+
+function openEditPost(idx) {
+  const post = state.posts[idx];
+  document.getElementById('modal-title').textContent = 'Edit Post';
+  document.getElementById('modal-body').innerHTML = `
+    ${post.manual ? '' : `<div style="font-family:var(--font-display);font-size:14px;font-style:italic;border-left:2px solid var(--gold);padding-left:12px;margin-bottom:16px;color:var(--text3)">"${post.quoteText}"</div>`}
+    <div class="builder-section-label">Caption</div>
+    <textarea id="edit-caption" style="min-height:100px;margin-bottom:12px">${post.caption}</textarea>
+    <div class="builder-section-label">LinkedIn Caption</div>
+    <textarea id="edit-caption-li" style="min-height:80px;margin-bottom:12px">${post.captionLinkedIn || ''}</textarea>
+    <div class="builder-section-label">Hashtags (comma separated)</div>
+    <input type="text" id="edit-hashtags" value="${(post.hashtags||[]).join(', ')}" style="margin-bottom:12px" />
+    <div class="builder-section-label">Platforms</div>
+    <div class="platform-chips mb12" id="edit-platforms">
+      <div class="platform-chip ${post.platforms.includes('ig')?'selected-ig':''}" onclick="toggleChip(this,'ig')" data-plat="ig">📸 Instagram</div>
+      <div class="platform-chip ${post.platforms.includes('fb')?'selected-fb':''}" onclick="toggleChip(this,'fb')" data-plat="fb">🔵 Facebook</div>
+      <div class="platform-chip ${post.platforms.includes('li')?'selected-li':''}" onclick="toggleChip(this,'li')" data-plat="li">💼 LinkedIn</div>
+      <div class="platform-chip ${post.platforms.includes('tt')?'selected-tt':''}" onclick="toggleChip(this,'tt')" data-plat="tt">🎵 TikTok</div>
+    </div>
+    <div class="builder-section-label">Schedule Date</div>
+    <input type="date" id="edit-date" value="${post.scheduledDate||''}" style="width:auto;margin-bottom:12px" />
+    <div class="toggle-row">
+      <div><div class="toggle-label">Voiceover</div></div>
+      <div class="toggle ${post.voice?'on':''}" id="edit-voice" onclick="this.classList.toggle('on')"></div>
+    </div>
+    <div class="toggle-row mb16">
+      <div><div class="toggle-label">Background Music</div></div>
+      <div class="toggle ${post.music?'on':''}" id="edit-music" onclick="this.classList.toggle('on')"></div>
+    </div>
+    <div class="flex gap8">
+      <button class="btn btn-primary" onclick="saveEditPost(${idx})">Save Changes</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>
+  `;
+  document.getElementById('post-modal').classList.add('open');
+}
+
+function saveEditPost(idx) {
+  const post = state.posts[idx];
+  const chips = document.querySelectorAll('#edit-platforms .platform-chip');
+  const platforms = [];
+  chips.forEach(c => { if ([...c.classList].some(cl => cl.startsWith('selected-'))) platforms.push(c.dataset.plat); });
+  post.caption = document.getElementById('edit-caption').value;
+  if (post.manual) post.quoteText = post.caption;
+  post.captionLinkedIn = document.getElementById('edit-caption-li').value;
+  post.hashtags = document.getElementById('edit-hashtags').value.split(',').map(h=>h.trim().replace('#',''));
+  post.platforms = platforms.length ? platforms : post.platforms;
+  post.scheduledDate = document.getElementById('edit-date').value;
+  post.voice = document.getElementById('edit-voice').classList.contains('on');
+  post.music = document.getElementById('edit-music').classList.contains('on');
+  db.save('posts', post);
+  closeModal();
+  renderPostsList();
+  notify('Post updated', 'success');
+}
+
+async function regeneratePost(idx) {
+  const post = state.posts[idx];
+  const apiKey = getApiKey();
+  if (!hasApiKey()) { notify('API key required', 'error'); return; }
+  const q = { text: post.quoteText, bookTitle: post.bookTitle, tag: 'quote' };
+  notify('Regenerating post...', 'success');
+  try {
+    const content = await generatePostContent(q, post.platforms, apiKey);
+    post.caption = content.caption;
+    post.captionLinkedIn = content.caption_linkedin;
+    post.hashtags = content.hashtags || [];
+    post.imagePrompt = content.image_prompt;
+    db.save('posts', post);
+    renderPostsList();
+    notify('Post regenerated!', 'success');
+  } catch(e) { notify('Regeneration failed', 'error'); }
+}
+
+function approvePost(idx) {
+  state.posts[idx].status = 'approved';
+  db.save('posts', state.posts[idx]);
+  renderPostsList();
+  notify('Post approved and ready to schedule', 'success');
+  updateBadges();
+}
+
+function deletePost(idx) {
+  const removed = state.posts.splice(idx, 1)[0];
+  if (removed) db.remove('posts', removed.id);
+  renderPostsList();
+  updateBadges();
+  notify('Post removed', 'success');
+}
+
+// ─── CALENDAR ───
+function renderCalendar() {
+  const grid = document.getElementById('calendar-grid');
+  const label = document.getElementById('cal-month-label');
+  const d = new Date(state.calYear, state.calMonth, 1);
+  label.textContent = d.toLocaleString('default', { month: 'long', year: 'numeric' });
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  grid.innerHTML = days.map(d => `<div class="cal-day-header">${d}</div>`).join('');
+  const firstDay = new Date(state.calYear, state.calMonth, 1).getDay();
+  const daysInMonth = new Date(state.calYear, state.calMonth+1, 0).getDate();
+  const daysInPrev = new Date(state.calYear, state.calMonth, 0).getDate();
+  const today = new Date();
+  // Prev month
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-day other-month';
+    cell.innerHTML = `<div class="cal-date">${daysInPrev - i}</div>`;
+    grid.appendChild(cell);
+  }
+  // This month
+  for (let day = 1; day <= daysInMonth; day++) {
+    const cell = document.createElement('div');
+    const isToday = day === today.getDate() && state.calMonth === today.getMonth() && state.calYear === today.getFullYear();
+    cell.className = 'cal-day' + (isToday ? ' today' : '');
+    cell.innerHTML = `<div class="cal-date">${day}</div>`;
+    const dateStr = `${state.calYear}-${String(state.calMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const dayPosts = state.posts.filter(p => p.scheduledDate === dateStr);
+    dayPosts.forEach(post => {
+      const postEl = document.createElement('div');
+      postEl.className = `cal-post ${post.status}`;
+      postEl.innerHTML = `<span style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;flex:1">${post.quoteText.slice(0,25)}…</span><div class="cal-post-platforms">${post.platforms.map(p=>`<div class="cal-dot" style="background:${platColor(p)}"></div>`).join('')}</div>`;
+      postEl.onclick = () => { const idx = state.posts.indexOf(post); openEditPost(idx); };
+      cell.appendChild(postEl);
+    });
+    grid.appendChild(cell);
+  }
+}
+
+function platColor(p) { return {ig:'#e1306c',fb:'#1877f2',li:'#0a66c2',tt:'#163431'}[p]||'#888'; }
+
+function prevMonth() { state.calMonth--; if(state.calMonth<0){state.calMonth=11;state.calYear--;} renderCalendar(); }
+function nextMonth() { state.calMonth++; if(state.calMonth>11){state.calMonth=0;state.calYear++;} renderCalendar(); }
+function changeView(v) {
+  state.currentView = v;
+  document.getElementById('cal-view-grid').style.display = v==='grid'?'block':'none';
+  document.getElementById('cal-view-list').style.display = v==='list'?'block':'none';
+  if(v==='list') renderCalendarList();
+  document.getElementById('view-grid-btn').classList.toggle('active', v==='grid');
+  document.getElementById('view-list-btn').classList.toggle('active', v==='list');
+}
+
+function renderCalendarList() {
+  const list = document.getElementById('calendar-list-view');
+  const sorted = [...state.posts].sort((a,b)=>new Date(a.scheduledDate)-new Date(b.scheduledDate));
+  if (!sorted.length) { list.innerHTML = '<div class="empty-state"><div class="empty-icon">◷</div><div class="empty-title">No posts scheduled</div></div>'; return; }
+  list.innerHTML = '';
+  sorted.forEach(post => {
+    const d = post.scheduledDate ? new Date(post.scheduledDate + 'T12:00:00') : null;
+    const item = document.createElement('div');
+    item.className = 'schedule-item';
+    item.innerHTML = `
+      <div class="schedule-date"><div class="schedule-date-day">${d?d.getDate():'—'}</div><div class="schedule-date-mon">${d?d.toLocaleString('default',{month:'short'}):''}</div></div>
+      <div class="schedule-divider"></div>
+      <div class="schedule-info">
+        <div class="schedule-quote">"${post.quoteText}"</div>
+        <div class="schedule-meta"><span class="status-badge status-${post.status}">${post.status}</span>${post.platforms.map(p=>`<span class="plt-badge plt-${p}">${p.toUpperCase()}</span>`).join('')}</div>
+      </div>
+      <div class="schedule-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openEditPost(${state.posts.indexOf(post)})">Edit</button>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+// ─── SCHEDULE LIST ───
+function renderScheduleList() {
+  const list = document.getElementById('schedule-list');
+  const sorted = [...state.posts].sort((a,b)=>new Date(a.scheduledDate)-new Date(b.scheduledDate));
+  if (!sorted.length) { list.innerHTML = '<div class="empty-state"><div class="empty-icon">◷</div><div class="empty-title">Queue is empty</div><div class="empty-sub">Generate posts from your quotes to fill the schedule</div></div>'; return; }
+  list.innerHTML = '';
+  sorted.forEach(post => {
+    const d = post.scheduledDate ? new Date(post.scheduledDate + 'T12:00:00') : null;
+    const item = document.createElement('div');
+    item.className = 'schedule-item';
+    item.draggable = true;
+    item.innerHTML = `
+      <div class="schedule-drag-handle">⠿</div>
+      <div class="schedule-date"><div class="schedule-date-day">${d?d.getDate():'—'}</div><div class="schedule-date-mon">${d?d.toLocaleString('default',{month:'short'}):''}</div></div>
+      <div class="schedule-divider"></div>
+      <div class="schedule-info">
+        <div class="schedule-quote">"${post.quoteText}"</div>
+        <div class="schedule-meta">
+          <span class="status-badge status-${post.status}">${post.status}</span>
+          ${post.platforms.map(p=>`<span class="plt-badge plt-${p}">${p.toUpperCase()}</span>`).join('')}
+          ${post.voice?'<span style="font-size:10px;color:var(--text3)">🎙 VO</span>':''}
+          ${post.music?'<span style="font-size:10px;color:var(--text3)">♪ Music</span>':''}
+        </div>
+      </div>
+      <div class="schedule-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openEditPost(${state.posts.indexOf(post)})">Edit</button>
+        <button class="btn btn-ghost btn-sm" onclick="regeneratePost(${state.posts.indexOf(post)})">↺</button>
+        ${post.status==='draft'?`<button class="btn btn-primary btn-sm" onclick="approvePost(${state.posts.indexOf(post)})">Approve</button>`:''}
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+// ─── MODALS ───
+function closeModal() { const m = document.getElementById('post-modal'); if (m) m.classList.remove('open'); }
+(function(){ const m = document.getElementById('post-modal'); if (m) m.addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); }); })();
+
+// ─── SETTINGS ───
+function saveBrandKit() { notify('Brand kit saved', 'success'); }
+function saveApprovalSettings() { notify('Approval schedule saved', 'success'); }
+function saveVoiceSettings() { notify('Audio settings saved', 'success'); }
+
+function onProviderChange() {
+  const p = getProvider();
+  document.getElementById('gemini-key-row').style.display = p === 'gemini' ? 'block' : 'none';
+  document.getElementById('gemini-model-row').style.display = p === 'gemini' ? 'block' : 'none';
+  document.getElementById('groq-key-row').style.display = p === 'groq' ? 'block' : 'none';
+  document.getElementById('groq-model-row').style.display = p === 'groq' ? 'block' : 'none';
+  document.getElementById('anthropic-key-row').style.display = p === 'anthropic' ? 'block' : 'none';
+  const hints = {
+    gemini: 'Free · no credit card · up to 1,500 requests/day on Flash-Lite. Get a key at aistudio.google.com/apikey',
+    groq: 'Free tier · no credit card · ~14,400 requests/day. Get a key at console.groq.com',
+    anthropic: 'Paid. Get a key at console.anthropic.com'
+  };
+  document.getElementById('provider-hint').textContent = hints[p];
+}
+
+async function saveApiSettings() {
+  // Optional: connect Supabase from the settings fields (overrides file values for this session)
+  const sbUrl = (document.getElementById('supabase-url').value || '').trim();
+  const sbKey = (document.getElementById('supabase-key').value || '').trim();
+  if (sbUrl && sbKey && window.supabase) {
+    try {
+      sb = window.supabase.createClient(sbUrl, sbKey);
+      // make dbReady() pass by treating these as live config
+      window.SUPABASE_URL_RUNTIME = sbUrl;
+      const loaded = await db.loadAll();
+      if (loaded) {
+        renderBooks(); filterQuotes(); renderPostsList(); renderCalendar(); updateBadges();
+        notify('Database connected — data loaded', 'success');
+      }
+    } catch (e) { notify('Supabase connection failed', 'error'); }
+  }
+
+  const provider = getProvider();
+  const key = getApiKey();
+  const result = document.getElementById('api-test-result');
+  if (!key) { result.innerHTML = '<span style="color:var(--red)">⚠ Enter your API key first.</span>'; return; }
+  result.innerHTML = '<span style="color:var(--gold)">Testing connection...</span>';
+  state.settings.provider = provider;
+  const names = { gemini: 'Gemini', groq: 'Groq', anthropic: 'Claude' };
+  try {
+    const raw = await callAI('Reply ONLY with JSON.', 'Return {"ok":true}', 50);
+    parseJSON(raw);
+    result.innerHTML = '<span style="color:var(--green)">✓ Connected to ' + names[provider] + '. Ready to generate.</span>';
+    notify('Provider connected', 'success');
+  } catch (e) {
+    result.innerHTML = '<span style="color:var(--red)">✕ ' + e.message + '</span>';
+  }
+}
+
+async function clearAllData() {
+  if (!confirm('Delete ALL books, quotes, and posts? This permanently wipes the database and cannot be undone.')) return;
+  const out = document.getElementById('clear-result');
+  out.innerHTML = '<span style="color:var(--gold)">Clearing…</span>';
+  const ok = await db.clearAll();
+  state.books = []; state.quotes = []; state.posts = [];
+  renderBooks(); filterQuotes(); renderPostsList(); renderCalendar(); updateBadges();
+  out.innerHTML = dbReady()
+    ? (ok ? '<span style="color:var(--green)">✓ All entries deleted.</span>' : '<span style="color:var(--red)">Cleared locally, but the database wipe failed — check the console.</span>')
+    : '<span style="color:var(--green)">✓ All entries cleared from this session.</span>';
+  notify('All entries deleted', 'success');
+}
+
+function updateColor(type, value) {
+  document.getElementById('swatch-' + type).style.background = value;
+  document.getElementById('color-' + type + '-text').value = value;
+}
+
+function handleLogoUpload(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = e => { document.getElementById('logo-preview').innerHTML = `<img src="${e.target.result}" style="width:48px;height:48px;object-fit:contain" />`; };
+    reader.readAsDataURL(file);
+  }
+}
+
+function connectPlatform(platform) {
+  notify(`${platform} OAuth — backend integration required for live connection`, 'success');
+}
+
+function toggleDay(el) { el.classList.toggle('active'); }
+
+// ─── BADGES ───
+function updateBadges() {
+  document.getElementById('quote-count-badge').textContent = state.quotes.length;
+  document.getElementById('posts-count-badge').textContent = state.posts.length;
+  document.getElementById('stat-quotes').textContent = state.quotes.length;
+  document.getElementById('stat-posts').textContent = state.posts.filter(p=>p.status==='draft'||p.status==='pending').length;
+  document.getElementById('stat-posted').textContent = state.posts.filter(p=>p.status==='posted').length;
+}
+
+// ─── DRAG HINTS ───
+document.addEventListener('dragstart', e => { if(e.target.classList.contains('schedule-item')) e.target.classList.add('dragging'); });
+document.addEventListener('dragend', e => { e.target.classList.remove('dragging'); });
+
+// ─── MOBILE SIDEBAR ───
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebar-overlay').classList.add('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+function setMobileNav(page) {
+  document.querySelectorAll('.mobile-nav-item').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById('mnav-' + page);
+  if (el) el.classList.add('active');
+  closeSidebar();
+}
+
+// Patch navigate to close sidebar on mobile
+const _origNav = navigate;
+window.navigate = function(page) {
+  _origNav(page);
+  closeSidebar();
+  setMobileNav(page);
+};
+
+// ─── INIT ───
+// Render the UI immediately so the app is always interactive,
+// regardless of whether/when the Supabase library finishes loading.
+renderCalendar();
+updateBadges();
+if (document.getElementById('ai-provider')) onProviderChange();
+
+// Connect to Supabase once its library is ready (it loads with `defer`,
+// so it may arrive after this script). Never blocks the UI.
+function connectDbWhenReady(attempt) {
+  attempt = attempt || 0;
+  if (window.supabase) {
+    initSupabase();
+    if (dbReady()) {
+      db.loadAll().then(loaded => {
+        if (loaded) { renderBooks(); filterQuotes(); renderPostsList(); renderCalendar(); updateBadges(); }
+      }).catch(e => console.warn('initial load failed:', e));
+    }
+  } else if (attempt < 40) {
+    setTimeout(() => connectDbWhenReady(attempt + 1), 100); // retry up to ~4s
+  } else {
+    console.warn('Supabase library did not load — running in-memory only.');
+  }
+}
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', () => connectDbWhenReady(0));
+} else {
+  connectDbWhenReady(0);
+}
+</script>
+</body>
+</html>
